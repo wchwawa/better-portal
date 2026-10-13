@@ -305,6 +305,6 @@ cd better-portal
 
 ## 감사의 말
 
-원래 비트레이트 조정 아이디어는 [@atameric](https://github.com/atameric)과 [ps5-portal-high-bitrate](https://github.com/atameric/ps5-portal-high-bitrate)에서 나왔습니다. 기여자와 테스터 모두에게 감사드립니다. [원작자를 후원](https://buymeacoffee.com/atameric)할 수도 있습니다.
+원래의 비트레이트 조정 방식은 [**@atameric**](https://github.com/atameric)과 [ps5-portal-high-bitrate](https://github.com/atameric/ps5-portal-high-bitrate)에서 비롯되었습니다. [원작자를 후원](https://buymeacoffee.com/atameric)할 수 있습니다.
 
-Better Portal의 Mac 설정 도우미는 [@wchwawa](https://github.com/wchwawa)가 유지보수합니다. [MIT 라이선스](LICENSE)의 독립적인 커뮤니티 소프트웨어이며 Sony 또는 PlayStation과 제휴하지 않습니다.
+[MIT](LICENSE) 라이선스에 따라 배포됩니다. 독립적인 커뮤니티 소프트웨어이며 Sony 또는 PlayStation과 제휴하지 않습니다.

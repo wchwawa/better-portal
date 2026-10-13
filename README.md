@@ -297,6 +297,6 @@ cd better-portal
 
 ## Credits
 
-The original bitrate approach comes from **[@atameric](https://github.com/atameric)** and [ps5-portal-high-bitrate](https://github.com/atameric/ps5-portal-high-bitrate). Thank you to the original project's contributors and testers. You can [support the original creator](https://buymeacoffee.com/atameric).
+The original bitrate approach comes from **[@atameric](https://github.com/atameric)** and [ps5-portal-high-bitrate](https://github.com/atameric/ps5-portal-high-bitrate). You can [support the original creator](https://buymeacoffee.com/atameric).
 
-Better Portal's guided Mac experience is maintained by [@wchwawa](https://github.com/wchwawa). Licensed under [MIT](LICENSE). Independent community software; not affiliated with Sony or PlayStation.
+Licensed under [MIT](LICENSE). Independent community software; not affiliated with Sony or PlayStation.

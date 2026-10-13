@@ -295,6 +295,6 @@ cd better-portal
 
 ## 致谢
 
-原始码率调整思路来自 **[@atameric](https://github.com/atameric)** 和 [ps5-portal-high-bitrate](https://github.com/atameric/ps5-portal-high-bitrate)。感谢原项目的贡献者与测试者，也可以[支持原作者](https://buymeacoffee.com/atameric)。
+原始码率调整方法来自 **[@atameric](https://github.com/atameric)** 和 [ps5-portal-high-bitrate](https://github.com/atameric/ps5-portal-high-bitrate)。你可以[支持原作者](https://buymeacoffee.com/atameric)。
 
-Better Portal 的 Mac 引导体验由 [@wchwawa](https://github.com/wchwawa) 维护，使用 [MIT 许可证](LICENSE)。这是独立社区软件，与 Sony 或 PlayStation 无隶属关系。
+采用 [MIT](LICENSE) 许可证。独立社区软件；与 Sony 或 PlayStation 无隶属关系。

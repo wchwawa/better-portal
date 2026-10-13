@@ -305,6 +305,6 @@ cd better-portal
 
 ## Créditos
 
-La idea original para ajustar el bitrate procede de **[@atameric](https://github.com/atameric)** y [ps5-portal-high-bitrate](https://github.com/atameric/ps5-portal-high-bitrate). Gracias a quienes contribuyeron y probaron el proyecto original. También puedes [apoyar a su creador](https://buymeacoffee.com/atameric).
+El método original para ajustar el bitrate procede de **[@atameric](https://github.com/atameric)** y [ps5-portal-high-bitrate](https://github.com/atameric/ps5-portal-high-bitrate). Puedes [apoyar al creador original](https://buymeacoffee.com/atameric).
 
-[@wchwawa](https://github.com/wchwawa) mantiene la experiencia guiada para Mac de Better Portal. Licencia [MIT](LICENSE). Es software independiente de la comunidad, sin afiliación con Sony ni PlayStation.
+Bajo licencia [MIT](LICENSE). Software independiente de la comunidad; sin afiliación con Sony ni PlayStation.

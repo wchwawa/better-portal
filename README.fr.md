@@ -305,6 +305,6 @@ cd better-portal
 
 ## Remerciements
 
-L’idée d’origine pour modifier le débit vient de **[@atameric](https://github.com/atameric)** et de [ps5-portal-high-bitrate](https://github.com/atameric/ps5-portal-high-bitrate). Merci aux personnes qui ont contribué au projet d’origine et l’ont testé. Vous pouvez aussi [soutenir son créateur](https://buymeacoffee.com/atameric).
+La méthode d’origine pour modifier le débit vient de **[@atameric](https://github.com/atameric)** et de [ps5-portal-high-bitrate](https://github.com/atameric/ps5-portal-high-bitrate). Vous pouvez [soutenir le créateur d’origine](https://buymeacoffee.com/atameric).
 
-L’assistant Mac de Better Portal est maintenu par [@wchwawa](https://github.com/wchwawa). Logiciel communautaire indépendant sous licence [MIT](LICENSE), sans affiliation avec Sony ou PlayStation.
+Sous licence [MIT](LICENSE). Logiciel communautaire indépendant ; sans affiliation avec Sony ou PlayStation.

@@ -305,6 +305,6 @@ cd better-portal
 
 ## 謝辞
 
-元のビットレート調整のアイデアは **[@atameric](https://github.com/atameric)** と [ps5-portal-high-bitrate](https://github.com/atameric/ps5-portal-high-bitrate) によるものです。貢献者とテスターの皆さんに感謝します。[元の作者を支援](https://buymeacoffee.com/atameric)することもできます。
+元のビットレート調整手法は **[@atameric](https://github.com/atameric)** と [ps5-portal-high-bitrate](https://github.com/atameric/ps5-portal-high-bitrate) に由来します。[原作者を支援](https://buymeacoffee.com/atameric)できます。
 
-Better Portal の Mac 向け設定ガイドは [@wchwawa](https://github.com/wchwawa) が保守しています。[MIT ライセンス](LICENSE)で公開している独立したコミュニティソフトウェアです。Sony および PlayStation とは提携していません。
+[MIT](LICENSE) ライセンスに基づいて公開されています。独立したコミュニティソフトウェアであり、Sony または PlayStation とは提携していません。
