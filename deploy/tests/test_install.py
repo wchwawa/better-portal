@@ -29,6 +29,7 @@ class InstallerTests(unittest.TestCase):
                          'portal_auto_platform.py', 'portal_capture.py',
                          'portal_egress_witness.py', 'portal_windows.py',
                          'portal_windows_network.py', 'protocol.py',
+                         'portal_tui.py', 'portal_tui_text.py',
                          'requirements.txt', 'LICENSE'):
                 (source / name).write_text('# installer fixture\n')
             (deploy / 'portal').write_text('#!/bin/sh\nprintf "fixture version\\n"\n')
@@ -63,21 +64,23 @@ class InstallerTests(unittest.TestCase):
             environment = dict(os.environ, PORTAL_CONTAINER='1', PORTAL_SKIP_APK='1')
             result = subprocess.run(['sh', str(installer)], env=environment,
                                     capture_output=True, text=True, timeout=30)
-            return result, helper.exists()
+            return result, helper.exists(), {path.name for path in app.glob('*.py')}
 
     def test_failed_self_test_stops_before_helper_install(self):
-        result, helper_installed = self.run_installer(7)
+        result, helper_installed, _ = self.run_installer(7)
         self.assertEqual(result.returncode, 7, result.stdout + result.stderr)
         self.assertIn('self-test diagnostic', result.stderr)
         self.assertFalse(helper_installed)
         self.assertNotIn('==> Installed:', result.stdout)
 
     def test_successful_self_test_installs_helper(self):
-        result, helper_installed = self.run_installer(0)
+        result, helper_installed, modules = self.run_installer(0)
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn('full self-test output', result.stdout)
         self.assertTrue(helper_installed)
         self.assertIn('==> Installed: fixture version', result.stdout)
+        self.assertTrue({'portal_tui.py', 'portal_tui_text.py'} <= modules,
+                        'Shared self-tests need the wizard and its translations in the installed bundle')
 
 
 if __name__ == '__main__':

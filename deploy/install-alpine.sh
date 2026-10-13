@@ -17,6 +17,7 @@ ETC=/etc/portal-bitrate
 CONTAINER=${PORTAL_CONTAINER:-}
 FILES="portal_active_probe.py portal_auto.py portal_auto_platform.py portal_capture.py
        portal_egress_witness.py portal_windows.py portal_windows_network.py protocol.py
+       portal_tui.py portal_tui_text.py
        requirements.txt LICENSE"
 
 for f in $FILES deploy/portal deploy/portal-bitrate.initd; do

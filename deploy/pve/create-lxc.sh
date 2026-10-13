@@ -36,6 +36,7 @@ ip link show "$BRIDGE" >/dev/null 2>&1 || die "Bridge $BRIDGE not found (ip -br 
 ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)
 FILES=(portal_active_probe.py portal_auto.py portal_auto_platform.py portal_capture.py
        portal_egress_witness.py portal_windows.py portal_windows_network.py protocol.py
+       portal_tui.py portal_tui_text.py
        requirements.txt LICENSE deploy/install-alpine.sh deploy/portal deploy/portal-bitrate.initd)
 for f in "${FILES[@]}"; do [ -f "$ROOT/$f" ] || die "$ROOT/$f missing - run from a complete checkout."; done
 REV=$(git -C "$ROOT" rev-parse --short HEAD 2>/dev/null || basename "$ROOT")
