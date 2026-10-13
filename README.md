@@ -49,11 +49,15 @@ The images below show the actual app in demo mode, using example addresses and s
 
 ### Choose your language
 
-On your first launch, choose **English** or **简体中文** with the arrow keys and press **Enter**. Your choice is saved immediately and used on your next launch. To change it later, press **L** on the **Prepare** screen.
+On your first launch, choose **English** or **简体中文** with the arrow keys and press **Enter**. Your choice is saved immediately and used on your next launch.
 
 ![Language picker offering English and Simplified Chinese before setup](docs/images/language.png)
 
-Demo mode lets you try both languages but does not save your choice.
+To change languages during setup, press **S** to open **Settings**. Use **← / →** to switch between English and Simplified Chinese. The interface changes immediately and saves your choice. Press **Enter**, **Esc** or **S** to return to the same screen with your inputs intact.
+
+![Settings switching the interface from English to Chinese immediately, then returning to the same step](docs/images/settings.gif)
+
+During connection, the countdown continues with Settings open. **Q / Ctrl+C** still stops the attempt; the panel closes automatically when network restoration starts. Demo mode lets you try both languages but does not save your choice.
 
 ### 1. Prepare your devices
 
@@ -111,7 +115,7 @@ A value such as **63.106 Mbps** is the target reported by PS5, not a measurement
 
 **How do I switch languages?**
 
-Press **L** on the first **Prepare** screen, choose a language, then press **Enter**. Your device addresses and bitrate choice stay the same. **Esc** cancels the language change.
+Press **S** to open **Settings**, then use **← / →**. Changes apply immediately and are remembered for next time. **Esc** closes Settings; it does not undo the change. Your device addresses, bitrate choice and current step stay the same.
 
 **Do I need to run it again after disconnecting or turning off Portal?**
 
