@@ -1,132 +1,156 @@
-# PS5 Portal High Bitrate
+# Better Portal
 
-**Community preview: Windows / Linux automation + optional Proxmox / Docker deployment.** [Download v0.3.0-preview.3](https://github.com/atameric/ps5-portal-high-bitrate/releases/tag/v0.3.0-preview.3). [Automatic setup (EN)](AUTOMATION.md) | [Otomatik kurulum (TR)](AUTOMATION.tr.md) | [Container setup (experimental)](deploy/README.md). Includes Windows manual launchers and an always-on one-way relay with Windows Task Scheduler / Linux systemd installers. SDNick484 contributed Alpine LXC/OpenRC and Linux Docker macvlan packaging. Windows automation validation is pending; Linux/Pi reboot and reconnect success and Proxmox real-device success have community reports. Docker has synthetic tests only. Read the Proxmox NIC firewall scope before installing. The owner confirmed the original Mac mini automation prototype; this portable implementation still needs platform testing. No 4K or guaranteed latency improvement.
+A guided Mac app for choosing a higher bitrate target for PS5 Remote Play on your PlayStation Portal.
 
-The following sections describe the **macOS manual launcher**. For Windows manual mode use [WINDOWS.md](WINDOWS.md); for Linux or automatic mode use the guides above.
+> **Built on [atameric/ps5-portal-high-bitrate](https://github.com/atameric/ps5-portal-high-bitrate).** Shout-out to [@atameric](https://github.com/atameric) for the original idea and implementation. Better Portal builds on that work with a guided terminal interface. The original MIT license and contributor history are preserved.
 
-Experimental **macOS** launcher for temporarily requesting a higher PS5 Remote Play bitrate on your own PlayStation Portal. Includes 65, 100 and experimental 200 Mbps target profiles, a bounded relay, independent packet-egress verification, and network restoration.
+Enter your device addresses, choose a bitrate, and connect when the app says **READY**. Saved settings, a two-minute countdown and clear results guide you through each session.
 
-**This is not a jailbreak, a 4K unlock, or a guaranteed latency improvement.** A single Portal running firmware **7.1.7** was tested. Other firmware, network layouts and consoles are unverified. The tool matches a recorded packet layout, not a verified firmware identity; a matching packet length alone does not guarantee compatible plaintext offsets.
+[Get started](#get-started) · [See the four steps](#your-first-session) · [Questions and fixes](#questions-and-fixes)
 
-[Türkçe kullanım](README.tr.md)
+## Before you start
 
-## Observed results
+- A PS5 and PlayStation Portal that can already connect and play normally.
+- A Mac, PS5 and Portal on the **same home network**. PS5 can use Ethernet while Portal uses Wi-Fi. Avoid guest Wi-Fi, VPN routes and networks that isolate devices.
+- **Python 3.10 or newer** on the Mac. Check with `python3 --version`, or install it from [Python's macOS downloads](https://www.python.org/downloads/macos/).
+- Your Mac login password. The app requests administrator access to set up the connection.
 
-| Profile | PS5-reported target | Owner observation |
-| --- | --- | --- |
-| 65 Mbps | approximately 63.106 Mbps | approximately 58 Mbps on Portal; visibly cleaner picture |
-| 100 Mbps | approximately 97.087 Mbps | peaks around 84 Mbps on Portal |
-| 200 Mbps (experimental) | initially 166.141 Mbps, then approximately 158.3 Mbps | qualitative positive feedback; actual sustained throughput not established |
-| Separate 4K experiment | approximately 97.087 Mbps | PS5 offered only 720p/540p/360p; visible regression |
+This is an experimental community tool. Compatibility and picture quality depend on your devices, firmware and network. Start with **65 Mbps**; a higher target is not a guarantee of a smoother picture or lower delay.
 
-The working bitrate-only profile restored 1080p after the 4K experiment. **The failed 4K profile is not included.** These are observations from one setup, not controlled benchmarks. Target bitrate is not actual video throughput. Sustained 100 or 200 Mbps, reduced input lag and universal compatibility have not been demonstrated. Private captures and proprietary firmware are not distributed.
+## Get started
 
-A community member [reported a successful 65 Mbps session on the earlier Windows manual preview](https://www.reddit.com/r/PlaystationPortal/comments/1wtyglf/comment/pd0nzk0/). This is a user report, not independent validation of the new automatic mode or general Windows compatibility.
+1. [Download Better Portal](https://github.com/wchwawa/better-portal/archive/refs/heads/main.zip) and unzip it.
+2. Open the folder and double-click **Setup.command**. This installs what the app needs. Press Enter when setup finishes.
+3. Double-click **Start.command** whenever you want to start a new Portal session.
 
-A [Linux tester](https://www.reddit.com/r/PlaystationPortal/comments/1wtyglf/comment/pd2k5ls/) reports success on EndeavourOS and Raspberry Pi OS / Pi 3B over Ethernet, including systemd startup after reboot, a fresh Portal reconnect and the 100 Mbps profile with PS5 waking from rest mode. See [automation notes](AUTOMATION.md#community-linux-report-2026-09-30) for the Docker/forwarding conflict and remaining test gaps. This is community feedback, not a throughput or latency benchmark.
+Enter your Mac password if prompted. Terminal does not display characters as you type the password.
 
-## Requirements
-
-- macOS with Python 3.10 or newer, `sudo`, and the built-in `tcpdump`.
-- PS5, Portal and Mac on the same directly connected IPv4 LAN. No guest/client isolation, VPN routing or routed subnets between them.
-- Prefer wired Ethernet for PS5. The tested Mac used Wi-Fi; Wi-Fi relaying itself can add loss/latency.
-- Administrative access to the Mac and permission to operate both devices. The tool temporarily changes the two devices' ARP mappings and disables ICMP redirects; it does not modify firmware.
-- Python dependencies are installed without sudo. Running a downloaded launcher as administrator executes its local Python files: inspect the code and keep its folder writable only by trusted users.
-
-## Setup
-
-Clone or download this repository, then open a Terminal in its folder:
+Prefer Terminal? Run setup once:
 
 ```sh
-python3 -m venv .venv
-.venv/bin/python -m pip install -r requirements.txt
-cp config.example.json config.json
+git clone https://github.com/wchwawa/better-portal.git
+cd better-portal
+./Setup.command
 ```
 
-Alternatively double-click `Setup.command`, then `Start.command` to open the **guided terminal wizard**. It explains the prerequisites, asks for the two device IPv4 addresses, suggests the Mac LAN interface and lets you select 65/100/200 Mbps. Existing addresses are pre-filled. Find the device addresses in your router's connected-device list and use DHCP reservations so they do not change. The wizard saves `config.json` locally; no manual JSON editing is needed. Bitrate preferences stay separately in the private, git-ignored `tui-settings.json`.
-
-For the original command-line launcher, edit `config.json` yourself. The example addresses are documentation placeholders and will not reach your devices. Find interface names with `networksetup -listallhardwareports`; Wi-Fi is often `en0`, but not always.
-
-Optional preflight (resolves only the two configured peers; does not change routing/ARP mappings):
+Then open the app from that folder:
 
 ```sh
-sudo .venv/bin/python portal_capture.py --check
+./Start.command
 ```
 
-## Each new play session
+Keep the Terminal window at least **72 columns by 24 rows**. Enlarge it if the app asks.
 
-1. Disconnect Portal from PS5; leave PS5 powered on.
-2. Double-click `Start.command`. Enter the Mac password only at the local sudo prompt. Read the highlighted prerequisites, check the saved addresses in the editable fields and select a profile. Start with **65 Mbps**. Use Tab or Up/Down to move through the form; type to replace the focused value. Left/Right or Space selects one of the bitrate options.
-3. Keep Portal disconnected during **WAIT**. Wait for the green **READY / CONNECT NOW** prompt. Only then start a fresh connection on Portal. A visible **120-second countdown**, beginning at **02:00**, shows how long you have to connect.
-4. Follow the live request, acceptance and target-report indicators. A matching startup gets up to 15 further seconds to confirm the target, including when you connect near the end of the countdown. Once three high target reports arrive, the tool restores the direct path immediately.
-5. Read the result. **Ready to play** requires target confirmation, local packet-egress verification and no restoration errors. Once complete, the Mac is no longer relaying the session. Quit with Q or Esc; Enter starts another guided attempt. Q, Esc or Ctrl-C during the attempt requests cleanup before the result appears. Recovery failures block the retry button and show recovery details with D.
+## Your first session
 
-The wizard uses the standard macOS Python `curses` module; it needs no new dependency. Use an interactive terminal at least 72 columns by 24 rows. To launch it from this project folder:
+The images below show the actual app in demo mode, using example addresses and shortened waiting times.
 
-```sh
-sudo .venv/bin/python portal_tui.py
-```
+### 1. Prepare your devices
 
-Preview the same screens without administrator access, packet capture, configuration writes or network changes:
+Disconnect Portal from PS5 using **Quick Menu → Disconnect**. Keep PS5 powered on, Portal awake, and the Mac awake until the attempt finishes.
+
+The yellow highlights call out what matters before you continue. Press **Enter** when you are ready.
+
+![Prepare screen with yellow highlights for the same network, disconnected Portal and awake Mac](docs/images/prepare.png)
+
+### 2. Enter your addresses and choose a bitrate
+
+Find the PS5 and Portal **IPv4 addresses** in your router's connected-device list. Enter them in the highlighted fields. Keep the suggested **Mac LAN interface** unless you are using a different network adapter.
+
+Move between fields with **Tab** or **↑ / ↓**. Typing replaces the selected field. On the bitrate row, use **← / →** or **Space** to choose:
+
+| Profile | When to use it |
+| --- | --- |
+| **65 Mbps — recommended** | Start here. The moving rainbow marks the recommended option. |
+| **100 Mbps** | Try it after a stable 65 Mbps session and compare the same game scene. |
+| **200 Mbps — experimental** | An optional experiment; it may increase stutter and may not reach the target. |
+
+The arrow-key hint sits to the right of the choices. Press **Enter** to move to **Save and prepare connection**, then Enter again to start. Your addresses and selected profile are remembered for next time.
+
+![Devices screen with highlighted inputs, a flowing rainbow on 65 Mbps and the arrow-key hint beside the bitrate choices](docs/images/devices.gif)
+
+### 3. Connect when READY appears
+
+During **WAIT**, keep Portal disconnected. The artwork follows device checks and preparation.
+
+When **READY / CONNECT NOW** appears, select your PS5 on Portal and start Remote Play. You have **120 seconds**, shown as a countdown from **02:00**.
+
+The connection line changes as the app sees your request, PS5 acceptance and bitrate confirmation. Once connected, leave Portal connected while the app finishes and restores the direct connection.
+
+![Connection artwork progressing from device checks to READY, countdown, PS5 acceptance and target confirmation](docs/images/connect.gif)
+
+To stop an attempt, press **Q**, **Esc** or **Ctrl+C** and wait for the result. Keep the Mac awake while restoration is in progress.
+
+### 4. Read the result and play
+
+**Ready to play** means the higher target was confirmed, the local check passed, and the direct connection was restored. Keep that Portal session connected; you can quit the app with **Q** or **Esc**.
+
+![Result screens showing green verified success, amber incomplete verification, cancellation and red recovery warnings](docs/images/result-terminal-art.gif)
+
+| Result | What to do |
+| --- | --- |
+| **Ready to play** · green `[OK]` | Keep playing. The Mac is no longer relaying this session. |
+| **No new connection detected** / **No compatible startup captured** | Disconnect Portal, retry, and connect only after READY appears. |
+| **Higher target not confirmed** / **Target reported; verification incomplete** · amber `[?]` | Check **D: details**. Reconnect normally, or retry with 65 Mbps. |
+| **Attempt stopped** · `[X]` | The attempt was cancelled. Read the restoration status, then retry or quit. |
+| **Network recovery needs attention** · red `[!]` | Keep the Mac awake for automatic recovery. Press **D** for recovery details. Wait for recovery before another attempt. |
+
+A value such as **63.106 Mbps** is the target reported by PS5, not a measurement of actual video throughput. The result artwork describes the finished attempt; it does not monitor your connection afterward.
+
+## Questions and fixes
+
+**Do I need to run it again after disconnecting or turning off Portal?**
+
+Yes. Each new Remote Play connection needs a new run. Open **Start.command**, check your saved settings, and reconnect after READY.
+
+**Does the Mac need to stay on while I play?**
+
+After **Ready to play**, the Mac is no longer relaying and the app can be closed. During setup, cancellation or a recovery warning, keep the Mac awake until restoration completes.
+
+**Will it remember my Mac password?**
+
+Better Portal does not save your password. macOS controls whether another launch needs authorization. Retrying inside the same open wizard does not ask again.
+
+**How do I go back to normal?**
+
+Disconnect Portal and reconnect normally without running Better Portal. There is no firmware modification to undo.
+
+**The app says a device did not respond.**
+
+Wake PS5 and Portal, confirm their current IP addresses, and check that all three devices are on the same home network. If you see a duplicate-IP message, check the router's device list before retrying.
+
+**The picture stutters with a higher profile.**
+
+Try 65 Mbps, or reconnect normally. More bitrate is not always better for your network.
+
+**Start.command cannot find `.venv/bin/python`, or I cannot open a launcher.**
+
+Run **Setup.command** in the downloaded folder first. You can also open Terminal, type `cd `, drag that folder into the window, press Enter, and run `./Setup.command`, then `./Start.command`.
+
+**Can I look around without connecting my devices?**
+
+After setup, run this from the project folder. Demo mode needs no administrator access and does not change your network or save settings:
 
 ```sh
 .venv/bin/python portal_tui.py --demo
 ```
 
-The connection screen shows Portal and PS5 terminal art. A broken line waits for a new connection; an outgoing marker follows the startup request, and the line joins only after PS5 accepts. Colors and labels follow device checks, bitrate confirmation and direct-path restoration. The 120-second countdown stays visible while waiting. Add `--no-animations` to keep the same states and highlights without motion. Effects use existing progress callbacks and never pause the relay or require an extra keypress.
-
-The result screen uses the same devices with a settled outcome: a green `[OK]` link for verified success, an amber `[?]` for an unconfirmed attempt, `[X]` for cancellation, or a red `[!]` for recovery problems. Labels and symbols remain readable without color. This shows the completed attempt, not a live connection monitor; the reported target and next action remain below the artwork.
-
-The wizard reserves five seconds for network warm-up, then the full 120-second connection window, and at most 15 seconds for confirmation after the first modified startup. Its independent restoration watchdog waits **155 seconds** from its own start. Preflight and cleanup add time around the relay window. Keep the Mac awake until the result screen confirms restoration. The countdown is based on elapsed time, so incoming traffic is not needed to advance it.
-
-Original command-line launcher (retains its 40-second relay window):
+For a still interface, add `--no-animations`:
 
 ```sh
-sudo .venv/bin/python portal_active_probe.py --profile 65
-# Or choose the more demanding target:
-sudo .venv/bin/python portal_active_probe.py --profile 100
+sudo .venv/bin/python portal_tui.py --no-animations
 ```
 
-For this original launcher, the five-second warm-up is included in the 40-second relay window, and the independent restoration watchdog waits 55 seconds from its own start. `--connect-timeout 60` optionally gives the command-line launcher 60 seconds after READY and adjusts its watchdog accordingly. Higher bitrate can increase congestion; compare profiles in the same moving scene. To revert, disconnect and reconnect normally without the launcher. Each new session negotiates its own settings.
+**What about Windows or Linux?**
 
-### 200 Mbps experiment
+This guided interface is for **macOS**. The original project has separate [Windows](https://github.com/atameric/ps5-portal-high-bitrate/blob/main/WINDOWS.md) and [Linux / automatic setup](https://github.com/atameric/ps5-portal-high-bitrate/blob/main/AUTOMATION.md) guides.
 
-```sh
-sudo .venv/bin/python portal_active_probe.py --profile 200
-```
+**Where can I get help?**
 
-The original 200 Mbps run applied one mutation, received BANG acceptance and STREAMINFO, and restored the network without errors. Its PS5 targets settled near 158 Mbps, below the 160 Mbps early-exit threshold. Thus it returned status 1 (`UNCONFIRMED`) despite a working session. This profile retains that threshold: success requires three consecutive reports at or above 160 Mbps, not proof of actual 200 Mbps video. The relay-side one-second UDP peak was 75.760 Mbps; no sustained direct-path throughput or latency improvement was measured. Resolution fields are unchanged. Reconnect with 100 or 65 if playback degrades.
+[Open an issue](https://github.com/wchwawa/better-portal/issues) with the message shown, your macOS and Portal versions, and the selected profile. Redact device addresses from screenshots and keep raw packet captures private. Settings and session reports stay on your Mac.
 
-## How it works
+## Credits
 
-The Mac temporarily relays only the configured PS5-Portal pair. For a narrowly matched initial Takion BIG packet (client version 20, channel zero, zero GMAC, 2296-byte base64 LaunchSpec), it XORs ciphertext bytes at inferred offset 334. The hypothesis is `25000` → `65000`, or the same-length JSON number `1e+05` for 100 Mbps, or `2e+05` for 200 Mbps. No plaintext decryption or authentication bypass is claimed. The 1080p resolution fields are not changed.
+The original bitrate approach comes from **[@atameric](https://github.com/atameric)** and [ps5-portal-high-bitrate](https://github.com/atameric/ps5-portal-high-bitrate). Thank you to the original project's contributors and testers. You can [support the original creator](https://buymeacoffee.com/atameric).
 
-An independent bounded `tcpdump` capture verifies the changed packet appeared on the Mac interface. BANG acceptance, STREAMINFO and consecutive CONNECTIONQUALITY targets gate early exit. These control messages are observed, not cryptographically authenticated by this tool. Local egress verification does not itself prove delivery. Packet matching does not establish device firmware compatibility.
-
-## Troubleshooting and recovery
-
-- **NOT APPLIED:** no matching new handshake was captured. Disconnect, retry, and connect only after READY. Do not infer that PS5 rejected the target.
-- **UNCONFIRMED:** a mutation occurred but the required high target sequence was not observed. Reconnect normally or try 65. Do not repeatedly force an unknown firmware layout.
-- **Stutter or blurry picture:** compare 65 and 100 before trying 200; higher targets are not always better. Reconnect normally to undo the session change.
-- **Restoration failure:** allow the watchdog its deadline (155 seconds for the wizard, 55 for the default original launcher; `watchdog_seconds` is included in new reports). The report includes `watchdog_state`, the private path to the original network state. Retry restoration with `sudo .venv/bin/python portal_capture.py --restore /path/from/report/state.json`. Use only the state file generated by this tool. If a process was force-killed, reconnect the two devices to refresh neighbor mappings.
-- **Existing lock:** do not run overlapping experiments. If no experiment or watchdog is running and restoration is complete, remove the stale `/var/run/portal-lab-capture.lock` with sudo. Never delete it while another run is active.
-
-Ctrl-C enters cleanup. A separate watchdog offers recovery if the main process crashes, but cannot recover while the Mac is powered off. Review `restoration_errors` rather than assuming the timer guarantees success.
-
-## Privacy
-
-`config.json`, packet captures and generated reports stay local and are git-ignored. Raw captures can contain session identifiers and network metadata. **Do not attach them to public issues.** Share only a manually redacted summary: firmware version, profile, whether mutation occurred, target reports and restoration status. No telemetry is sent by this project.
-
-## Development
-
-```sh
-.venv/bin/python -m unittest discover -s tests -v
-```
-
-Tests use synthetic packets and mocked network operations, with no devices or sudo required. CI runs these tests; it does not test a real console. The public packaging and configurable network layer have offline validation; only their source prototype was tested on the owner's devices.
-
-Independent community experiment; not affiliated with Sony or PlayStation. Protocol context: [Chiaki-ng](https://github.com/streetpea/chiaki-ng). No Chiaki source, Sony firmware, firmware keys or captured sessions are bundled. MIT licensed; see LICENSE.
-
-## Support the project
-
-☕ **Support the project:** The project and APK will remain free and open source. If you'd like to support continued development and testing, you can buy me a coffee here: [https://buymeacoffee.com/atameric](https://buymeacoffee.com/atameric) ❤️
+Better Portal's guided Mac experience is maintained by [@wchwawa](https://github.com/wchwawa). Licensed under [MIT](LICENSE). Independent community software; not affiliated with Sony or PlayStation.
