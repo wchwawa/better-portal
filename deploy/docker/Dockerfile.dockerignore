@@ -5,6 +5,7 @@
 !protocol.py
 !requirements.txt
 !LICENSE
+!locales/*.json
 !tests/*.py
 !deploy/install-alpine.sh
 !deploy/portal
