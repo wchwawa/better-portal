@@ -6,7 +6,7 @@ A guided Mac app for choosing a higher bitrate target for PS5 Remote Play on you
 
 > **Built on [atameric/ps5-portal-high-bitrate](https://github.com/atameric/ps5-portal-high-bitrate).** Shout-out to [@atameric](https://github.com/atameric) for the original idea and implementation. Better Portal builds on that work with a guided terminal interface. The original MIT license and contributor history are preserved.
 
-Choose English or Simplified Chinese, enter your device addresses, choose a bitrate, and connect when the app says **READY**. Saved settings, a two-minute countdown and clear results guide you through each session.
+Choose your language, enter your device addresses, choose a bitrate, and connect when the app says **READY**. Saved settings, a two-minute countdown and clear results guide you through each session.
 
 [Get started](#get-started) · [See the four steps](#your-first-session) · [Questions and fixes](#questions-and-fixes)
 
@@ -49,15 +49,19 @@ The images below show the actual app in demo mode, using example addresses and s
 
 ### Choose your language
 
-On your first launch, choose **English** or **简体中文** with the arrow keys and press **Enter**. Your choice is saved immediately and used on your next launch.
+On your first launch, choose **English**, **简体中文**, **日本語**, **한국어**, **Español** or **Français** with **↑ / ↓**. The picker previews your language as you move. Press **Enter** to save your choice for this session and future launches.
 
-![Language picker offering English and Simplified Chinese before setup](docs/images/language.png)
+![First-launch picker with all six languages shown by their native names](docs/images/language.png)
 
-To change languages during setup, press **S** to open **Settings**. Use **← / →** to switch between English and Simplified Chinese. The interface changes immediately and saves your choice. Press **Enter**, **Esc** or **S** to return to the same screen with your inputs intact.
+To change languages during setup, press **S** to open **Settings**. Use the **arrow keys** to move through the two rows of languages. The interface changes immediately and saves your choice. Press **Enter**, **Esc** or **S** to return to the same screen with your inputs intact.
 
-![Settings switching the interface from English to Chinese immediately, then returning to the same step](docs/images/settings.gif)
+![Settings switching instantly through all six languages while preserving the current step and inputs](docs/images/settings.gif)
 
-During connection, the countdown continues with Settings open. **Q / Ctrl+C** still stops the attempt; the panel closes automatically when network restoration starts. Demo mode lets you try both languages but does not save your choice.
+During connection, the countdown continues with Settings open. **Q / Ctrl+C** still stops the attempt; the panel closes automatically when network restoration starts. Demo mode lets you try every language but does not save your choice.
+
+The device fields, connection states, results and recovery guidance are translated too.
+
+![The device screen in Japanese, Korean, Spanish and French](docs/images/languages.gif)
 
 ### 1. Prepare your devices
 
@@ -115,7 +119,7 @@ A value such as **63.106 Mbps** is the target reported by PS5, not a measurement
 
 **How do I switch languages?**
 
-Press **S** to open **Settings**, then use **← / →**. Changes apply immediately and are remembered for next time. **Esc** closes Settings; it does not undo the change. Your device addresses, bitrate choice and current step stay the same.
+Press **S** to open **Settings**, then use the **arrow keys**. Changes apply immediately and are remembered for next time. **Esc** closes Settings; it does not undo the change. Your device addresses, bitrate choice and current step stay the same.
 
 **Do I need to run it again after disconnecting or turning off Portal?**
 
