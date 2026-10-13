@@ -1,6 +1,6 @@
 # Better Portal
 
-[English](README.md) · **简体中文**
+[English](README.md) · **简体中文** · [日本語](README.ja.md) · [한국어](README.ko.md) · [Español](README.es.md) · [Français](README.fr.md)
 
 用 PlayStation Portal 玩自己的 PS5 时，通过 Mac 上的逐步向导选择更高的画面码率目标。
 
@@ -151,7 +151,7 @@ Portal 连上后，保持连接，等 Mac 显示**结果页**再关闭窗口。�
 
 **63.106 Mbps** 之类的数字是 PS5 报告的目标码率，**不是实测视频传输速度**。Mac 已经不需要为本次连接中转数据。
 
-**下次断开连接或关闭 Portal 后：**重新打开 **Start.command**，再完成这四步。之前的地址会自动填好；如果家庭网络有变化，请重新核对。
+**下次断开连接或关闭 Portal 后**：重新打开 **Start.command**，再完成这四步。之前的地址会自动填好；如果家庭网络有变化，请重新核对。
 
 ## 结果和上图不一样时
 
@@ -167,11 +167,11 @@ Portal 连上后，保持连接，等 Mac 显示**结果页**再关闭窗口。�
 <details>
 <summary>展开查看重试和恢复警告的独立示例</summary>
 
-**未检测到新连接：**重新尝试，等到“现在连接”后，再发起新的 Portal 连接。
+**未检测到新连接**：重新尝试，等到“现在连接”后，再发起新的 Portal 连接。
 
 ![一次未检测到新的 Portal 连接的结果示例](docs/images/result-timeout-zh-CN.png)
 
-**网络恢复需要处理：**保持 Mac 唤醒，按 D 查看详情并按提示处理。
+**网络恢复需要处理**：保持 Mac 唤醒，按 D 查看详情并按提示处理。
 
 ![网络恢复未完成的结果示例，含保持 Mac 唤醒和查看恢复详情的提示](docs/images/result-recovery-zh-CN.png)
 
@@ -291,7 +291,7 @@ cd better-portal
 
 </details>
 
-**Windows 或 Linux 用户：**此向导面向 **macOS**。原项目提供独立的 [Windows 指南](https://github.com/atameric/ps5-portal-high-bitrate/blob/main/WINDOWS.md)和 [Linux / 自动化指南](https://github.com/atameric/ps5-portal-high-bitrate/blob/main/AUTOMATION.md)。
+**Windows 或 Linux 用户**：此向导面向 **macOS**。原项目提供独立的 [Windows 指南](https://github.com/atameric/ps5-portal-high-bitrate/blob/main/WINDOWS.md)和 [Linux / 自动化指南](https://github.com/atameric/ps5-portal-high-bitrate/blob/main/AUTOMATION.md)。
 
 ## 致谢
 
