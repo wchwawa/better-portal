@@ -169,6 +169,8 @@ class Wizard:
         self.profile = profile if profile in PROFILES else '65'
         language = preferences.get('language')
         self.language = language if language in LANGUAGES else None
+        self.settings_open = False
+        self.settings_error = ''
         self.focus = 0
         self.cursor = 0
         self.selected = True
@@ -269,6 +271,70 @@ class Wizard:
                 self.language = language
                 return True
 
+    def settings_key(self, key, *, live=False):
+        """Handle one key without nesting a loop inside the relay callback."""
+        rows, columns = self.screen.getmaxyx()
+        full_size = rows >= self.MIN_ROWS and columns >= self.MIN_COLS
+        if key in (ord('s'), ord('S')):
+            if self.settings_open or full_size:
+                self.settings_open = not self.settings_open
+                self.settings_error = ''
+            return True
+        if not self.settings_open:
+            return False
+        if key in (27, 10, 13, self.curses.KEY_ENTER):
+            self.settings_open = False
+        elif live and key in (3, ord('q'), ord('Q')):
+            self.settings_open = False
+            return False
+        elif full_size and key in (self.curses.KEY_LEFT, self.curses.KEY_RIGHT,
+                                   self.curses.KEY_UP, self.curses.KEY_DOWN,
+                                   self.curses.KEY_BTAB, 9, 32):
+            current = LANGUAGES.index(self.language) if self.language in LANGUAGES else 0
+            direction = -1 if key in (self.curses.KEY_LEFT, self.curses.KEY_UP,
+                                      self.curses.KEY_BTAB) else 1
+            language = LANGUAGES[(current + direction) % len(LANGUAGES)]
+            try:
+                self.save_preferences(language=language)
+            except OSError as exc:
+                self.settings_error = str(exc)
+            else:
+                self.language = language
+                self.settings_error = ''
+        return True
+
+    def refresh(self, *, live=False):
+        """Paint settings over the current page while preserving its state."""
+        rows, columns = self.screen.getmaxyx()
+        if self.settings_open and rows >= self.MIN_ROWS and columns >= self.MIN_COLS:
+            self.hide_cursor()
+            width = min(64, columns - 8)
+            left = (columns - width) // 2
+            for row in range(9, 17):
+                line = '+' + '-' * (width - 2) + '+' if row in (9, 16) else '|' + ' ' * (width - 2) + '|'
+                self.put(row, left, line, self.colors.get('accent', 0))
+            self.put(10, left + 3, 'Settings', self.emphasis())
+            self.put(12, left + 3, 'Language / 语言', self.curses.A_BOLD)
+            column = left + 22
+            for language, name in zip(LANGUAGES, ('English', '简体中文')):
+                selected = self.language == language
+                label = f' [{"x" if selected else " "}] {name} '
+                style = self.emphasis() | self.curses.A_REVERSE if selected else 0
+                self.put(12, column, label, style)
+                column += cell_width(label) + 2
+            if self.settings_error:
+                message = self.t('Could not save settings: {error}', error=self.settings_error)
+                self.put(14, left + 3, clip_cells(message, width - 6), self.colors.get('error', 0))
+                self.put(15, left + 3, 'Language unchanged. Try again.', self.curses.A_DIM)
+            else:
+                self.put(14, left + 3, 'Applies immediately; saved for next time.' if not self.demo
+                         else 'Applies immediately. Demo changes are not saved.', self.curses.A_DIM)
+            footer = ('←/→: language  Esc/S: back  Q/Ctrl+C: stop' if live else
+                      '←/→: language    Enter / Esc / S: back')
+            self.put(rows - 2, 4, ' ' * (columns - 5))
+            self.put(rows - 2, 4, footer, self.curses.A_DIM)
+        self.screen.refresh()
+
     def hide_cursor(self):
         self.set_cursor(0)
 
@@ -345,6 +411,9 @@ class Wizard:
             self.hide_cursor()
         rows, columns = self.screen.getmaxyx()
         self.put(1, 4, 'PS5 PORTAL', self.colors.get('accent', 0) | self.curses.A_BOLD)
+        if step != 2 or self.event.get('phase') not in ('restoring', 'stopping'):
+            hint = self.t('S Settings')
+            self.put(1, min(86, columns - 4) - cell_width(hint), hint, self.curses.A_DIM)
         self.put(2, 4, self.t('High Bitrate  /  Guided setup') +
                  (self.t('  /  DEMO: no network changes') if self.demo else ''),
                  self.curses.A_DIM)
@@ -360,6 +429,7 @@ class Wizard:
         return rows >= self.MIN_ROWS and columns >= self.MIN_COLS
 
     def small_terminal(self, live=False):
+        self.settings_open = False
         self.screen.erase()
         self.hide_cursor()
         self.put(1, 1, 'Please enlarge this terminal to at least 72 x 24.')
@@ -383,7 +453,7 @@ class Wizard:
     def prepare(self):
         highlight = self.emphasis('warning')
         while True:
-            if self.frame(0, 'Enter: continue    L: language    Esc: quit'):
+            if self.frame(0, 'Enter: continue    Esc: quit'):
                 self.put(7, 4, 'Before you begin', self.curses.A_BOLD)
                 self.inline(9, 4, ('1. ', self.curses.A_DIM),
                             ('SAME NETWORK', highlight),
@@ -399,10 +469,12 @@ class Wizard:
                 self.inline(17, 4, ('Wait for ', 0), ('CONNECT NOW', highlight),
                             (' before connecting Portal.', 0))
                 self.button(self.screen.getmaxyx()[0] - 5, 'I have checked these steps  ->')
-                self.screen.refresh()
+                self.refresh()
             else:
                 self.small_terminal()
             key = self.screen.getch()
+            if self.settings_key(key):
+                continue
             if key in (27, ord('q'), ord('Q')):
                 return False
             if key in (ord('l'), ord('L')):
@@ -474,7 +546,7 @@ class Wizard:
                 pass
         else:
             self.hide_cursor()
-        self.screen.refresh()
+        self.refresh()
         return True
 
     def configure(self):
@@ -485,6 +557,8 @@ class Wizard:
         while True:
             full_size = self.draw_form()
             key = self.screen.getch()
+            if self.settings_key(key):
+                continue
             if key == 27:
                 return None
             if not full_size:
@@ -710,7 +784,7 @@ class Wizard:
         if self.notice:
             self.put(19, 4, ' ' * min(82, self.screen.getmaxyx()[1] - 8))
             self.paragraph(19, self.notice, self.colors.get('warning', 0), max_rows=2)
-        self.screen.refresh()
+        self.refresh(live=True)
 
     def progress(self, event):
         kind = event['type']
@@ -718,6 +792,8 @@ class Wizard:
         self.event.update({key: value for key, value in event.items() if key != 'type'})
         if kind in ('checking', 'preparing', 'restoring', 'stopping'):
             self.event['phase'] = kind
+            if kind in ('restoring', 'stopping'):
+                self.settings_open = False
         elif kind == 'ready':
             self.event['phase'] = 'waiting'
         elif kind == 'modified':
@@ -732,6 +808,8 @@ class Wizard:
         if self.event.get('phase') in ('restoring', 'stopping'):
             return True
         key = self.screen.getch()
+        if self.settings_key(key, live=True):
+            return True
         return key not in (27, 3, ord('q'), ord('Q'))
 
     def simulate(self):
@@ -839,10 +917,13 @@ class Wizard:
                 else:
                     self.paragraph(row, 'Demo sessions do not write reports or change networking.' if self.demo
                                    else 'The attempt stopped before a report was created.')
-                self.screen.refresh()
+                self.refresh()
             else:
                 self.small_terminal()
-            if self.screen.getch() in (10, 13, 27, self.curses.KEY_ENTER):
+            key = self.screen.getch()
+            if self.settings_key(key):
+                continue
+            if key in (10, 13, 27, self.curses.KEY_ENTER):
                 return
 
     def draw_result(self, summary, elapsed):
@@ -866,14 +947,17 @@ class Wizard:
         self.paragraph(row, summary.advice, max_rows=self.screen.getmaxyx()[0] - 4 - row)
         self.button(self.screen.getmaxyx()[0] - 4,
                     'Try another session  ->' if summary.kind != 'error' else 'Quit and allow recovery')
-        self.screen.refresh()
+        self.refresh()
 
     def result(self, report):
+        self.settings_open = False
         summary = summarize(report)
         started = time.monotonic()
         while True:
             self.draw_result(summary, time.monotonic() - started)
             key = self.screen.getch()
+            if self.settings_key(key):
+                continue
             if key in (27, ord('q'), ord('Q')):
                 return False
             if key in (ord('d'), ord('D')):

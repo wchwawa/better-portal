@@ -143,6 +143,110 @@ class LanguageTests(unittest.TestCase):
         wizard.rainbow(16, 9, '65 推荐')
         self.assertEqual([call.args[1] for call in wizard.screen.addstr.call_args_list], [9, 10, 11, 12, 14])
 
+    def test_settings_apply_and_save_language_without_confirming_or_leaving_the_panel(self):
+        self.save({'language': 'en', 'profile': '100'})
+        wizard = self.wizard()
+        self.assertTrue(wizard.settings_key(ord('S')))
+        self.assertTrue(wizard.settings_key(self.curses.KEY_RIGHT))
+        self.assertTrue(wizard.settings_open)
+        self.assertEqual(wizard.language, 'zh-CN')
+        self.assertEqual(tui.load_preferences(self.preferences), {'language': 'zh-CN', 'profile': '100'})
+        wizard.refresh()
+        self.assertTrue(any(call.args[2] == '设置' for call in wizard.screen.addstr.call_args_list))
+        wizard.settings_key(27)
+        self.assertFalse(wizard.settings_open)
+        self.assertEqual(self.wizard().language, 'zh-CN', 'Esc closes settings without undoing saved changes')
+
+    def test_settings_preserve_unsaved_form_values_profile_and_input_position(self):
+        self.save({'language': 'en', 'profile': '65'})
+        wizard = self.wizard(keys=[ord('s'), self.curses.KEY_RIGHT, 13, 27])
+        values = ['192.168.1.', '192.168.1.30', 'en4']
+        wizard.values = values.copy()
+        wizard.profile = '100'
+        self.assertIsNone(wizard.configure())
+        self.assertEqual(wizard.values, values)
+        self.assertEqual((wizard.focus, wizard.cursor, wizard.selected), (0, len(values[0]), True))
+        self.assertEqual(wizard.profile, '100')
+        self.assertFalse((self.root / 'config.json').exists())
+        self.assertEqual(tui.load_preferences(self.preferences), {'language': 'zh-CN', 'profile': '65'})
+
+    def test_live_settings_keep_processing_events_and_do_not_reset_the_countdown(self):
+        self.save({'language': 'en'})
+        wizard = self.wizard(keys=[ord('s'), self.curses.KEY_RIGHT, -1, 27])
+        with patch.object(wizard, 'choose_language', side_effect=AssertionError('No blocking picker in a relay')):
+            self.assertTrue(wizard.progress({'type': 'ready', 'seconds': 120}))
+            started = wizard.phase_started
+            self.assertTrue(wizard.progress({'type': 'tick', 'phase': 'waiting', 'seconds': 119}))
+            self.assertEqual(wizard.language, 'zh-CN')
+            self.assertTrue(wizard.settings_open)
+            self.assertTrue(wizard.progress({'type': 'tick', 'phase': 'waiting', 'seconds': 118}))
+            self.assertEqual(wizard.event['seconds'], 118)
+            self.assertEqual(wizard.phase_started, started)
+            self.assertTrue(wizard.progress({'type': 'modified'}))
+        self.assertFalse(wizard.settings_open)
+        self.assertEqual(wizard.event['phase'], 'confirming')
+        self.assertEqual(wizard.event['seconds'], tui.CONFIRM_SECONDS)
+        self.assertEqual(wizard.screen.getch.call_count, 4, 'Each event must read at most one key')
+
+    def test_live_cancel_keys_still_cancel_with_settings_open(self):
+        for key in (ord('q'), ord('Q'), 3):
+            with self.subTest(key=key):
+                wizard = self.wizard(demo=True, keys=[ord('s'), key])
+                self.assertTrue(wizard.progress({'type': 'ready', 'seconds': 120}))
+                self.assertFalse(wizard.progress({'type': 'tick', 'phase': 'waiting', 'seconds': 119}))
+                self.assertFalse(wizard.settings_open)
+
+    def test_recovery_dismisses_settings_without_consuming_recovery_keys(self):
+        for phase in ('restoring', 'stopping'):
+            with self.subTest(phase=phase):
+                wizard = self.wizard(demo=True, keys=[ord('s')])
+                wizard.progress({'type': 'ready', 'seconds': 120})
+                self.assertTrue(wizard.progress({'type': phase}))
+                self.assertFalse(wizard.settings_open)
+                self.assertEqual(wizard.screen.getch.call_count, 1)
+
+    def test_result_and_details_support_settings_without_retrying_the_attempt(self):
+        self.save({'language': 'en'})
+        wizard = self.wizard(keys=[ord('s'), self.curses.KEY_RIGHT, 13, ord('d'),
+                                   ord('S'), self.curses.KEY_LEFT, 27, 27, ord('q')])
+        self.assertFalse(wizard.result({'completed': True, 'unique_mutated_sequences': 0}))
+        self.assertFalse(wizard.settings_open)
+        self.assertEqual(wizard.language, 'en')
+        self.assertEqual(tui.load_preferences(self.preferences), {'language': 'en'})
+
+    def test_failed_settings_save_preserves_language_and_can_be_retried(self):
+        self.save({'language': 'en', 'profile': '100'})
+        wizard = self.wizard()
+        wizard.settings_key(ord('s'))
+        with patch.object(Path, 'replace', side_effect=OSError('synthetic write failure')):
+            wizard.settings_key(self.curses.KEY_RIGHT)
+        self.assertEqual(wizard.language, 'en')
+        self.assertIn('synthetic write failure', wizard.settings_error)
+        self.assertEqual(tui.load_preferences(self.preferences), {'language': 'en', 'profile': '100'})
+        wizard.refresh()
+        self.assertTrue(any('Language unchanged' in call.args[2] for call in wizard.screen.addstr.call_args_list))
+        wizard.settings_key(self.curses.KEY_RIGHT)
+        self.assertEqual(wizard.language, 'zh-CN')
+        self.assertEqual(wizard.settings_error, '')
+        self.assertEqual(list(self.root.iterdir()), [self.preferences])
+
+    def test_settings_preview_is_readonly_and_hidden_settings_cannot_change_language(self):
+        self.save({'language': 'en'})
+        before = self.preferences.read_bytes()
+        wizard = self.wizard(demo=True)
+        with patch.object(tui, 'save_private_json', side_effect=AssertionError('Demo must not write')):
+            wizard.settings_key(ord('s'))
+            wizard.settings_key(self.curses.KEY_RIGHT)
+            self.assertEqual(wizard.language, 'zh-CN')
+            wizard.screen.getmaxyx.return_value = (18, 50)
+            wizard.settings_key(self.curses.KEY_LEFT)
+            self.assertEqual(wizard.language, 'zh-CN')
+            wizard.small_terminal(live=True)
+            self.assertFalse(wizard.settings_open)
+            wizard.settings_key(ord('s'))
+            self.assertFalse(wizard.settings_open)
+        self.assertEqual(self.preferences.read_bytes(), before)
+
 
 class TerminalTextTests(unittest.TestCase):
     def test_clip_and_padding_never_split_a_wide_character(self):
