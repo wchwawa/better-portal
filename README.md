@@ -1,10 +1,12 @@
 # Better Portal
 
+**English** · [简体中文](README.zh-CN.md)
+
 A guided Mac app for choosing a higher bitrate target for PS5 Remote Play on your PlayStation Portal.
 
 > **Built on [atameric/ps5-portal-high-bitrate](https://github.com/atameric/ps5-portal-high-bitrate).** Shout-out to [@atameric](https://github.com/atameric) for the original idea and implementation. Better Portal builds on that work with a guided terminal interface. The original MIT license and contributor history are preserved.
 
-Enter your device addresses, choose a bitrate, and connect when the app says **READY**. Saved settings, a two-minute countdown and clear results guide you through each session.
+Choose English or Simplified Chinese, enter your device addresses, choose a bitrate, and connect when the app says **READY**. Saved settings, a two-minute countdown and clear results guide you through each session.
 
 [Get started](#get-started) · [See the four steps](#your-first-session) · [Questions and fixes](#questions-and-fixes)
 
@@ -44,6 +46,14 @@ Keep the Terminal window at least **72 columns by 24 rows**. Enlarge it if the a
 ## Your first session
 
 The images below show the actual app in demo mode, using example addresses and shortened waiting times.
+
+### Choose your language
+
+On your first launch, choose **English** or **简体中文** with the arrow keys and press **Enter**. Your choice is saved immediately and used on your next launch. To change it later, press **L** on the **Prepare** screen.
+
+![Language picker offering English and Simplified Chinese before setup](docs/images/language.png)
+
+Demo mode lets you try both languages but does not save your choice.
 
 ### 1. Prepare your devices
 
@@ -98,6 +108,10 @@ To stop an attempt, press **Q**, **Esc** or **Ctrl+C** and wait for the result. 
 A value such as **63.106 Mbps** is the target reported by PS5, not a measurement of actual video throughput. The result artwork describes the finished attempt; it does not monitor your connection afterward.
 
 ## Questions and fixes
+
+**How do I switch languages?**
+
+Press **L** on the first **Prepare** screen, choose a language, then press **Enter**. Your device addresses and bitrate choice stay the same. **Esc** cancels the language change.
 
 **Do I need to run it again after disconnecting or turning off Portal?**
 
