@@ -2,172 +2,296 @@
 
 [English](README.md) · **简体中文**
 
-在 Mac 上通过终端向导，为 PlayStation Portal 连接 PS5 时选择更高的目标码率。
+用 PlayStation Portal 玩自己的 PS5 时，通过 Mac 上的逐步向导选择更高的画面码率目标。
 
-> **基于 [atameric/ps5-portal-high-bitrate](https://github.com/atameric/ps5-portal-high-bitrate)。** 感谢 [@atameric](https://github.com/atameric) 提出原始思路并完成实现。Better Portal 在此基础上提供引导式终端界面，保留原始 MIT 许可证和贡献历史。
+> **基于 [atameric/ps5-portal-high-bitrate](https://github.com/atameric/ps5-portal-high-bitrate)。** 感谢 [@atameric](https://github.com/atameric) 提出原始思路并完成实现，保留原始 MIT 许可证和贡献历史。
 
-选好语言，填入设备地址和码率，等到**“现在连接”**出现后连接 Portal。向导会记住设置，并用两分钟倒计时、连接动画和结果提示带你完成每次操作。
+[安装与打开](#安装与打开) · [第一次使用](#第一次使用) · [查找设备地址](#find-device-addresses) · [遇到问题](#常见问题)
 
 ## 开始前需要什么
 
-- 一台 PS5 和一台 PlayStation Portal，已经能够正常连接和游玩。
-- Mac、PS5、Portal 位于**同一家庭局域网**。PS5 可以接网线，Portal 使用 Wi-Fi；避开访客 Wi-Fi、VPN 和开启设备隔离的网络。
-- Mac 上安装 **Python 3.10 或更新版本**。可以运行 `python3 --version` 检查，或从 [Python 官方 macOS 下载页](https://www.python.org/downloads/macos/)安装。
-- Mac 登录密码。设置连接时需要管理员权限。
+准备好以下设备和信息：
 
-这是一个实验性社区工具，效果取决于设备、系统版本和网络。建议从 **65 Mbps** 开始；目标码率更高，并不保证画面更流畅或延迟更低。
+- 一台 **Mac**、一台 **PS5** 和一台 **PlayStation Portal**。Portal 已经能够通过远程游玩，正常玩你自己的 PS5。
+- 三台设备连接到**家里的同一台路由器**。Mac 和 Portal 可以使用家里的 Wi-Fi；PS5 可以连接这个 Wi-Fi，也可以用网线连接这台路由器。避开访客网络；如果 Mac 正在使用 VPN，请先断开。
+- 安装时可以上网，以及**你登录 Mac 时使用的密码**。
+
+这是一个实验性社区工具，建议先用 **65 Mbps**。码率表示每秒可以传送多少画面数据；调高后可能保留更多细节，但网络不稳定时也可能更卡。
 
 ## 安装与打开
 
-1. [下载 Better Portal](https://github.com/wchwawa/better-portal/archive/refs/heads/main.zip)，解压到本地文件夹。
-2. 双击文件夹中的 **Setup.command**，完成依赖安装后按 Enter。
-3. 每次需要设置新的 Portal 连接时，双击 **Start.command**。
+只需要安装一次。请保留下载的整个文件夹，以后每次使用都从这里打开。
 
-如果出现密码提示，输入 Mac 登录密码并按 Enter。输入密码时，终端不会显示字符。
+### A. 安装 Python
 
-也可以通过终端安装，首次运行：
+Python 用来运行 Better Portal，你不需要写代码。如果已经安装 Python 3.10 或更新版本，可以直接看 B。
+
+1. 打开 [Python 官方 Mac 下载页](https://www.python.org/downloads/macos/)，在 **Stable Releases** 中找到一个 **Python 3.14** 版本，点击它下面的 **macOS installer**。Better Portal 已测试过这个版本系列。
+2. 打开下载的 `.pkg` 文件，按提示选择**继续 → 安装**，完成安装。
+3. 在访达中打开**应用程序 → Python 3.14**，双击 **Install Certificates.command**。等到出现 `update complete` 后关闭窗口。这一步也在 [Python 官方安装说明](https://docs.python.org/3.14/using/mac.html)中。
+
+### B. 下载并完成首次设置
+
+1. 点击 **[下载 Better Portal ZIP](https://github.com/wchwawa/better-portal/archive/refs/heads/main.zip)**。
+2. 打开**访达**（蓝色笑脸图标），进入**下载**。如果下载的 ZIP 没有自动解压，双击它，然后打开生成的 **better-portal-main** 文件夹。
+3. 双击 **Setup.command**。会打开一个**终端**窗口，也就是显示文字、通过键盘操作的窗口。等待安装完成。
+4. 看到 **`Setup complete.`** 后，按键盘上的 **Return（回车）**，再关闭这个窗口。如果出现错误而不是完成提示，请先看[常见问题](#常见问题)。
+
+| 文件夹里的文件 | 什么时候打开 |
+| --- | --- |
+| **Setup.command** | 首次安装时打开一次。 |
+| **Start.command** | 每次需要设置新的 Portal 连接时打开。 |
+
+其他文件保留在原处即可，无需打开或修改。
+
+### C. 打开向导
+
+双击同一文件夹中的 **Start.command**。如果出现 **`Password:`**，输入**登录 Mac 的密码**，再按 **Return**。**输入时不会显示字母，也不会显示圆点，这是正常现象。** 如果出现 `Sorry, try again`，重新输入密码即可。
+
+如果 macOS 拦截启动文件，请看[“macOS 不让我打开文件”](#macos-blocked)。如果向导提示窗口太小，拖动终端窗口的一角，把它放大。
+
+## 第一次使用
+
+**向导使用 Mac 键盘操作。** 先在终端窗口内点击一次，让它接收键盘输入。彩色按钮用按键选择，不需要用鼠标点击。Mac 键盘上的 **Return**，就是界面中写的 **Enter**。
+
+| 按键 | 用途 |
+| --- | --- |
+| **Return / Enter** | 确认选择、移动到下一项，或执行当前高亮按钮。 |
+| **Tab** 或 **↑ / ↓** | 在设备填写项之间移动，左侧的 `>` 指向当前行。 |
+| **← / →** | 选中码率这一行后，用左右方向键切换；`[x]` 表示已选中。 |
+| **S** | 打开设置并更换语言。按一次字母键即可，不需要再按回车。 |
+
+下方图片来自**实际程序的演示模式**。其中的“演示”字样和地址用于说明操作。**请填写你自己设备的地址，按自己窗口中的倒计时操作。** 点击图片可以放大查看。
+
+### 先选择语言
+
+用 **↑ / ↓** 选择 **简体中文、English、日本語、한국어、Español 或 Français**，按 **Return** 确认。向导会记住选择。如果直接进入准备页，说明以前已经选过语言；按 **S** 可以修改。
+
+![首次选择语言：简体中文处于高亮状态，按 Return 确认](docs/images/language-zh-CN.png)
+
+### 1. 准备设备
+
+在 **Portal** 上，从屏幕右上角向左滑，打开快捷菜单，选择**断开连接**。让**断开后将 PS5 置于待机模式**这一选项保持关闭，使 PS5 继续开机。找不到菜单时，可以参考 [Sony 的远程游玩说明](https://www.playstation.com/en-nz/support/hardware/playstation-remote-play-on-psportal/)。
+
+**Portal 继续开机，并保持连接 Wi-Fi。** 这里只结束当前的游玩连接。Mac 也保持唤醒，笔记本不要合上盖子。
+
+回到 **Mac**，读完黄色提醒，按 **Return** 进入设备页。
+
+![准备页：同一家庭网络、断开 Portal 与 PS5 的连接、保持 Mac 唤醒](docs/images/prepare-zh-CN.png)
+
+### 2. 填写两个地址，先使用 65 Mbps
+
+<a id="find-device-addresses"></a>
+**先找到 PS5 和 Portal 各自的地址。** IPv4 地址是设备在家庭网络中的编号，由四组数字组成，中间用英文句点分隔。两台设备的编号不同。
+
+1. 打开平时管理**家庭路由器或 Wi-Fi** 的 App 或管理页面。名称取决于路由器品牌或宽带运营商。
+2. 找到**设备、已连接设备、终端或 Clients** 之类的列表。打开 **PS5** 的条目，记下它的 **IP 地址 / IPv4 地址**；再找到 **PlayStation Portal**，记下它的地址。
+3. 把这两个地址放在手边。需要的是设备地址，不是路由器自身的地址、MAC 地址或测速结果。**不要照抄本指南里的 `192.168.1.20` 和 `192.168.1.30`。**
+
+例如，[TP-Link Tether 的图文说明](https://www.tp-link.com/us/support/faq/2611/)使用 **Local Device → Clients → 对应设备**；[华硕也有设备列表的图文指南](https://www.asus.com/us/support/faq/1005513/)。如果不知道怎么打开路由器管理页面，或不能确定哪个条目是自己的设备，请先请教当时设置家庭 Wi-Fi 的人或宽带运营商，确认这两个局域网地址。
+
+**然后从上到下填写 Mac 上的界面：**
+
+| 当前行 | 做完这一项后按 Return |
+| --- | --- |
+| **PS5 IPv4 地址** | 输入刚才找到的 PS5 地址。 |
+| **Portal IPv4 地址** | 输入刚才找到的 Portal 地址。 |
+| **Mac 局域网网卡** | 这是 Mac 网络适配器的名称。通常保留已有值，例如 `en0`。如果为空或使用其他网卡，请看[这里](#mac-adapter)。 |
+| **码率 (Mbps)** | 第一次先保持选中 **65 推荐**。 |
+| **保存并准备连接** | 按 Return 开始准备，此时 Portal 仍保持断开。 |
+
+进入一个填写项后，直接输入会替换原来的内容。填错时用 **↑** 返回修改。地址和码率会保存，供下次使用。
+
+![第一次进入设备页：PS5 地址框高亮，右侧有“在此填写”提示](docs/images/devices-input-zh-CN.png)
+
+<details>
+<summary>展开观看填写顺序和 65 Mbps 的彩虹动效</summary>
+
+这段演示依次填写示例地址，保留网卡，选择 65 Mbps，再移动到开始按钮。动图会循环；实际窗口里填写的内容会保留。
+
+![依次填写 PS5 和 Portal 地址，经过网卡、65 Mbps 码率，再移动到开始按钮](docs/images/devices-zh-CN.gif)
+
+</details>
+
+<details>
+<summary>什么时候尝试 100 或 200 Mbps？</summary>
+
+选中码率这一行后，用 **← / →** 或**空格**切换。65 Mbps 稳定后，可以尝试 **100 Mbps**。**200 Mbps** 是实验选项，可能增加卡顿。比较同一个游戏场景，数值更大不一定更好。
+
+</details>
+
+### 3. 先等 Mac 准备好，再操作 Portal 连接
+
+**先看到“请稍候”：继续等待。** Mac 正在检查设备和准备连接，Portal 保持断开。
+
+![“请稍候”界面：正在检查设备，Portal 此时保持断开](docs/images/connect-wait-zh-CN.png)
+
+**接着看到“已就绪 / 现在连接”：拿起 Portal 操作。** 在 Portal 的远程游玩主页选择自己的 PS5，像平时一样连接。Mac 上从 **02:00** 开始倒计时，你有 **120 秒**。这时程序在等**你亲自在 Portal 上发起连接**。
+
+![“现在连接”界面：两分钟倒计时正在运行，此时在 Portal 上连接 PS5](docs/images/connect-ready-zh-CN.png)
+
+Portal 连上后，保持连接，等 Mac 显示**结果页**再关闭窗口。如果倒计时结束仍未连接，按照结果页中的提示重试。
+
+需要提前停止时，在 Mac 上按 **Q**，等待结果出现。网络恢复期间保持 Mac 唤醒。
+
+<details>
+<summary>展开观看一段缩短等待时间的连接演示</summary>
+
+这段动图从“请稍候”到“现在连接”，再到连接检查和成功结果。它使用模拟事件并缩短等待，会循环播放。**请以你自己窗口中的倒计时为准。**
+
+![一次模拟成功连接：设备检查、连接倒计时、验证和成功结果](docs/images/connect-zh-CN.gif)
+
+</details>
+
+### 4. 确认“可以开始游玩”
+
+绿色的**可以开始游玩**和 **`[OK]`** 表示设置成功，已经恢复正常的直接连接。**保持 Portal 连接，继续玩即可。** 在 Mac 上按 **Q** 退出向导；启动窗口显示 `Press Enter to close` 后，按 Return，再关闭窗口。
+
+![成功结果：绿色“可以开始游玩”，Portal 与 PS5 之间显示 OK 连线](docs/images/result-success-zh-CN.png)
+
+**63.106 Mbps** 之类的数字是 PS5 报告的目标码率，**不是实测视频传输速度**。Mac 已经不需要为本次连接中转数据。
+
+**下次断开连接或关闭 Portal 后：**重新打开 **Start.command**，再完成这四步。之前的地址会自动填好；如果家庭网络有变化，请重新核对。
+
+## 结果和上图不一样时
+
+下面是**不同的运行结果**，不是成功后还需要依次经历的阶段。
+
+| Mac 上的提示 | 接下来怎么做 |
+| --- | --- |
+| **未检测到新连接 / 未捕获到兼容的连接请求** | 先断开 Portal 与 PS5，按 **Return** 重试。等新的“现在连接”出现后，再操作 Portal 连接。 |
+| **未确认高码率目标 / 已报告高码率，但验证未完成** | 按 **D** 查看详情。网络恢复后，可以正常重连，或使用 65 Mbps 重试。 |
+| **本次运行已停止** | 阅读网络恢复状态。确认已恢复后，按 Return 重试或按 Q 退出。 |
+| **网络恢复需要处理** | 保持 Mac 唤醒，按 **D** 查看恢复详情。恢复完成后再尝试下一次。 |
+
+<details>
+<summary>展开查看重试和恢复警告的独立示例</summary>
+
+**未检测到新连接：**重新尝试，等到“现在连接”后，再发起新的 Portal 连接。
+
+![一次未检测到新的 Portal 连接的结果示例](docs/images/result-timeout-zh-CN.png)
+
+**网络恢复需要处理：**保持 Mac 唤醒，按 D 查看详情并按提示处理。
+
+![网络恢复未完成的结果示例，含保持 Mac 唤醒和查看恢复详情的提示](docs/images/result-recovery-zh-CN.png)
+
+[结果动图](docs/images/result-zh-CN.gif)轮流展示不同的模拟结果，方便对照；一次成功连接不会依次经过所有这些结果。
+
+</details>
+
+## 使用过程中切换语言
+
+按 **S**，用**方向键**选择语言，按 **Enter、Esc 或 S** 返回。修改立即生效并自动保存；Esc 只关闭面板，不会撤销修改。已填写的内容和当前步骤都会保留。
+
+连接期间打开设置，倒计时仍会继续。按 **Q** 仍可停止本次操作。开始恢复网络时，设置面板会自动关闭。
+
+<details>
+<summary>展开查看即时切换，以及日语、韩语、西班牙语和法语界面</summary>
+
+![在六种语言之间即时切换，然后返回原来的填写界面](docs/images/settings.gif)
+
+![同一个设备页的日语、韩语、西班牙语和法语版本](docs/images/languages.gif)
+
+</details>
+
+## 常见问题
+
+<a id="macos-blocked"></a>
+**macOS 不让我打开文件，提示无法验证开发者或 Apple 无法检查文件。**
+
+尝试打开本仓库下载的文件后，进入**苹果菜单 → 系统设置 → 隐私与安全性**。找到该文件被阻止的提示；确认信任这次下载后，选择**仍要打开**并确认。可以对照 [Apple 的图文说明](https://support.apple.com/zh-cn/102445)。如果提示“将损坏你的电脑”，这是另一类警告，请先停止，并按 Apple 针对该提示的说明处理。
+
+**Setup 没有显示完成，而是出现 Python 或证书错误。**
+
+完成 [A. 安装 Python](#a-安装-python)，包括 **Install Certificates.command**。关闭失败的设置窗口，重新打开 **Setup.command**。如果仍然失败，求助时提供错误文字。
+
+**密码一直不对，或提示当前账户不能使用 sudo。**
+
+请输入登录 Mac 的密码。如果当前账户没有管理员权限，请管理这台 Mac 的人协助授权启动。
+
+**文字显示不全，或提示窗口太小。**
+
+拖动终端窗口的一角，把它放大。向导需要至少容纳 72 列、24 行文字；空间足够后会继续显示。
+
+**设备没有响应，或画面卡顿。**
+
+保持 PS5 和 Portal 唤醒，重新核对当前地址和家庭 Wi-Fi 连接。画面卡顿时先尝试 65 Mbps，或断开 Portal，不运行 Better Portal，直接正常重连。
+
+**会保存我的 Mac 密码吗？**
+
+不会，授权由 macOS 管理。在同一个已经打开的向导里重试，不会再次询问密码。
+
+**怎么反馈问题？**
+
+请[创建 Issue](https://github.com/wchwawa/better-portal/issues)，写清楚卡在哪一步、窗口里的提示、macOS 和 Portal 版本，以及所选码率。分享截图前遮住设备地址；原始报告和抓包可能包含私人网络信息，请保留在本机。
+
+<a id="terminal-help"></a>
+
+<details>
+<summary>终端操作帮助：打开项目文件夹、预览界面，以及找不到 Python 文件</summary>
+
+手动打开终端：按 **Command（⌘）+ 空格**，输入**终端**，再按 Return。
+
+1. 输入 `cd`，后面加**一个空格**。
+2. 把访达中的 **better-portal-main 文件夹**拖进终端，再按 Return。这是在告诉终端接下来使用哪个文件夹。
+3. 从下面**一次复制一条命令**，粘贴进终端，按 Return。只复制命令本身。
+
+如果 Start 提示找不到 `.venv/bin/python`，先在这个文件夹里运行设置：
 
 ```sh
-git clone https://github.com/wchwawa/better-portal.git
-cd better-portal
 ./Setup.command
 ```
 
-之后在项目文件夹中运行：
+然后启动真实连接向导：
 
 ```sh
 ./Start.command
 ```
 
-终端窗口至少需要 **72 列、24 行**。如果出现窗口过小提示，放大窗口即可继续。
-
-## 第一次使用
-
-下方图片来自实际程序的演示模式，使用示例地址，等待过程经过缩短。
-
-### 先选择语言
-
-首次打开时，用 **↑ / ↓** 选择 **简体中文、English、日本語、한국어、Español 或 Français**。移动选项时可以预览对应语言，按 **Enter** 确认并保存，下次直接使用上次的选择。
-
-![首次启动时，以各自原生名称显示六种语言](docs/images/language.png)
-
-使用过程中，按 **S** 打开**设置**，用**方向键**在两行语言选项中切换。界面会立即刷新并自动保存选择，无需重新启动。按 **Enter、Esc 或 S** 关闭设置，回到原来的页面，已填写的内容会保留。
-
-![通过设置即时切换六种语言，保留当前步骤和已填写的内容](docs/images/settings.gif)
-
-连接期间打开设置，倒计时会继续运行，**Q / Ctrl+C** 仍可中止本次连接。开始恢复网络时，设置面板会自动关闭。演示模式可以体验全部语言，但不会保存选择。
-
-设备填写、连接状态、结果和恢复指引也都有对应翻译。
-
-![日语、韩语、西班牙语和法语的设备设置页](docs/images/languages.gif)
-
-### 1. 准备设备
-
-在 Portal 上打开**快捷菜单 → 断开连接**，先断开与 PS5 的连接。保持 PS5 开机，Portal 唤醒，Mac 在整个设置和网络恢复过程中保持唤醒。
-
-黄色文字标出了需要确认的事项。确认后按 **Enter** 继续。
-
-![准备页用黄色突出同一网络、断开 Portal 和保持 Mac 唤醒](docs/images/prepare-zh-CN.png)
-
-### 2. 填写地址，选择码率
-
-在路由器的已连接设备列表中找到 PS5 和 Portal 的 **IPv4 地址**，分别填入高亮输入框。**Mac 局域网网卡**会自动建议一个值；如果使用其他网卡连接家庭网络，请修改为对应名称。
-
-用 **Tab** 或 **↑ / ↓** 切换输入项，直接输入可以替换已选内容。移动到码率选项后，用 **← / →** 或**空格**选择：
-
-| 码率 | 适合什么时候使用 |
-| --- | --- |
-| **65 Mbps，推荐** | 首次使用从这里开始。流动的彩虹文字标记推荐选项。 |
-| **100 Mbps** | 65 Mbps 稳定后再尝试，比较同一游戏场景的表现。 |
-| **200 Mbps，实验选项** | 可能增加卡顿，也不一定能达到目标值。 |
-
-方向键提示位于选项右侧。按 Enter 移动到**保存并准备连接**，再按 Enter 开始。地址和码率会保存，供下次使用。
-
-![设备页的高亮输入框、65 Mbps 流动彩虹推荐文字和右侧方向键提示](docs/images/devices-zh-CN.gif)
-
-### 3. 看到“现在连接”后再连接
-
-显示**请稍候**时，让 Portal 保持断开。终端中的 Portal 与 PS5 图案会随设备检查、连接准备的实际阶段变化。
-
-出现**已就绪 / 现在连接**后，在 Portal 上选择 PS5，开始远程游玩。你有 **120 秒**进行连接，界面从 **02:00** 开始倒计时。
-
-收到连接请求、PS5 接受连接、确认目标码率时，图案之间的连线会依次变化。连上后保持 Portal 连接，等待向导完成设置并恢复直接连接。
-
-![连接页从设备检查、两分钟倒计时，到 PS5 接受连接和码率验证的动画](docs/images/connect-zh-CN.gif)
-
-需要中止时，按 **Q、Esc 或 Ctrl+C**，等待结果出现。网络恢复期间请保持 Mac 唤醒。
-
-### 4. 查看结果，开始游玩
-
-**可以开始游玩**表示高码率目标已确认、本机验证通过，直接连接已恢复。保持当前 Portal 连接，按 **Q** 或 **Esc** 退出向导即可。
-
-![结果页分别显示成功、需要重试、主动取消和网络恢复警告](docs/images/result-zh-CN.gif)
-
-| 结果 | 接下来怎么做 |
-| --- | --- |
-| **可以开始游玩**，绿色 `[OK]` | 继续游玩，Mac 已退出本次连接的中转。 |
-| **未检测到新连接 / 未捕获到兼容的连接请求** | 先断开 Portal，再重试；等到“现在连接”出现后再连接。 |
-| **未确认高码率目标 / 已报告高码率，但验证未完成**，黄色 `[?]` | 按 **D** 查看详情。可以正常重连，或用 65 Mbps 重试。 |
-| **本次运行已停止**，`[X]` | 已取消本次运行，确认网络恢复状态后重试或退出。 |
-| **网络恢复需要处理**，红色 `[!]` | 保持 Mac 唤醒，等待自动恢复。按 **D** 查看恢复详情，恢复完成后再重试。 |
-
-界面中的 **63.106 Mbps** 等数值是 PS5 报告的目标码率，**并非实测视频码率**。结果图案描述本次运行的结果，不会在退出后持续监测连接。
-
-## 常见问题
-
-**怎样切换语言？**
-
-按 **S** 打开**设置**，用 **← / →** 切换，立即生效并保存。**Esc** 只关闭设置，不会撤销语言变更。设备地址、码率选择和当前步骤都会保留。
-
-**关闭 Portal 或断开重连后，还需要重新运行吗？**
-
-需要。每次新建远程游玩连接，都需要重新运行。打开 **Start.command**，确认已保存的设置，等到“现在连接”后再连接。
-
-**玩游戏时，Mac 必须一直开着吗？**
-
-显示“可以开始游玩”后，Mac 已退出中转，可以关闭向导。设置、取消和网络恢复期间，请保持 Mac 唤醒，直到恢复完成。
-
-**会保存我的 Mac 密码吗？**
-
-不会。是否需要再次授权由 macOS 控制。在同一个已打开的向导中重试，不会重复询问密码。
-
-**怎样恢复默认连接？**
-
-断开 Portal，直接正常重连，不运行 Better Portal 即可。工具不修改设备固件。
-
-**提示设备没有响应，怎么办？**
-
-唤醒 PS5 和 Portal，确认当前 IP 地址，以及三台设备是否处于同一家庭网络。如果提示 IP 冲突，先检查路由器设备列表，再重试。底层错误详情保留原文，便于排查。
-
-**更高码率反而卡顿？**
-
-先试 65 Mbps，或直接正常重连。更高码率不一定适合你的网络。
-
-**提示找不到 `.venv/bin/python`，或启动文件无法打开？**
-
-先在下载的项目文件夹中运行 **Setup.command**。也可以打开终端，输入 `cd `，把项目文件夹拖入终端，按 Enter，然后依次运行 `./Setup.command` 和 `./Start.command`。
-
-**可以先看看界面，不连接设备吗？**
-
-安装后，在项目文件夹中运行下面的命令。演示模式无需管理员权限，不修改网络，也不保存设置：
+安装后，想**只预览界面**：
 
 ```sh
 .venv/bin/python portal_tui.py --demo
 ```
 
-如果想关闭动效，在启动命令后添加 `--no-animations`：
+想**预览并关闭动效**：
 
 ```sh
-sudo .venv/bin/python portal_tui.py --no-animations
+.venv/bin/python portal_tui.py --demo --no-animations
 ```
 
-**支持 Windows 或 Linux 吗？**
+这两条预览命令都会模拟连接，无需操作真实设备、无需管理员密码，不修改网络，也不保存设置。体验完先退出预览，再用 Start.command 设置真实连接。
 
-此引导界面面向 **macOS**。原项目提供独立的 [Windows 指南](https://github.com/atameric/ps5-portal-high-bitrate/blob/main/WINDOWS.md)和 [Linux / 自动化指南](https://github.com/atameric/ps5-portal-high-bitrate/blob/main/AUTOMATION.md)。
+</details>
 
-**去哪里反馈问题？**
+<a id="mac-adapter"></a>
 
-请[创建 Issue](https://github.com/wchwawa/better-portal/issues)，说明界面中的提示、macOS 和 Portal 系统版本，以及所选码率。分享截图前遮住设备地址，原始抓包请保留在本机。设置和运行报告均保存在你的 Mac 上。
+<details>
+<summary>Mac 局域网网卡这一项为空，或我使用 USB / 有线网卡</summary>
+
+这里填写的是 `en0` 这类名称，不是 Wi-Fi 名称或 IP 地址。按照上面的说明打开终端，运行：
+
+```sh
+networksetup -listallhardwareports
+```
+
+如果通过 Wi-Fi 上网，找到 **Hardware Port: Wi-Fi** 那一段，使用 **Device:** 后的名称。如果插网线上网，找到当前有线网卡对应的那一段，把 Device 名称填回向导。不确定正在使用哪块网卡时，可以在求助时说明情况。
+
+</details>
+
+<details>
+<summary>已经熟悉 Git 和终端？</summary>
+
+```sh
+git clone https://github.com/wchwawa/better-portal.git
+cd better-portal
+./Setup.command
+./Start.command
+```
+
+</details>
+
+**Windows 或 Linux 用户：**此向导面向 **macOS**。原项目提供独立的 [Windows 指南](https://github.com/atameric/ps5-portal-high-bitrate/blob/main/WINDOWS.md)和 [Linux / 自动化指南](https://github.com/atameric/ps5-portal-high-bitrate/blob/main/AUTOMATION.md)。
 
 ## 致谢
 
