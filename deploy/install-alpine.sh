@@ -18,6 +18,7 @@ CONTAINER=${PORTAL_CONTAINER:-}
 FILES="portal_active_probe.py portal_auto.py portal_auto_platform.py portal_capture.py
        portal_egress_witness.py portal_windows.py portal_windows_network.py protocol.py
        portal_tui.py portal_tui_text.py
+       locales/zh-CN.json locales/ja.json locales/ko.json locales/es.json locales/fr.json
        requirements.txt LICENSE"
 
 for f in $FILES deploy/portal deploy/portal-bitrate.initd; do
@@ -52,7 +53,7 @@ fi
 
 echo "==> Relay code -> $APP"
 umask 077
-mkdir -p "$APP/tests" "$RT" "$ETC"
+mkdir -p "$APP/tests" "$APP/locales" "$RT" "$ETC"
 chmod 700 "$APP" "$RT" "$ETC"
 for f in $FILES; do cp "$SRC/$f" "$APP/$f"; done
 cp "$SRC"/tests/*.py "$APP/tests/"

@@ -10,7 +10,7 @@ from types import SimpleNamespace
 from unittest.mock import MagicMock, patch
 
 import portal_tui as tui
-from portal_tui_text import ZH_CN, cell_width, clip_cells, pad_cells, translate, wrap_cells
+from portal_tui_text import CATALOGS, LANGUAGE_NAMES, LANGUAGES, cell_width, clip_cells, pad_cells, translate, wrap_cells
 
 
 class LanguageTests(unittest.TestCase):
@@ -111,7 +111,8 @@ class LanguageTests(unittest.TestCase):
             self.assertFalse(wizard.choose_language())
         self.assertEqual(wizard.language, 'en')
         self.assertEqual(tui.load_preferences(self.preferences), {'language': 'en', 'profile': '100'})
-        self.assertTrue(any('Cannot save' in call.args[2] for call in wizard.screen.addstr.call_args_list))
+        self.assertTrue(any('synthetic write failure' in call.args[2]
+                            for call in wizard.screen.addstr.call_args_list))
         self.assertEqual(list(self.root.iterdir()), [self.preferences])
 
     def test_demo_language_and_profile_changes_never_write_files(self):
@@ -247,6 +248,92 @@ class LanguageTests(unittest.TestCase):
             self.assertFalse(wizard.settings_open)
         self.assertEqual(self.preferences.read_bytes(), before)
 
+    def test_every_language_is_available_on_first_launch_and_remembered(self):
+        for index, language in enumerate(LANGUAGES):
+            with self.subTest(language=language):
+                self.save({'profile': '100'})
+                wizard = self.wizard(keys=[self.curses.KEY_DOWN] * index + [13])
+                self.assertTrue(wizard.choose_language())
+                self.assertEqual(wizard.language, language)
+                self.assertEqual(self.wizard().language, language)
+                self.assertEqual(tui.load_preferences(self.preferences),
+                                 {'language': language, 'profile': '100'})
+                self.assertTrue(any(translate('Choose your language', language) == call.args[2]
+                                    for call in wizard.screen.addstr.call_args_list))
+
+    def test_picker_previews_the_highlighted_language_but_cancel_keeps_saved_choice(self):
+        self.save({'language': 'en'})
+        wizard = self.wizard(keys=[self.curses.KEY_UP, 27])
+        self.assertFalse(wizard.choose_language())
+        self.assertTrue(any(translate('Choose your language', 'fr') == call.args[2]
+                            for call in wizard.screen.addstr.call_args_list))
+        self.assertEqual(wizard.language, 'en')
+        self.assertEqual(tui.load_preferences(self.preferences), {'language': 'en'})
+
+    def test_settings_grid_arrows_follow_rows_and_columns_and_save_each_change(self):
+        self.save({'language': 'en', 'profile': '200'})
+        wizard = self.wizard()
+        wizard.settings_key(ord('s'))
+        for key, expected in ((self.curses.KEY_DOWN, 'ko'), (self.curses.KEY_RIGHT, 'es'),
+                              (self.curses.KEY_UP, 'zh-CN'), (self.curses.KEY_LEFT, 'en'),
+                              (self.curses.KEY_LEFT, 'fr'), (9, 'en')):
+            with self.subTest(expected=expected):
+                wizard.settings_key(key)
+                self.assertEqual(wizard.language, expected)
+                self.assertEqual(self.wizard().language, expected)
+                self.assertEqual(tui.load_preferences(self.preferences)['profile'], '200')
+                self.assertTrue(wizard.settings_open)
+
+    def test_all_languages_preserve_live_events_and_countdown_while_switching(self):
+        self.save({'language': 'en'})
+        wizard = self.wizard(keys=[ord('s')] + [self.curses.KEY_RIGHT] * len(LANGUAGES))
+        wizard.progress({'type': 'ready', 'seconds': 120})
+        started = wizard.phase_started
+        for index, language in enumerate((*LANGUAGES[1:], LANGUAGES[0]), 1):
+            with self.subTest(language=language):
+                self.assertTrue(wizard.progress({'type': 'tick', 'phase': 'waiting', 'seconds': 120 - index}))
+                self.assertEqual(wizard.language, language)
+                self.assertEqual(wizard.event['seconds'], 120 - index)
+                self.assertEqual(wizard.phase_started, started)
+                self.assertTrue(wizard.settings_open)
+        self.assertEqual(wizard.screen.getch.call_count, 7)
+
+    def test_language_names_fit_the_picker_and_settings_without_hiding_live_countdown(self):
+        for language in LANGUAGES:
+            with self.subTest(language=language):
+                wizard = self.wizard(demo=True, keys=[27])
+                wizard.language = language
+                wizard.choose_language()
+                picker = wizard.screen.addstr.call_args_list
+                for name in LANGUAGE_NAMES.values():
+                    self.assertTrue(any(name in call.args[2] and 9 <= call.args[0] <= 14 for call in picker))
+                wizard.screen.addstr.reset_mock()
+                wizard.settings_open = True
+                wizard.refresh(live=True)
+                panel = wizard.screen.addstr.call_args_list
+                for index, name in enumerate(LANGUAGE_NAMES.values()):
+                    label = next(call.args for call in panel if name in call.args[2])
+                    self.assertEqual(label[0], 12 + index // 3)
+                    self.assertLessEqual(label[1] + cell_width(label[2]), 67)
+                self.assertFalse(any(17 <= call.args[0] <= 19 for call in panel),
+                                 'Language settings must leave the live countdown and guidance visible')
+
+    def test_localized_device_fields_and_bitrate_hint_fit_the_minimum_terminal(self):
+        for language in LANGUAGES:
+            with self.subTest(language=language):
+                wizard = self.wizard(demo=True)
+                wizard.language = language
+                wizard.draw_form()
+                draws = wizard.screen.addstr.call_args_list
+                for source in ('PS5 IPv4 address', 'Portal IPv4 address', 'Mac LAN interface'):
+                    label = next(call.args for call in draws if call.args[2] == wizard.t(source))
+                    self.assertLess(label[1] + cell_width(label[2]), 27, 'Labels must not overlap inputs')
+                hint = next(call.args for call in draws if call.args[2] == wizard.t('use arrow to choose'))
+                last_choice = next(call.args for call in draws if '200 ' in call.args[2])
+                self.assertEqual(hint[0], 16)
+                self.assertGreater(hint[1], last_choice[1] + cell_width(last_choice[2]))
+                self.assertLessEqual(hint[1] + cell_width(hint[2]), 71)
+
 
 class TerminalTextTests(unittest.TestCase):
     def test_clip_and_padding_never_split_a_wide_character(self):
@@ -270,15 +357,28 @@ class TerminalTextTests(unittest.TestCase):
 
     def test_localized_templates_keep_the_same_format_fields_and_raw_diagnostics(self):
         def fields(text):
-            return {field for _, field, _, _ in string.Formatter().parse(text) if field is not None}
-        for source, localized in ZH_CN.items():
-            with self.subTest(source=source):
-                self.assertEqual(fields(source), fields(localized))
+            return {(field, spec, conversion) for _, field, spec, conversion in string.Formatter().parse(text)
+                    if field is not None}
+        for language, catalog in CATALOGS.items():
+            self.assertEqual(catalog.keys(), CATALOGS['zh-CN'].keys())
+            for source, localized in catalog.items():
+                with self.subTest(source=source, language=language):
+                    self.assertIsInstance(localized, str)
+                    self.assertEqual(fields(source), fields(localized))
+                    if not (source == 'Wait for ' and language in ('ja', 'ko')):
+                        self.assertTrue(localized.strip())
         self.assertEqual(translate('PS5-reported target: {target:.3f} Mbps', 'zh-CN', target=63.106),
                          'PS5 报告的目标码率：63.106 Mbps')
         diagnostic = 'Unknown driver failure: interface en4'
-        self.assertEqual(translate(diagnostic, 'zh-CN'), diagnostic)
+        for language in LANGUAGES:
+            self.assertEqual(translate(diagnostic, language), diagnostic)
         self.assertEqual(translate('Ready to play', 'en'), 'Ready to play')
+
+    def test_unknown_or_malformed_language_preferences_fall_back_before_the_picker_opens(self):
+        for language in ('unknown', None, [], {}, 42):
+            with self.subTest(language=language):
+                self.assertEqual(translate('Settings', language), 'Settings')
+                self.assertEqual(translate('Target {samples}/3', language, samples=2), 'Target 2/3')
 
 
 if __name__ == '__main__':

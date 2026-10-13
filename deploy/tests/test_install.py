@@ -25,6 +25,9 @@ class InstallerTests(unittest.TestCase):
             tests = source / 'tests'
             tests.mkdir()
             (tests / 'test_fixture.py').write_text('# synthetic fixture\n')
+            (source / 'locales').mkdir()
+            for language in ('zh-CN', 'ja', 'ko', 'es', 'fr'):
+                (source / 'locales' / f'{language}.json').write_text('{}\n')
             for name in ('portal_active_probe.py', 'portal_auto.py',
                          'portal_auto_platform.py', 'portal_capture.py',
                          'portal_egress_witness.py', 'portal_windows.py',
@@ -64,7 +67,8 @@ class InstallerTests(unittest.TestCase):
             environment = dict(os.environ, PORTAL_CONTAINER='1', PORTAL_SKIP_APK='1')
             result = subprocess.run(['sh', str(installer)], env=environment,
                                     capture_output=True, text=True, timeout=30)
-            return result, helper.exists(), {path.name for path in app.glob('*.py')}
+            installed = {path.relative_to(app).as_posix() for path in app.rglob('*') if path.is_file()}
+            return result, helper.exists(), installed
 
     def test_failed_self_test_stops_before_helper_install(self):
         result, helper_installed, _ = self.run_installer(7)
@@ -81,6 +85,8 @@ class InstallerTests(unittest.TestCase):
         self.assertIn('==> Installed: fixture version', result.stdout)
         self.assertTrue({'portal_tui.py', 'portal_tui_text.py'} <= modules,
                         'Shared self-tests need the wizard and its translations in the installed bundle')
+        self.assertTrue({f'locales/{language}.json' for language in ('zh-CN', 'ja', 'ko', 'es', 'fr')} <= modules,
+                        'The installed wizard must include every language catalog')
 
 
 if __name__ == '__main__':

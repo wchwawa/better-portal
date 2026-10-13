@@ -1,9 +1,9 @@
 name: Deploy end-to-end
 on:
   push:
-    paths: ['deploy/**', '*.py', 'tests/**', 'requirements.txt', '.github/workflows/deploy-e2e.yml']
+    paths: ['deploy/**', '*.py', 'tests/**', 'locales/**', 'requirements.txt', '.github/workflows/deploy-e2e.yml']
   pull_request:
-    paths: ['deploy/**', '*.py', 'tests/**', 'requirements.txt', '.github/workflows/deploy-e2e.yml']
+    paths: ['deploy/**', '*.py', 'tests/**', 'locales/**', 'requirements.txt', '.github/workflows/deploy-e2e.yml']
 permissions:
   contents: read
 

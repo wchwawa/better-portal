@@ -12,12 +12,13 @@ import time
 from dataclasses import dataclass
 from pathlib import Path
 
-from portal_tui_text import LANGUAGES, cell_width, clip_cells, pad_cells, translate, wrap_cells
+from portal_tui_text import LANGUAGE_NAMES, LANGUAGES, cell_width, clip_cells, pad_cells, translate, wrap_cells
 
 ROOT = Path(__file__).resolve().parent
 CONNECT_SECONDS = 120
 CONFIRM_SECONDS = 15
 PROFILES = ('65', '100', '200')
+LANGUAGE_COLUMNS = 3
 
 
 def default_interface():
@@ -229,26 +230,29 @@ class Wizard:
             rows, columns = self.screen.getmaxyx()
             full_size = rows >= self.MIN_ROWS and columns >= self.MIN_COLS
             if full_size:
-                self.put(1, 4, 'BETTER PORTAL', self.emphasis())
-                self.put(2, 4, 'Language / 语言', self.curses.A_DIM)
-                self.put(5, 4, '-' * min(82, columns - 8), self.curses.A_DIM)
-                self.put(7, 4, 'Choose your language / 选择语言', self.curses.A_BOLD)
-                for index, name in enumerate(('English', '简体中文')):
+                language = LANGUAGES[selected]
+
+                def put(row, text, style=0):
+                    self.put(row, 4, text, style, language=language)
+
+                put(1, 'BETTER PORTAL', self.emphasis())
+                put(2, 'Language', self.curses.A_DIM)
+                put(5, '-' * min(82, columns - 8), self.curses.A_DIM)
+                put(7, 'Choose your language', self.curses.A_BOLD)
+                for index, name in enumerate(LANGUAGE_NAMES.values()):
                     style = self.emphasis() | self.curses.A_REVERSE if selected == index else 0
-                    self.put(10 + index * 2, 4,
-                             f' {">" if selected == index else " "} [{"x" if selected == index else " "}] {name} ', style)
+                    put(9 + index, f' {">" if selected == index else " "} [{"x" if selected == index else " "}] {name} ', style)
                 if error:
-                    self.paragraph(15, 'Cannot save / 无法保存: ' + error,
-                                   self.colors.get('error', 0), max_rows=3)
-                elif self.demo:
-                    self.put(15, 4, 'DEMO: language is not saved.', self.curses.A_DIM)
-                    self.put(16, 4, '演示模式：本次选择不会保存。', self.curses.A_DIM)
+                    message = translate('Could not save settings: {error}', language, error=error)
+                    for row, line in enumerate(wrap_cells(message, columns - 8)[:2], 16):
+                        put(row, line, self.colors.get('error', 0))
                 else:
-                    self.put(15, 4, 'Remembered for next time.', self.curses.A_DIM)
-                    self.put(16, 4, '下次启动将使用所选语言。', self.curses.A_DIM)
-                self.button(rows - 5, 'Continue / 继续 ->')
-                self.put(rows - 3, 4, '-' * min(82, columns - 8), self.curses.A_DIM)
-                self.put(rows - 2, 4, '↑ ↓ / ← →  选择 / Select    Enter 确认    Esc 返回', self.curses.A_DIM)
+                    put(16, 'DEMO: language is not saved.' if self.demo else
+                        'Remembered for next time.', self.curses.A_DIM)
+                put(rows - 5, ' ' + translate('Continue ->', language) + ' ',
+                    self.emphasis() | self.curses.A_REVERSE)
+                put(rows - 3, '-' * min(82, columns - 8), self.curses.A_DIM)
+                put(rows - 2, '↑/↓: select    Enter: confirm    Esc: back', self.curses.A_DIM)
                 self.screen.refresh()
             else:
                 self.small_terminal()
@@ -291,8 +295,9 @@ class Wizard:
                                    self.curses.KEY_UP, self.curses.KEY_DOWN,
                                    self.curses.KEY_BTAB, 9, 32):
             current = LANGUAGES.index(self.language) if self.language in LANGUAGES else 0
-            direction = -1 if key in (self.curses.KEY_LEFT, self.curses.KEY_UP,
-                                      self.curses.KEY_BTAB) else 1
+            direction = {self.curses.KEY_LEFT: -1, self.curses.KEY_BTAB: -1,
+                         self.curses.KEY_UP: -LANGUAGE_COLUMNS,
+                         self.curses.KEY_DOWN: LANGUAGE_COLUMNS}.get(key, 1)
             language = LANGUAGES[(current + direction) % len(LANGUAGES)]
             try:
                 self.save_preferences(language=language)
@@ -313,21 +318,22 @@ class Wizard:
             for row in range(9, 17):
                 line = '+' + '-' * (width - 2) + '+' if row in (9, 16) else '|' + ' ' * (width - 2) + '|'
                 self.put(row, left, line, self.colors.get('accent', 0))
-            self.put(10, left + 3, 'Settings', self.emphasis())
-            self.put(12, left + 3, 'Language / 语言', self.curses.A_BOLD)
-            column = left + 22
-            for language, name in zip(LANGUAGES, ('English', '简体中文')):
+            self.inline(10, left + 3, ('Settings', self.emphasis()),
+                        (' / ', self.curses.A_DIM), ('Language', self.curses.A_BOLD))
+            cell = (width - 6) // LANGUAGE_COLUMNS
+            for index, (language, name) in enumerate(LANGUAGE_NAMES.items()):
                 selected = self.language == language
                 label = f' [{"x" if selected else " "}] {name} '
                 style = self.emphasis() | self.curses.A_REVERSE if selected else 0
-                self.put(12, column, label, style)
-                column += cell_width(label) + 2
+                row = 12 + index // LANGUAGE_COLUMNS
+                column = left + 3 + (index % LANGUAGE_COLUMNS) * cell
+                self.put(row, column, label, style)
             if self.settings_error:
                 message = self.t('Could not save settings: {error}', error=self.settings_error)
                 self.put(14, left + 3, clip_cells(message, width - 6), self.colors.get('error', 0))
                 self.put(15, left + 3, 'Language unchanged. Try again.', self.curses.A_DIM)
             else:
-                self.put(14, left + 3, 'Applies immediately; saved for next time.' if not self.demo
+                self.put(15, left + 3, 'Applies immediately; saved for next time.' if not self.demo
                          else 'Applies immediately. Demo changes are not saved.', self.curses.A_DIM)
             footer = ('←/→: language  Esc/S: back  Q/Ctrl+C: stop' if live else
                       '←/→: language    Enter / Esc / S: back')
@@ -347,13 +353,14 @@ class Wizard:
         except self.curses.error:
             pass
 
-    def put(self, row, column, text, style=0):
+    def put(self, row, column, text, style=0, *, language=None):
         """Translate source copy and clip it by terminal cells, never by bytes."""
         rows, columns = self.screen.getmaxyx()
         if row < 0 or column < 0 or row >= rows or column >= columns - 1:
             return
         try:
-            self.screen.addstr(row, column, clip_cells(self.t(str(text)), columns - column - 1), style)
+            text = translate(str(text), self.language if language is None else language)
+            self.screen.addstr(row, column, clip_cells(text, columns - column - 1), style)
         except self.curses.error:
             pass
 

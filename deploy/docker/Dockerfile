@@ -9,6 +9,7 @@ LABEL org.opencontainers.image.title="ps5-portal-high-bitrate relay" \
 
 ARG SOURCE_REV=unknown
 COPY portal_*.py protocol.py requirements.txt LICENSE /src/
+COPY locales/ /src/locales/
 COPY tests/ /src/tests/
 COPY deploy/install-alpine.sh deploy/portal deploy/portal-bitrate.initd /src/deploy/
 RUN PORTAL_CONTAINER=1 PORTAL_SOURCE_REV="$SOURCE_REV" sh /src/deploy/install-alpine.sh \
