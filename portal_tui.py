@@ -8,10 +8,11 @@ import re
 import subprocess
 import sys
 import tempfile
-import textwrap
 import time
 from dataclasses import dataclass
 from pathlib import Path
+
+from portal_tui_text import LANGUAGES, cell_width, clip_cells, pad_cells, translate, wrap_cells
 
 ROOT = Path(__file__).resolve().parent
 CONNECT_SECONDS = 120
@@ -91,6 +92,14 @@ def save_private_json(path, value):
             temporary.unlink(missing_ok=True)
 
 
+def load_preferences(path):
+    try:
+        value = json.loads(path.read_text(encoding='utf-8'))
+        return value if isinstance(value, dict) else {}
+    except (OSError, ValueError):
+        return {}
+
+
 @dataclass
 class Result:
     kind: str
@@ -155,11 +164,11 @@ class Wizard:
                        saved.get('interface') or default_interface()]
         if demo:
             self.values = ['192.168.1.20', '192.168.1.30', 'en0']
-        try:
-            profile = json.loads(self.preferences_path.read_text()).get('profile', '65')
-        except (OSError, ValueError, AttributeError):
-            profile = '65'
+        preferences = load_preferences(self.preferences_path)
+        profile = preferences.get('profile', '65')
         self.profile = profile if profile in PROFILES else '65'
+        language = preferences.get('language')
+        self.language = language if language in LANGUAGES else None
         self.focus = 0
         self.cursor = 0
         self.selected = True
@@ -199,6 +208,67 @@ class Wizard:
                                    ('error', 'warning', 'success', 'accent', 'blue', 'magenta')]
         self.hide_cursor()
 
+    def t(self, text, **values):
+        return translate(text, self.language, **values)
+
+    def save_preferences(self, **changes):
+        if not self.demo:
+            preferences = load_preferences(self.preferences_path)
+            preferences.update(changes)
+            save_private_json(self.preferences_path, preferences)
+
+    def choose_language(self):
+        """Ask before setup; an existing selection can be changed from Prepare."""
+        selected = LANGUAGES.index(self.language) if self.language in LANGUAGES else 0
+        error = ''
+        while True:
+            self.screen.erase()
+            self.hide_cursor()
+            rows, columns = self.screen.getmaxyx()
+            full_size = rows >= self.MIN_ROWS and columns >= self.MIN_COLS
+            if full_size:
+                self.put(1, 4, 'BETTER PORTAL', self.emphasis())
+                self.put(2, 4, 'Language / 语言', self.curses.A_DIM)
+                self.put(5, 4, '-' * min(82, columns - 8), self.curses.A_DIM)
+                self.put(7, 4, 'Choose your language / 选择语言', self.curses.A_BOLD)
+                for index, name in enumerate(('English', '简体中文')):
+                    style = self.emphasis() | self.curses.A_REVERSE if selected == index else 0
+                    self.put(10 + index * 2, 4,
+                             f' {">" if selected == index else " "} [{"x" if selected == index else " "}] {name} ', style)
+                if error:
+                    self.paragraph(15, 'Cannot save / 无法保存: ' + error,
+                                   self.colors.get('error', 0), max_rows=3)
+                elif self.demo:
+                    self.put(15, 4, 'DEMO: language is not saved.', self.curses.A_DIM)
+                    self.put(16, 4, '演示模式：本次选择不会保存。', self.curses.A_DIM)
+                else:
+                    self.put(15, 4, 'Remembered for next time.', self.curses.A_DIM)
+                    self.put(16, 4, '下次启动将使用所选语言。', self.curses.A_DIM)
+                self.button(rows - 5, 'Continue / 继续 ->')
+                self.put(rows - 3, 4, '-' * min(82, columns - 8), self.curses.A_DIM)
+                self.put(rows - 2, 4, '↑ ↓ / ← →  选择 / Select    Enter 确认    Esc 返回', self.curses.A_DIM)
+                self.screen.refresh()
+            else:
+                self.small_terminal()
+            key = self.screen.getch()
+            if key in (27, ord('q'), ord('Q')):
+                return False
+            if not full_size:
+                continue
+            if key in (self.curses.KEY_DOWN, self.curses.KEY_RIGHT, 9, 32):
+                selected = (selected + 1) % len(LANGUAGES)
+            elif key in (self.curses.KEY_UP, self.curses.KEY_LEFT, self.curses.KEY_BTAB):
+                selected = (selected - 1) % len(LANGUAGES)
+            elif key in (10, 13, self.curses.KEY_ENTER):
+                language = LANGUAGES[selected]
+                try:
+                    self.save_preferences(language=language)
+                except OSError as exc:
+                    error = str(exc)
+                    continue
+                self.language = language
+                return True
+
     def hide_cursor(self):
         self.set_cursor(0)
 
@@ -212,20 +282,21 @@ class Wizard:
             pass
 
     def put(self, row, column, text, style=0):
+        """Translate source copy and clip it by terminal cells, never by bytes."""
         rows, columns = self.screen.getmaxyx()
         if row < 0 or column < 0 or row >= rows or column >= columns - 1:
             return
         try:
-            self.screen.addnstr(row, column, str(text), columns - column - 1, style)
+            self.screen.addstr(row, column, clip_cells(self.t(str(text)), columns - column - 1), style)
         except self.curses.error:
             pass
 
     def paragraph(self, row, text, style=0, column=4, max_rows=None):
         width = min(86, self.screen.getmaxyx()[1] - 4) - column
-        lines = textwrap.wrap(text, width=max(10, width))
+        lines = wrap_cells(self.t(text), width=max(10, width))
         if max_rows is not None and len(lines) > max_rows:
             lines = lines[:max_rows]
-            lines[-1] = lines[-1][:max(0, width - 3)].rstrip() + '...'
+            lines[-1] = clip_cells(lines[-1], max(0, width - 3)).rstrip() + '...'
         for line in lines:
             self.put(row, column, line, style)
             row += 1
@@ -236,8 +307,9 @@ class Wizard:
 
     def inline(self, row, column, *spans):
         for text, style in spans:
+            text = self.t(text)
             self.put(row, column, text, style)
-            column += len(text)
+            column += cell_width(text)
 
     def rainbow(self, row, column, text):
         """Let color flow through stationary text on the existing redraw clock."""
@@ -245,7 +317,8 @@ class Wizard:
         phase = int(time.monotonic() * count / 4) if self.animations else 0
         for index, character in enumerate(text):
             color = (index * count // len(text) - phase) % count
-            self.put(row, column + index, character, self.rainbow_colors[color])
+            self.put(row, column, character, self.rainbow_colors[color])
+            column += cell_width(character)
 
     def transition_line(self, row, color, elapsed, direction='forward'):
         """One brief sweep marks a state change; the new state is readable at once."""
@@ -263,8 +336,8 @@ class Wizard:
             self.put(row, 4, '-' * max(1, round(width * fraction)), color)
 
     def badge(self, row, label, title, color):
-        self.inline(row, 4, (f' {label} ', self.emphasis(color) | self.curses.A_REVERSE),
-                    ('  ' + title, self.emphasis(color)))
+        self.inline(row, 4, (f' {self.t(label)} ', self.emphasis(color) | self.curses.A_REVERSE),
+                    ('  ' + self.t(title), self.emphasis(color)))
 
     def frame(self, step, footer):
         self.screen.erase()
@@ -272,13 +345,15 @@ class Wizard:
             self.hide_cursor()
         rows, columns = self.screen.getmaxyx()
         self.put(1, 4, 'PS5 PORTAL', self.colors.get('accent', 0) | self.curses.A_BOLD)
-        self.put(2, 4, 'High Bitrate  /  Guided setup' + ('  /  DEMO: no network changes' if self.demo else ''),
+        self.put(2, 4, self.t('High Bitrate  /  Guided setup') +
+                 (self.t('  /  DEMO: no network changes') if self.demo else ''),
                  self.curses.A_DIM)
         column = 4
         for index, label in enumerate(('1 Prepare', '2 Devices', '3 Connect', '4 Result')):
+            label = self.t(label)
             style = self.curses.A_BOLD | self.colors.get('accent', 0) if index == step else self.curses.A_DIM
             self.put(4, column, label, style)
-            column += len(label) + 5
+            column += cell_width(label) + 5
         self.put(5, 4, '-' * min(82, columns - 8), self.curses.A_DIM)
         self.put(rows - 3, 4, '-' * min(82, columns - 8), self.curses.A_DIM)
         self.put(rows - 2, 4, footer, self.curses.A_DIM)
@@ -289,8 +364,11 @@ class Wizard:
         self.hide_cursor()
         self.put(1, 1, 'Please enlarge this terminal to at least 72 x 24.')
         if live:
-            self.put(3, 1, f'{self.event.get("phase", "checking").upper()}: '
-                     f'{self.event.get("seconds", 0)}s remaining')
+            stage_label = {'checking': 'CHECK', 'preparing': 'WAIT', 'waiting': 'CONNECT',
+                           'confirming': 'VERIFY', 'restoring': 'RESTORE', 'stopping': 'STOPPING'}
+            self.put(3, 1, self.t('{phase}: {seconds}s remaining',
+                     phase=self.t(stage_label.get(self.event.get('phase'), 'CHECK')),
+                     seconds=self.event.get('seconds', 0)))
             self.put(5, 1, 'Q or Esc stops safely and restores the network.')
         else:
             self.put(3, 1, 'Esc exits. Setup resumes when the window is larger.')
@@ -300,12 +378,12 @@ class Wizard:
         style = self.curses.A_BOLD | self.colors.get('accent', 0)
         if active:
             style |= self.curses.A_REVERSE
-        self.put(row, 4, '  ' + text + '  ', style)
+        self.put(row, 4, '  ' + self.t(text) + '  ', style)
 
     def prepare(self):
         highlight = self.emphasis('warning')
         while True:
-            if self.frame(0, 'Enter: continue    Esc: quit'):
+            if self.frame(0, 'Enter: continue    L: language    Esc: quit'):
                 self.put(7, 4, 'Before you begin', self.curses.A_BOLD)
                 self.inline(9, 4, ('1. ', self.curses.A_DIM),
                             ('SAME NETWORK', highlight),
@@ -327,6 +405,8 @@ class Wizard:
             key = self.screen.getch()
             if key in (27, ord('q'), ord('Q')):
                 return False
+            if key in (ord('l'), ord('L')):
+                self.choose_language()
             if key in (10, 13, self.curses.KEY_ENTER) and self.screen.getmaxyx()[0] >= self.MIN_ROWS and self.screen.getmaxyx()[1] >= self.MIN_COLS:
                 return True
 
@@ -352,8 +432,8 @@ class Wizard:
             style = self.emphasis()
             if focused:
                 style |= self.curses.A_REVERSE
-            value = self.values[index] or ('Enter interface' if index == 2 else 'Enter IPv4 address')
-            self.put(row, 27, '[ ' + value.ljust(24)[:24] + ' ]', style)
+            value = self.values[index] or self.t('Enter interface' if index == 2 else 'Enter IPv4 address')
+            self.put(row, 27, '[ ' + pad_cells(value, 24) + ' ]', style)
             if focused:
                 self.put(row, 57, 'type here', self.emphasis())
         self.put(16, 2, '>' if self.focus == 3 else ' ', self.emphasis())
@@ -362,16 +442,16 @@ class Wizard:
         for profile in PROFILES:
             label = f' [{"x" if profile == self.profile else " "}] {profile} '
             if profile == '65':
-                label += 'recommended '
+                label += self.t('recommended') + ' '
             style = self.emphasis() if profile == self.profile else 0
             if profile == self.profile and self.focus == 3 and profile != '65':
                 style |= self.curses.A_REVERSE
             self.put(16, column, label, style)
             if profile == '65':
-                self.rainbow(16, column + 5, '65 recommended')
+                self.rainbow(16, column + 5, '65 ' + self.t('recommended'))
                 if self.profile == '65' and self.focus == 3:
                     self.put(16, column + 1, '[x]', self.emphasis() | self.curses.A_REVERSE)
-            column += len(label) + 1
+            column += cell_width(label) + 1
         self.put(16, column, 'use arrow to choose',
                  self.emphasis() if self.focus == 3 else self.curses.A_DIM)
         if self.error:
@@ -421,7 +501,7 @@ class Wizard:
                     config = validate_form(self.form_values())
                     if not self.demo:
                         save_private_json(self.config_path, config)
-                        save_private_json(self.preferences_path, {'profile': self.profile})
+                        self.save_preferences(profile=self.profile)
                     self.values = [config['ps5_ip'], config['portal_ip'], config['interface']]
                     return config
                 except ValueError as exc:
@@ -430,7 +510,7 @@ class Wizard:
                     self.cursor = len(self.values[self.focus])
                     self.selected = True
                 except OSError as exc:
-                    self.error = str(exc)
+                    self.error = self.t('Could not save settings: {error}', error=str(exc))
             elif self.focus == 3 and key in (self.curses.KEY_LEFT, self.curses.KEY_RIGHT, 32):
                 direction = -1 if key == self.curses.KEY_LEFT else 1
                 self.profile = PROFILES[(PROFILES.index(self.profile) + direction) % len(PROFILES)]
@@ -499,7 +579,7 @@ class Wizard:
             self.put(row + index, left, line, outline)
         for index, line in enumerate(ps5):
             self.put(row + index, right, line, outline)
-        self.put(row + 2, left + 5, label.center(13), self.emphasis(color))
+        self.put(row + 2, left + 5, pad_cells(self.t(label), 13, center=True), self.emphasis(color))
         self.put(row + 2, right + 6, marker, self.emphasis(color))
         self.put(row + 5, left + 7, 'PS PORTAL', self.curses.A_BOLD)
         self.put(row + 5, right + 4, 'PS5', self.curses.A_BOLD)
@@ -594,7 +674,7 @@ class Wizard:
             remaining = max(0, min(CONNECT_SECONDS, self.event.get('seconds', 0)))
             color = 'warning' if remaining <= 20 else 'success'
             self.inline(17, 4, (f'{remaining // 60:02d}:{remaining % 60:02d}', self.emphasis(color)),
-                        (f'  /  {remaining}s left to connect', self.curses.A_BOLD))
+                        (self.t('  /  {seconds}s left to connect', seconds=remaining), self.curses.A_BOLD))
             width = min(48, self.screen.getmaxyx()[1] - 12)
             filled = round(width * remaining / CONNECT_SECONDS)
             self.put(18, 4, '[' + '#' * filled + '.' * (width - filled) + ']',
@@ -602,27 +682,31 @@ class Wizard:
             self.put(19, 4, 'On Portal, select your PS5 to start Remote Play.', self.curses.A_DIM)
         elif phase in ('checking', 'preparing'):
             self.put(17, 4, 'No action needed yet.', self.curses.A_BOLD)
-            self.put(18, 4, f'When READY appears, you get {CONNECT_SECONDS} seconds to connect.',
+            self.put(18, 4, self.t('When READY appears, you get {seconds} seconds to connect.',
+                                 seconds=CONNECT_SECONDS),
                      self.curses.A_DIM)
         elif phase == 'confirming':
-            guidance = ('Finishing this attempt...' if stage == 'confirmed' else
-                        f'Up to {self.event.get("seconds", CONFIRM_SECONDS)}s left to confirm.')
+            guidance = (self.t('Finishing this attempt...') if stage == 'confirmed' else
+                        self.t('Up to {seconds}s left to confirm.',
+                               seconds=self.event.get('seconds', CONFIRM_SECONDS)))
             self.inline(17, 4, ('Keep Portal connected.  ', self.curses.A_BOLD),
                         (guidance, self.curses.A_DIM))
             column = 4
             for done, text in (
-                    (self.event.get('modified', 0) > 0, 'Request'),
-                    (self.event.get('accepted', False), 'PS5 accepted'),
-                    (self.event.get('samples', 0) >= 3, f'Target {min(self.event.get("samples", 0), 3)}/3')):
+                    (self.event.get('modified', 0) > 0, self.t('Request')),
+                    (self.event.get('accepted', False), self.t('PS5 accepted')),
+                    (self.event.get('samples', 0) >= 3,
+                     self.t('Target {samples}/3', samples=min(self.event.get('samples', 0), 3)))):
                 text = ('[x] ' if done else '[ ] ') + text + '   '
                 self.put(18, column, text,
                          self.colors.get('success', 0) if done else self.curses.A_DIM)
-                column += len(text)
+                column += cell_width(text)
         else:
             self.put(17, 4, 'Keep this Mac awake until the result appears.', self.curses.A_BOLD)
         target = self.event.get('target_bitrate')
         if isinstance(target, (int, float)):
-            self.put(19, 4, f'PS5-reported target: {target / 1e6:.3f} Mbps', self.curses.A_BOLD)
+            self.put(19, 4, self.t('PS5-reported target: {target:.3f} Mbps', target=target / 1e6),
+                     self.curses.A_BOLD)
         if self.notice:
             self.put(19, 4, ' ' * min(82, self.screen.getmaxyx()[1] - 8))
             self.paragraph(19, self.notice, self.colors.get('warning', 0), max_rows=2)
@@ -736,17 +820,20 @@ class Wizard:
                 self.put(7, 4, 'Local session details', self.curses.A_BOLD)
                 row = 9
                 if report.get('directory'):
-                    row = self.paragraph(row, 'Report: ' + str(Path(report['directory']) / 'report.json')) + 1
+                    row = self.paragraph(row, self.t('Report: {path}',
+                                         path=str(Path(report['directory']) / 'report.json'))) + 1
                 if report.get('restoration_errors'):
-                    row = self.paragraph(row, 'Recovery errors: ' + '; '.join(report['restoration_errors']),
+                    row = self.paragraph(row, self.t('Recovery errors: {errors}',
+                                         errors='; '.join(report['restoration_errors'])),
                                          self.colors.get('error', 0)) + 1
                     deadline = report.get('watchdog_seconds')
-                    row = self.paragraph(row, f'Automatic recovery deadline: {deadline}s after watchdog start.'
+                    row = self.paragraph(row, self.t('Automatic recovery deadline: {seconds}s after watchdog start.',
+                                                    seconds=deadline)
                                          if deadline else 'The independent recovery process has its own deadline.') + 1
                     state = report.get('watchdog_state')
                     if state:
-                        self.paragraph(row, 'Manual recovery from this project folder: sudo .venv/bin/python '
-                                       'portal_capture.py --restore ' + state)
+                        self.paragraph(row, self.t('Manual recovery from this project folder: {command}',
+                                       command='sudo .venv/bin/python portal_capture.py --restore ' + state))
                 elif report.get('directory'):
                     self.paragraph(row, 'The report and captures stay local. Share only a redacted summary.')
                 else:
@@ -795,6 +882,8 @@ class Wizard:
                 return summary.kind != 'error'
 
     def run(self):
+        if self.language is None and not self.choose_language():
+            return 0
         while self.prepare():
             config = self.configure()
             if config is None:
@@ -806,31 +895,35 @@ class Wizard:
 
 
 def main():
-    parser = argparse.ArgumentParser(description=__doc__)
+    def t(text, **values):
+        language = load_preferences(ROOT / 'tui-settings.json').get('language')
+        return translate(text, language, **values)
+
+    parser = argparse.ArgumentParser(description=t(__doc__))
     parser.add_argument('--demo', action='store_true',
-                        help='Preview the wizard with simulated events; no sudo or network changes')
+                        help=t('Preview the wizard with simulated events; no sudo or network changes'))
     parser.add_argument('--no-animations', action='store_true',
-                        help='Keep state labels and highlights, without motion')
+                        help=t('Keep state labels and highlights, without motion'))
     args = parser.parse_args()
     if not sys.stdin.isatty() or not sys.stdout.isatty():
-        parser.exit(2, 'Open this wizard in an interactive Terminal window.\n')
+        parser.exit(2, t('Open this wizard in an interactive Terminal window.') + '\n')
     if not args.demo:
         if sys.platform != 'darwin':
-            parser.exit(2, 'This guided launcher currently supports macOS.\n')
+            parser.exit(2, t('This guided launcher currently supports macOS.') + '\n')
         if os.geteuid() != 0 or 'SUDO_UID' not in os.environ:
-            parser.exit(2, 'Double-click Start.command, or run: sudo .venv/bin/python portal_tui.py\n')
+            parser.exit(2, t('Double-click Start.command, or run: sudo .venv/bin/python portal_tui.py') + '\n')
     try:
         import curses
     except ImportError:
-        parser.exit(2, 'This Python installation needs the standard curses module.\n')
+        parser.exit(2, t('This Python installation needs the standard curses module.') + '\n')
     try:
         return curses.wrapper(lambda screen: Wizard(screen, curses, demo=args.demo,
                                                      animations=not args.no_animations).run())
     except KeyboardInterrupt:
-        print('Demo closed.' if args.demo else 'Wizard closed.')
+        print(t('Demo closed.' if args.demo else 'Wizard closed.'))
         return 1
     except curses.error as exc:
-        print(f'Terminal setup failed: {exc}. Try the macOS Terminal app.', file=sys.stderr)
+        print(t('Terminal setup failed: {error}. Try the macOS Terminal app.', error=str(exc)), file=sys.stderr)
         return 2
 
 
