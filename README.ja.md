@@ -1,10 +1,14 @@
+## 謝辞
+
+元のビットレート調整手法は **[@atameric](https://github.com/atameric)** と [ps5-portal-high-bitrate](https://github.com/atameric/ps5-portal-high-bitrate) に由来します。[原作者を支援](https://buymeacoffee.com/atameric)できます。
+
+[MIT](LICENSE) ライセンスに基づいて公開されています。独立したコミュニティソフトウェアであり、Sony または PlayStation とは提携していません。
+
 # Better Portal
 
 [English](README.md) · [简体中文](README.zh-CN.md) · **日本語** · [한국어](README.ko.md) · [Español](README.es.md) · [Français](README.fr.md)
 
 PlayStation Portal で自分の PS5 を遊ぶときに、より高い画質を目指すビットレートを設定できます。Mac の設定ガイドが、画面ごとに操作を案内します。
-
-> **[atameric/ps5-portal-high-bitrate](https://github.com/atameric/ps5-portal-high-bitrate) を基にしています。** 元のアイデアと実装を公開してくださった [@atameric](https://github.com/atameric) に感謝します。元の MIT ライセンスと貢献履歴を引き継いでいます。
 
 [インストールと起動](#get-started) · [初めて使うとき](#first-session) · [機器のアドレスを調べる](#find-device-addresses) · [困ったとき](#questions-and-fixes)
 
@@ -302,9 +306,3 @@ cd better-portal
 </details>
 
 **Windows / Linux を使う場合**：この設定ガイドは **macOS** 向けです。元のプロジェクトには [Windows](https://github.com/atameric/ps5-portal-high-bitrate/blob/main/WINDOWS.md) と [Linux / 自動設定](https://github.com/atameric/ps5-portal-high-bitrate/blob/main/AUTOMATION.md)の別ガイドがあります（英語）。
-
-## 謝辞
-
-元のビットレート調整手法は **[@atameric](https://github.com/atameric)** と [ps5-portal-high-bitrate](https://github.com/atameric/ps5-portal-high-bitrate) に由来します。[原作者を支援](https://buymeacoffee.com/atameric)できます。
-
-[MIT](LICENSE) ライセンスに基づいて公開されています。独立したコミュニティソフトウェアであり、Sony または PlayStation とは提携していません。

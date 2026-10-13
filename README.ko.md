@@ -1,10 +1,14 @@
+## 감사의 말
+
+원래의 비트레이트 조정 방식은 [**@atameric**](https://github.com/atameric)과 [ps5-portal-high-bitrate](https://github.com/atameric/ps5-portal-high-bitrate)에서 비롯되었습니다. [원작자를 후원](https://buymeacoffee.com/atameric)할 수 있습니다.
+
+[MIT](LICENSE) 라이선스에 따라 배포됩니다. 독립적인 커뮤니티 소프트웨어이며 Sony 또는 PlayStation과 제휴하지 않습니다.
+
 # Better Portal
 
 [English](README.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja.md) · **한국어** · [Español](README.es.md) · [Français](README.fr.md)
 
 PlayStation Portal로 자신의 PS5를 플레이할 때 더 높은 화질을 위한 비트레이트 목표를 설정하세요. Mac의 설정 도우미가 화면마다 필요한 조작을 안내합니다.
-
-> **[atameric/ps5-portal-high-bitrate](https://github.com/atameric/ps5-portal-high-bitrate)를 기반으로 합니다.** 원래 아이디어와 구현을 공개한 [@atameric](https://github.com/atameric)에게 감사드립니다. 원본 MIT 라이선스와 기여 이력을 유지합니다.
 
 [설치 및 실행](#get-started) · [처음 사용하기](#first-session) · [기기 주소 찾기](#find-device-addresses) · [문제 해결](#questions-and-fixes)
 
@@ -302,9 +306,3 @@ cd better-portal
 </details>
 
 **Windows 또는 Linux 사용자:** 이 설정 도우미는 **macOS**용입니다. 원본 프로젝트에는 별도의 [Windows 안내](https://github.com/atameric/ps5-portal-high-bitrate/blob/main/WINDOWS.md)와 [Linux / 자동 설정 안내](https://github.com/atameric/ps5-portal-high-bitrate/blob/main/AUTOMATION.md)가 있습니다(영어).
-
-## 감사의 말
-
-원래의 비트레이트 조정 방식은 [**@atameric**](https://github.com/atameric)과 [ps5-portal-high-bitrate](https://github.com/atameric/ps5-portal-high-bitrate)에서 비롯되었습니다. [원작자를 후원](https://buymeacoffee.com/atameric)할 수 있습니다.
-
-[MIT](LICENSE) 라이선스에 따라 배포됩니다. 독립적인 커뮤니티 소프트웨어이며 Sony 또는 PlayStation과 제휴하지 않습니다.

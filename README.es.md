@@ -1,10 +1,14 @@
+## Créditos
+
+El método original para ajustar el bitrate procede de **[@atameric](https://github.com/atameric)** y [ps5-portal-high-bitrate](https://github.com/atameric/ps5-portal-high-bitrate). Puedes [apoyar al creador original](https://buymeacoffee.com/atameric).
+
+Bajo licencia [MIT](LICENSE). Software independiente de la comunidad; sin afiliación con Sony ni PlayStation.
+
 # Better Portal
 
 [English](README.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · **Español** · [Français](README.fr.md)
 
 Elige un bitrate objetivo más alto para mejorar la imagen al jugar a tu PS5 con PlayStation Portal. Better Portal te guía por la configuración en tu Mac, una pantalla a la vez.
-
-> **Basado en [atameric/ps5-portal-high-bitrate](https://github.com/atameric/ps5-portal-high-bitrate).** Gracias a [@atameric](https://github.com/atameric) por la idea y la implementación originales. Se conservan la licencia MIT y el historial de contribuciones del proyecto original.
 
 [Instalar y abrir](#get-started) · [Primera sesión](#first-session) · [Buscar las direcciones](#find-device-addresses) · [Resolver problemas](#questions-and-fixes)
 
@@ -302,9 +306,3 @@ cd better-portal
 </details>
 
 **¿Windows o Linux?** Este asistente es para **macOS**. El proyecto original tiene guías separadas de [Windows](https://github.com/atameric/ps5-portal-high-bitrate/blob/main/WINDOWS.md) y [Linux / configuración automática](https://github.com/atameric/ps5-portal-high-bitrate/blob/main/AUTOMATION.md), en inglés.
-
-## Créditos
-
-El método original para ajustar el bitrate procede de **[@atameric](https://github.com/atameric)** y [ps5-portal-high-bitrate](https://github.com/atameric/ps5-portal-high-bitrate). Puedes [apoyar al creador original](https://buymeacoffee.com/atameric).
-
-Bajo licencia [MIT](LICENSE). Software independiente de la comunidad; sin afiliación con Sony ni PlayStation.

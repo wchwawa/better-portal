@@ -1,10 +1,14 @@
+## 致谢
+
+原始码率调整方法来自 **[@atameric](https://github.com/atameric)** 和 [ps5-portal-high-bitrate](https://github.com/atameric/ps5-portal-high-bitrate)。你可以[支持原作者](https://buymeacoffee.com/atameric)。
+
+采用 [MIT](LICENSE) 许可证。独立社区软件；与 Sony 或 PlayStation 无隶属关系。
+
 # Better Portal
 
 [English](README.md) · **简体中文** · [日本語](README.ja.md) · [한국어](README.ko.md) · [Español](README.es.md) · [Français](README.fr.md)
 
 用 PlayStation Portal 玩自己的 PS5 时，通过 Mac 上的逐步向导选择更高的画面码率目标。
-
-> **基于 [atameric/ps5-portal-high-bitrate](https://github.com/atameric/ps5-portal-high-bitrate)。** 感谢 [@atameric](https://github.com/atameric) 提出原始思路并完成实现，保留原始 MIT 许可证和贡献历史。
 
 [安装与打开](#安装与打开) · [第一次使用](#第一次使用) · [查找设备地址](#find-device-addresses) · [遇到问题](#常见问题)
 
@@ -292,9 +296,3 @@ cd better-portal
 </details>
 
 **Windows 或 Linux 用户**：此向导面向 **macOS**。原项目提供独立的 [Windows 指南](https://github.com/atameric/ps5-portal-high-bitrate/blob/main/WINDOWS.md)和 [Linux / 自动化指南](https://github.com/atameric/ps5-portal-high-bitrate/blob/main/AUTOMATION.md)。
-
-## 致谢
-
-原始码率调整方法来自 **[@atameric](https://github.com/atameric)** 和 [ps5-portal-high-bitrate](https://github.com/atameric/ps5-portal-high-bitrate)。你可以[支持原作者](https://buymeacoffee.com/atameric)。
-
-采用 [MIT](LICENSE) 许可证。独立社区软件；与 Sony 或 PlayStation 无隶属关系。
