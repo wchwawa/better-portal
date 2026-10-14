@@ -8,75 +8,66 @@ Bajo licencia [MIT](LICENSE). Software independiente de la comunidad; sin afilia
 
 [English](README.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · **Español** · [Français](README.fr.md)
 
-Elige un bitrate objetivo más alto para mejorar la imagen al jugar a tu PS5 con PlayStation Portal. Better Portal te guía por la configuración en tu Mac, una pantalla a la vez.
+Elige un objetivo de mayor calidad de imagen al jugar a tu PS5 desde PlayStation Portal. Better Portal te guía por la configuración en **macOS o Windows**, una pantalla a la vez.
 
-[Instalar y abrir](#get-started) · [Primera sesión](#first-session) · [Buscar las direcciones](#find-device-addresses) · [Resolver problemas](#questions-and-fixes)
-
-## Inicio rápido en Windows
-
-La misma interfaz guiada está disponible en **Windows 11 y Windows 10**. Las pruebas con dispositivos reales en Windows siguen en curso; consulta la [guía para Windows (en inglés)](WINDOWS.md).
-
-1. Instala [Python](https://www.python.org/downloads/windows/) (3.10 o posterior, con el lanzador `py`) y [Npcap](https://npcap.com/#download). Deja desmarcado el modo de compatibilidad con WinPcap.
-2. Descarga y extrae todo el [ZIP de Better Portal](https://github.com/wchwawa/better-portal/archive/refs/heads/main.zip). Abre **Setup-Windows.cmd** una vez y espera a **Setup complete**.
-3. **Cada vez que juegues:** haz doble clic en **Start-Windows.cmd** y acepta el permiso de Windows. No necesitas escribir comandos ni usar otra herramienta de configuración.
-4. Elige el idioma, escribe las dos direcciones IPv4 y usa **← / →** para elegir el adaptador Wi-Fi o Ethernet del PC y el bitrate. Mantén Portal desconectado hasta **CONNECT NOW** y conecta con PS5 antes de que pasen **120 segundos**.
-
-Los idiomas, los ajustes con **S**, las animaciones, las fases y los resultados se comparten con la versión Mac que aparece abajo. En Windows se elige **Adaptador LAN del PC**. El idioma, las direcciones y el bitrate se guardan. Aunque se confirme el bitrate objetivo, comprueba la imagen, el sonido y los controles en Portal.
-
-**¿Usas Mac?** Sigue las instrucciones de abajo: **Setup.command** una vez y **Start.command** en cada sesión.
-
+[Inicio rápido en macOS](#macos-quick-start) · [Inicio rápido en Windows](#windows-quick-start) · [Primera sesión](#first-session) · [Buscar las direcciones](#find-device-addresses) · [Resolver problemas](#questions-and-fixes)
 
 ## Antes de empezar
 
-Prepara lo siguiente:
+Ten preparado lo siguiente:
 
-- Un **Mac**, una **PS5** y un **PlayStation Portal**. Debes poder jugar ya a tu propia PS5 desde Portal mediante Uso a distancia.
-- Los tres conectados al **mismo router de casa**. El Mac y Portal pueden usar el Wi-Fi de casa; la PS5 puede usar ese Wi-Fi o un cable de red conectado al mismo router. Evita la red de invitados y desconecta la VPN del Mac si utilizas una.
-- Conexión a Internet para la instalación y la **contraseña con la que inicias sesión en el Mac**.
+- Un **Mac o PC con Windows 10/11**, una **PS5** y una **PlayStation Portal**. Portal ya debe permitirte jugar a tu propia PS5 mediante Uso a distancia.
+- Los tres conectados a tu **router habitual de casa**. El ordenador y Portal pueden usar el Wi-Fi; PS5 puede usar el mismo Wi-Fi o un cable de red a ese router. Evita la red de invitados y desconecta la VPN del ordenador si la utilizas.
+- Acceso a Internet para la instalación y permiso para autorizar Better Portal en el ordenador.
 
-Esta es una herramienta experimental de la comunidad. Empieza con **65 Mbps**. El bitrate indica cuántos datos de imagen se pueden enviar por segundo. Un valor más alto puede mejorar el detalle, pero también causar tirones si la conexión es inestable.
+Es una herramienta comunitaria experimental. Empieza con **65 Mbps**. El bitrate indica cuántos datos de imagen se pueden enviar cada segundo; aumentarlo puede mejorar los detalles, pero también causar tirones si la conexión es inestable.
 
 <a id="get-started"></a>
 
-## Instalar y abrir
+## Inicio rápido
 
 Solo necesitas instalar una vez. Conserva toda la carpeta descargada: contiene el archivo que abrirás cada vez que quieras jugar.
 
+Elige las instrucciones para **tu ordenador**. Setup instala las dependencias una vez; Start abre el asistente para cada nueva conexión de Portal.
+
+| Tu ordenador | Primera instalación | Iniciar una sesión |
+| --- | --- | --- |
+| **macOS** | Doble clic en **Setup.command** | Doble clic en **Start.command** |
+| **Windows 10 / 11** | Doble clic en **Setup-Windows.cmd** | Doble clic en **Start-Windows.cmd** |
+
+<a id="macos-quick-start"></a>
+
+### Inicio rápido en macOS
+
 <a id="install-python"></a>
 
-### A. Instala Python
+1. **Instala Python:** abre la [página oficial de Python para Mac](https://www.python.org/downloads/macos/), elige un **Python 3.14 macOS installer** y abre el `.pkg` descargado. Sigue **Continuar → Instalar**. Si ya tienes Python 3.10 o posterior, puedes conservarlo.
+2. **Completa la instalación de Python:** en Finder, abre **Aplicaciones → Python 3.14** y haz doble clic en **Install Certificates.command**. Espera a `update complete` y cierra la ventana. Para otra versión, usa su carpeta de Python correspondiente. Consulta las [instrucciones oficiales](https://docs.python.org/3.14/using/mac.html).
+3. **Descarga Better Portal:** [descarga el ZIP](https://github.com/wchwawa/better-portal/archive/refs/heads/main.zip), abre **Finder → Descargas** y haz doble clic en el ZIP para descomprimirlo. Abre la carpeta **better-portal-main**.
+4. **Configura una vez:** haz doble clic en **Setup.command**. Se abrirá Terminal. Espera a **`Setup complete.`**, pulsa **Return** y cierra la ventana.
+5. **Inicia una sesión:** haz doble clic en **Start.command** dentro de la misma carpeta. Si aparece **`Password:`**, introduce tu **contraseña de inicio de sesión del Mac** y pulsa **Return**. **No se muestran letras ni puntos al escribir; es normal.** Continúa con [Primera sesión](#first-session).
 
-Python permite ejecutar Better Portal. No necesitas escribir código. Si ya tienes Python 3.10 o posterior, pasa al apartado B.
+Si macOS bloquea un archivo, consulta [«macOS no abre el archivo»](#macos-blocked). Si la instalación falla, consulta [Preguntas y soluciones](#questions-and-fixes) antes de iniciar una sesión.
 
-1. Abre la [página oficial de descargas de Python para Mac](https://www.python.org/downloads/macos/). En **Stable Releases**, busca una versión de **Python 3.14** y pulsa su enlace **macOS installer**. Better Portal se ha probado con esta serie de versiones.
-2. Abre el archivo `.pkg` descargado. Sigue **Continuar → Instalar** y termina la instalación.
-3. En Finder, abre **Aplicaciones → Python 3.14** y haz doble clic en **Install Certificates.command**. Espera a que aparezca `update complete` y cierra esa ventana. Este paso también figura en las [instrucciones oficiales de Python (en inglés)](https://docs.python.org/3.14/using/mac.html).
+<a id="windows-quick-start"></a>
 
-### B. Descarga y prepara Better Portal
+### Inicio rápido en Windows
 
-1. Pulsa **[Descargar Better Portal en ZIP](https://github.com/wchwawa/better-portal/archive/refs/heads/main.zip)**.
-2. Abre **Finder** (el icono azul con una cara sonriente) y entra en **Descargas**. Haz doble clic en el ZIP si aún no se ha descomprimido. Abre la carpeta **better-portal-main** que aparece.
-3. Haz doble clic en **Setup.command**. Se abrirá **Terminal**, una ventana que muestra texto y se maneja con el teclado. Espera a que termine la instalación.
-4. Cuando aparezca **`Setup complete.`**, pulsa **Return** y cierra la ventana. Si aparece un error, consulta [la ayuda](#questions-and-fixes) antes de seguir.
+1. **Instala Python:** abre la [página oficial de Python para Windows](https://www.python.org/downloads/windows/) e instala **Python 3.14 de 64 bits (x86-64)** con el **lanzador `py`**. También puedes usar una instalación compatible existente de Python x86-64 3.10–3.14.
+2. **Instala Npcap:** descárgalo de [npcap.com](https://npcap.com/#download). Deja **sin marcar el modo de compatibilidad con WinPcap**; no necesitas modo monitor de Wi-Fi ni soporte raw 802.11. Estas opciones siguen las [instrucciones de Scapy para Windows](https://scapy.readthedocs.io/en/stable/installation.html#windows).
+3. **Descarga Better Portal:** [descarga el ZIP](https://github.com/wchwawa/better-portal/archive/refs/heads/main.zip). En **Explorador de archivos → Descargas**, haz clic derecho en el ZIP → **Extraer todo** y abre la carpeta **better-portal-main** extraída.
+4. **Configura una vez:** haz doble clic en **Setup-Windows.cmd**. Espera a **`Setup complete`** y pulsa una tecla para cerrar la ventana. Si fallan las comprobaciones sin conexión, resuelve el error antes de iniciar una sesión.
+5. **Inicia una sesión:** haz doble clic en **Start-Windows.cmd** en la misma carpeta y acepta la **solicitud de permisos de Windows**. Continúa con [Primera sesión](#first-session).
 
-| Archivo de la carpeta | Cuándo abrirlo |
-| --- | --- |
-| **Setup.command** | Una vez, para instalar lo necesario. |
-| **Start.command** | Cada vez que quieras preparar una nueva conexión de Portal. |
+Windows utiliza el mismo asistente, idiomas, ajustes y cuenta atrás de 120 segundos. En Dispositivos aparece un selector de **adaptador LAN del PC**. Las pruebas con dispositivos reales en Windows siguen en curso; consulta la [guía de Windows (en inglés)](WINDOWS.md) para ver los requisitos y resolver problemas.
 
-Deja los demás archivos en la carpeta. No necesitas abrirlos ni editarlos.
-
-### C. Abre el asistente
-
-Haz doble clic en **Start.command** dentro de la misma carpeta. Si aparece **`Password:`**, escribe tu **contraseña de inicio de sesión del Mac** y pulsa **Return**. **No aparecen letras ni puntos mientras escribes; es normal.** Si pone `Sorry, try again`, vuelve a escribir la contraseña.
-
-Si macOS bloquea alguno de los archivos, consulta [«macOS no abre el archivo»](#macos-blocked). Si el asistente pide más espacio, arrastra una esquina de la ventana de Terminal para ampliarla.
+**En ambas plataformas:** conserva toda la carpeta extraída y abre su archivo Start para cada nueva sesión. Se guardan las direcciones, el idioma y el bitrate. Puedes instalar y abrir la aplicación haciendo doble clic en estos archivos; no necesitas editar código.
 
 <a id="first-session"></a>
 
 ## Tu primera sesión
 
-**Maneja el asistente con el teclado del Mac.** Haz clic una vez dentro de Terminal para que reciba las pulsaciones. Los botones de colores se seleccionan con las teclas. **Return** o **Retorno** en el Mac es la tecla que la pantalla llama **Enter**.
+**Maneja el asistente con el teclado de tu ordenador.** Haz clic una vez dentro de Terminal para que reciba las pulsaciones. Los botones de colores se seleccionan con las teclas. **Return** o **Retorno** en el Mac es la tecla que la pantalla llama **Enter**.
 
 | Tecla | Función |
 | --- | --- |
@@ -85,7 +76,7 @@ Si macOS bloquea alguno de los archivos, consulta [«macOS no abre el archivo»]
 | **← / →** | Cambiar el bitrate cuando su fila está seleccionada. `[x]` indica la opción elegida. |
 | **S** | Abrir los ajustes para cambiar el idioma. Pulsa la letra una vez; no hace falta Return. |
 
-Las imágenes muestran **la aplicación real en modo demo**. La etiqueta `DEMO` y las direcciones son ejemplos. **Usa las direcciones de tus dispositivos y sigue el contador de tu aplicación.** Puedes hacer clic en las imágenes para ampliarlas.
+Las imágenes muestran **la aplicación real en modo demo en Mac**. Windows sigue los mismos pasos y utiliza un selector de adaptador del PC en lugar del campo de interfaz del Mac. La etiqueta `DEMO` y las direcciones son ejemplos. **Usa las direcciones de tus dispositivos y sigue el contador de tu aplicación.** Puedes hacer clic en las imágenes para ampliarlas.
 
 ### Elige tu idioma
 
@@ -97,9 +88,9 @@ Usa **↑ / ↓** para elegir **Español, English, 简体中文, 日本語, 한�
 
 En **Portal**, desliza hacia la izquierda desde la esquina superior derecha para abrir el menú rápido y elige **Desconectar**. Deja desactivada la opción de poner la PS5 conectada en modo de reposo para que siga encendida. La [guía de Sony sobre Uso a distancia (en inglés)](https://www.playstation.com/en-nz/support/hardware/playstation-remote-play-on-psportal/) te ayuda a encontrar el menú.
 
-**Mantén Portal encendido y conectado al Wi-Fi.** Solo estás terminando la sesión de juego actual. Mantén también el Mac despierto y, si es un portátil, con la tapa abierta.
+**Mantén Portal encendido y conectado al Wi-Fi.** Solo estás terminando la sesión de juego actual. Mantén también el ordenador despierto y, si es un portátil, con la tapa abierta.
 
-En el **Mac**, lee los avisos amarillos y pulsa **Return** para pasar a Equipos.
+En el **ordenador**, lee los avisos amarillos y pulsa **Return** para pasar a Equipos.
 
 ![Pantalla de preparación: misma red, Portal desconectado de PS5 y Mac despierto](docs/images/prepare-es.png)
 
@@ -115,13 +106,14 @@ En el **Mac**, lee los avisos amarillos y pulsa **Return** para pasar a Equipos.
 
 Como ejemplo con imágenes, [TP-Link Tether usa Local Device → Clients → el dispositivo (en inglés)](https://www.tp-link.com/us/support/faq/2611/). [ASUS también tiene una guía de su lista de dispositivos (en inglés)](https://www.asus.com/us/support/faq/1005513/). Si no sabes abrir la aplicación del router o identificar los dispositivos, pide esas dos direcciones locales a quien configuró tu Wi-Fi o a tu proveedor de Internet antes de continuar.
 
-**Ahora rellena la pantalla del Mac de arriba abajo:**
+**Ahora rellena la pantalla del ordenador de arriba abajo:**
 
 | Fila | Qué hacer antes de pulsar Return |
 | --- | --- |
 | **IPv4 de PS5** | Escribe la dirección de la PS5 que has encontrado. |
 | **IPv4 de Portal** | Escribe la dirección de Portal que has encontrado. |
-| **Interfaz LAN del Mac** | Es el nombre del adaptador de red del Mac. Normalmente puedes dejar el valor propuesto, como `en0`. Si está vacío o usas otro adaptador, [compruébalo aquí](#mac-adapter). |
+| **Interfaz LAN del Mac** — solo macOS | Normalmente puedes dejar el valor propuesto, como `en0`. Si está vacío o usas otro adaptador, [compruébalo aquí](#mac-adapter). |
+| **Adaptador LAN del PC** — solo Windows | Usa **← / →** para elegir el adaptador Wi-Fi o Ethernet conectado al router de casa. |
 | **Bitrate (Mbps)** | Para la primera prueba, deja **65 recomendado** seleccionado. |
 | **Guardar y preparar conexión** | Pulsa Return para empezar. Mantén Portal desconectado por ahora. |
 
@@ -145,19 +137,19 @@ En la fila de bitrate, usa **← / →** o **Espacio** para elegir. Prueba **100
 
 </details>
 
-### 3. Espera en el Mac y después conecta desde Portal
+### 3. Espera en el ordenador y después conecta desde Portal
 
-**Primero, ESPERA significa que debes esperar.** Deja Portal desconectado mientras el Mac comprueba los dispositivos y prepara la conexión.
+**Primero, ESPERA significa que debes esperar.** Deja Portal desconectado mientras el ordenador comprueba los dispositivos y prepara la conexión.
 
 ![Pantalla ESPERA: no conectes Portal mientras se comprueban los dispositivos](docs/images/connect-wait-es.png)
 
-**Después, LISTO / CONECTA AHORA significa que debes coger Portal.** En su pantalla de inicio de Uso a distancia, selecciona tu PS5 y conéctate como de costumbre. Tienes **120 segundos** desde que el contador del Mac muestra **02:00**. La aplicación espera a que **tú inicies la conexión desde Portal**.
+**Después, LISTO / CONECTA AHORA significa que debes coger Portal.** En su pantalla de inicio de Uso a distancia, selecciona tu PS5 y conéctate como de costumbre. Tienes **120 segundos** desde que el contador del ordenador muestra **02:00**. La aplicación espera a que **tú inicies la conexión desde Portal**.
 
 ![Pantalla CONECTA AHORA: conecta Portal a PS5 durante los dos minutos del contador](docs/images/connect-ready-es.png)
 
-Cuando Portal se conecte, déjalo conectado. Espera a la pantalla **Resultado** del Mac antes de cerrar nada. Si se agota el tiempo, sigue las instrucciones del resultado para volver a intentarlo.
+Cuando Portal se conecte, déjalo conectado. Espera a la pantalla **Resultado** del ordenador antes de cerrar nada. Si se agota el tiempo, sigue las instrucciones del resultado para volver a intentarlo.
 
-Para detener el intento antes, pulsa **Q** en el Mac y espera al resultado. Mantén el Mac despierto durante la restauración de la conexión.
+Para detener el intento antes, pulsa **Q** en el ordenador y espera al resultado. Mantén el ordenador despierto durante la restauración de la conexión.
 
 <details>
 <summary>Ver un ejemplo de conexión con la espera abreviada</summary>
@@ -170,26 +162,26 @@ Esta demo repetida pasa de ESPERA a CONECTA AHORA, las comprobaciones y el resul
 
 ### 4. Confirma el objetivo y comprueba Portal
 
-**Objetivo de bitrate confirmado** en verde y **`[OK]`** indican que PS5 informó del objetivo más alto. **Comprueba imagen, sonido y controles en Portal antes de jugar.** La herramienta no verifica la reproducción ni las tablas de direcciones de los dispositivos. Si la pantalla sigue negra, desconecta y vuelve a conectar normalmente sin Better Portal, y comunica el problema. Mantén el Mac despierto hasta que termine la restauración. Pulsa **Q** para salir y, cuando aparezca `Press Enter to close`, pulsa Return y cierra la ventana.
+**Objetivo de bitrate confirmado** en verde y **`[OK]`** indican que PS5 informó del objetivo más alto. **Comprueba imagen, sonido y controles en Portal antes de jugar.** La herramienta no verifica la reproducción ni las tablas de direcciones de los dispositivos. Si la pantalla sigue negra, desconecta y vuelve a conectar normalmente sin Better Portal, y comunica el problema. Mantén el ordenador despierto hasta que termine la restauración. Pulsa **Q** para salir y, cuando aparezca `Press Enter to close`, pulsa Return y cierra la ventana.
 
 Las imágenes y animaciones muestran una versión anterior que llamaba a este resultado **Listo para jugar**. Ese mensaje también confirmaba únicamente el objetivo.
 
 ![Resultado correcto: Listo para jugar y un enlace verde OK entre Portal y PS5](docs/images/result-success-es.png)
 
-Un número como **63.106 Mbps** es el objetivo que ha comunicado la PS5, **no una medición del bitrate real del vídeo**. El Mac ya no necesita retransmitir los datos de esta sesión.
+Un número como **63.106 Mbps** es el objetivo que ha comunicado la PS5, **no una medición del bitrate real del vídeo**. El ordenador ya no necesita retransmitir los datos de esta sesión.
 
-**La próxima vez que desconectes o apagues Portal:** vuelve a abrir **Start.command** y repite los cuatro pasos. Las direcciones guardadas aparecerán rellenas; revísalas si ha cambiado tu red.
+**La próxima vez que desconectes o apagues Portal:** abre **Start.command** en Mac o **Start-Windows.cmd** en Windows y repite los cuatro pasos. Las direcciones guardadas aparecerán rellenas; revísalas si ha cambiado tu red.
 
 ## Si aparece otro resultado
 
 Son **resultados alternativos**, no fases por las que debas pasar después de una sesión correcta.
 
-| Mensaje del Mac | Qué hacer |
+| Mensaje del asistente | Qué hacer |
 | --- | --- |
 | **No se detectó una nueva conexión / Sin solicitud de inicio compatible** | Desconecta Portal de PS5 y pulsa **Return** para reintentar. Conecta desde Portal solo cuando vuelva a aparecer CONECTA AHORA. |
 | **Objetivo más alto sin confirmar / Objetivo recibido; verificación incompleta** | Pulsa **D** para ver los detalles. Tras restaurar la red, conecta normalmente o reintenta con 65 Mbps. |
 | **Intento detenido** | Lee el estado de restauración. Si ha terminado, reintenta con Return o sal con Q. |
-| **Revisa la restauración de la red** | Mantén el Mac despierto y pulsa **D** para ver los detalles. Espera a que termine la recuperación antes de otro intento. |
+| **Revisa la restauración de la red** | Mantén el ordenador despierto y pulsa **D** para ver los detalles. Espera a que termine la recuperación antes de otro intento. |
 
 <details>
 <summary>Ver ejemplos separados de reintento y recuperación</summary>
@@ -198,7 +190,7 @@ Son **resultados alternativos**, no fases por las que debas pasar después de un
 
 ![Ejemplo de un intento terminado sin detectar una nueva conexión de Portal](docs/images/result-timeout-es.png)
 
-**Restauración pendiente:** mantén el Mac despierto y sigue las indicaciones de D: detalles.
+**Restauración pendiente:** mantén el ordenador despierto y sigue las indicaciones de D: detalles.
 
 ![Ejemplo de restauración incompleta de la red con indicaciones para consultar los detalles](docs/images/result-recovery-es.png)
 
@@ -221,9 +213,14 @@ Durante la conexión, el contador sigue avanzando aunque los ajustes estén abie
 
 </details>
 
+
 <a id="questions-and-fixes"></a>
 
 ## Preguntas y soluciones
+
+**¿Problemas con la instalación, los permisos, Npcap o el adaptador en Windows?**
+
+Consulta la [guía de solución de problemas de Windows (en inglés)](WINDOWS.md#questions-and-fixes). Los archivos `.command` y las instrucciones del adaptador del Mac que aparecen a continuación son para macOS.
 
 <a id="macos-blocked"></a>
 
@@ -233,7 +230,7 @@ Después de intentar abrir el archivo descargado de este repositorio, ve a **men
 
 **Setup muestra un error de Python o de certificados en vez de «Setup complete».**
 
-Completa el [apartado A](#install-python), incluido **Install Certificates.command**. Cierra la ventana del intento fallido y vuelve a abrir **Setup.command**. Si sigue fallando, copia el error cuando pidas ayuda.
+Completa los [pasos de Python para macOS](#macos-quick-start), incluido **Install Certificates.command**. Cierra la ventana del intento fallido y vuelve a abrir **Setup.command**. Si sigue fallando, copia el error cuando pidas ayuda.
 
 **La contraseña no funciona o la cuenta no puede usar sudo.**
 
@@ -247,18 +244,18 @@ Arrastra una esquina de Terminal para ampliarlo. La aplicación necesita al meno
 
 Mantén PS5 y Portal despiertos. Revisa las direcciones actuales y el Wi-Fi de casa. Si hay tirones, prueba 65 Mbps o desconecta Portal y vuelve a conectarlo normalmente sin ejecutar Better Portal.
 
-**¿Se guarda mi contraseña del Mac?**
+**¿Se guarda mi contraseña de administrador?**
 
-No. macOS gestiona la autorización. Reintentar dentro del mismo asistente abierto no vuelve a pedirla.
+No. macOS o Windows gestiona la autorización. Reintentar dentro del mismo asistente abierto no vuelve a pedirla.
 
 **¿Cómo pido ayuda?**
 
-[Abre una incidencia](https://github.com/wchwawa/better-portal/issues) e indica el paso y el mensaje que aparecen, las versiones de macOS y Portal, y el bitrate elegido. Oculta las direcciones de los dispositivos en las capturas antes de compartirlas. Los informes y las capturas de paquetes pueden contener información privada de la red; consérvalos en tu equipo.
+[Abre una incidencia](https://github.com/wchwawa/better-portal/issues) e indica el paso y el mensaje que aparecen, las versiones del sistema operativo de tu ordenador y de Portal, y el bitrate elegido. Oculta las direcciones de los dispositivos en las capturas antes de compartirlas. Los informes y las capturas de paquetes pueden contener información privada de la red; consérvalos en tu equipo.
 
 <a id="terminal-help"></a>
 
 <details>
-<summary>Ayuda con Terminal: abrir la carpeta, probar la demo y resolver un archivo Python que falta</summary>
+<summary>Ayuda con Terminal en macOS: abrir la carpeta, probar la demo y resolver un archivo Python que falta</summary>
 
 Para abrir Terminal manualmente, pulsa **Comando (⌘) + Espacio**, escribe **Terminal** y pulsa Return.
 
@@ -310,7 +307,7 @@ Para Wi-Fi, busca la sección **Hardware Port: Wi-Fi** y usa el nombre que apare
 </details>
 
 <details>
-<summary>¿Ya usas Git y Terminal?</summary>
+<summary>¿Ya usas Git y Terminal en Mac?</summary>
 
 ```sh
 git clone https://github.com/wchwawa/better-portal.git
