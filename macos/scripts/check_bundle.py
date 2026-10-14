@@ -68,14 +68,18 @@ process = subprocess.Popen([str(runtime), 'tui', '--demo', '--no-animations'],
                            env=dict(os.environ, TERM='xterm-256color'))
 os.close(slave)
 screen = bytearray()
+def wizard_drawn(output):
+    value = output.lower()
+    return b'demo:' in value and (b'better portal' in value or b'guided setup' in value)
+
 try:
     deadline = time.monotonic() + 15
     while time.monotonic() < deadline:
         if select.select([master], [], [], .1)[0]:
             screen.extend(os.read(master, 65536))
-        if b'guided setup' in screen.lower():
+        if wizard_drawn(screen):
             break
-    assert b'guided setup' in screen.lower(), screen.decode(errors='replace')
+    assert wizard_drawn(screen), screen.decode(errors='replace')
     os.write(master, b'q')
     deadline = time.monotonic() + 10
     while process.poll() is None and time.monotonic() < deadline:
