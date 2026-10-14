@@ -8,7 +8,9 @@ import subprocess
 import fcntl
 import pty
 import select
+import shutil
 import struct
+import tempfile
 import termios
 import time
 
@@ -26,6 +28,18 @@ assert PROTECTED.stat().st_mode & 0o077 == 0
 assert BASE.stat().st_mode & 0o022 == 0
 assert not (LAUNCHER / 'Contents/Library/LaunchDaemons').exists()
 assert (PROTECTED / 'PortalRuntime/PortalRuntime').read_bytes() == runtime.read_bytes()
+with tempfile.TemporaryDirectory(prefix='better-portal-tamper-') as temporary:
+    tampered = Path(temporary) / 'PortalRuntime'
+    shutil.copy2(PROTECTED / 'PortalRuntime/PortalRuntime', tampered)
+    with tampered.open('r+b') as stream:
+        stream.seek(4096)
+        original = stream.read(1)
+        assert original
+        stream.seek(4096)
+        stream.write(bytes([original[0] ^ 1]))
+    result = subprocess.run(['/usr/bin/codesign', '--verify', '--strict', str(tampered)],
+                            capture_output=True)
+    assert result.returncode != 0, 'Modified root worker passed code-signature verification'
 info = plistlib.loads((APP / 'Contents/Info.plist').read_bytes())
 assert info['CFBundleIdentifier'] == 'com.wchwawa.betterportal'
 job = plistlib.loads((APP / 'Contents/Library/LaunchDaemons/com.wchwawa.betterportal.helper.plist').read_bytes())
@@ -76,4 +90,4 @@ finally:
         process.kill()
         process.wait(timeout=5)
     os.close(master)
-print('Development bundle verified: signatures, job, resources, frozen imports, real TUI, privileged-operation rejection')
+print('Development bundle verified: signatures, tamper rejection, job, resources, frozen imports, real TUI, privileged-operation rejection')
