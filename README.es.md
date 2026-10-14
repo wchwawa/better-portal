@@ -6,6 +6,8 @@ Bajo licencia [MIT](LICENSE). Software independiente de la comunidad; sin afilia
 
 # Better Portal
 
+**Vista previa de autorización en macOS:** La app empaquetada permite autorizar mediante macOS y después abrir el asistente sin sudo. El instalador firmado y la validación con dispositivos siguen pendientes; las instrucciones del código fuente de abajo aún usan sudo. Consulta [configuración, eliminación y estado de publicación](docs/macos-authorization.md).
+
 [English](README.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · **Español** · [Français](README.fr.md)
 
 Elige un bitrate objetivo más alto para mejorar la imagen al jugar a tu PS5 con PlayStation Portal. Better Portal te guía por la configuración en tu Mac, una pantalla a la vez.

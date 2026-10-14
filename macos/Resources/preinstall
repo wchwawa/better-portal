@@ -1,0 +1,12 @@
+#!/bin/sh
+set -eu
+# Never replace a runtime that an active relay or its detached recovery uses.
+if [ -e /var/run/portal-lab-capture.lock ] || [ -L /var/run/portal-lab-capture.lock ]; then
+    echo 'Better Portal recovery is pending. Keep the Mac awake and finish recovery before updating.' >&2
+    exit 1
+fi
+if /bin/launchctl print system/com.wchwawa.betterportal.helper >/dev/null 2>&1; then
+    echo 'Open Better Portal and choose Remove connection helper before installing this update.' >&2
+    exit 1
+fi
+exit 0

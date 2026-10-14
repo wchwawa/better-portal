@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0"><dict>
+  <key>Label</key><string>com.wchwawa.betterportal.helper</string>
+  <key>BundleProgram</key><string>Contents/MacOS/PortalHelper</string>
+  <key>MachServices</key><dict><key>com.wchwawa.betterportal.helper</key><true/></dict>
+  <key>ProcessType</key><string>Interactive</string>
+  <key>ExitTimeOut</key><integer>180</integer>
+  <!-- Detached recovery must survive daemon exit or revocation. -->
+  <key>AbandonProcessGroup</key><true/>
+</dict></plist>

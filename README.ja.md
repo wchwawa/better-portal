@@ -6,6 +6,8 @@
 
 # Better Portal
 
+**macOS 認証プレビュー：**パッケージ版は macOS で承認後、sudo なしでウィザードを開く仕組みを実装しています。署名済みインストーラと実機検証はまだ完了していません。以下のソース版は引き続き sudo を使います。[設定・削除・公開状況](docs/macos-authorization.md)をご覧ください。
+
 [English](README.md) · [简体中文](README.zh-CN.md) · **日本語** · [한국어](README.ko.md) · [Español](README.es.md) · [Français](README.fr.md)
 
 PlayStation Portal で自分の PS5 を遊ぶときに、より高い画質を目指すビットレートを設定できます。Mac の設定ガイドが、画面ごとに操作を案内します。

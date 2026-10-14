@@ -1,0 +1,20 @@
+name: macOS connection helper
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  native:
+    runs-on: macos-15
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements.txt -r macos/requirements-build.txt
+      - name: Native state machine and authenticated XPC loopback
+        run: sh macos/scripts/test-native.sh
+      - name: Build self-contained development app without registration
+        run: python macos/scripts/build.py --development
+      - name: Verify packaged entry points and resources
+        run: python macos/scripts/check_bundle.py

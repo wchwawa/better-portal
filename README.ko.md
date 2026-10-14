@@ -6,6 +6,8 @@
 
 # Better Portal
 
+**macOS 권한 미리보기:** 패키지 앱은 macOS 승인 후 sudo 없이 마법사를 여는 흐름을 구현했습니다. 서명된 설치 프로그램과 실기 검증은 아직 완료되지 않았습니다. 아래 소스 실행 방법은 계속 sudo를 사용합니다. [설정, 제거 및 배포 상태](docs/macos-authorization.md)를 확인하세요.
+
 [English](README.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja.md) · **한국어** · [Español](README.es.md) · [Français](README.fr.md)
 
 PlayStation Portal로 자신의 PS5를 플레이할 때 더 높은 화질을 위한 비트레이트 목표를 설정하세요. Mac의 설정 도우미가 화면마다 필요한 조작을 안내합니다.

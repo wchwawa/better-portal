@@ -1,48 +1,103 @@
 # macOS authorization: approve setup, then use normally
 
-**Status: researched proposal, not implemented.** The current terminal launcher still uses sudo. This document describes the recommended next step for Better Portal; it is not an installation script or a claim that passwordless startup already works.
+**Status: implemented as a packaged-app preview; signed installation and physical-device acceptance are still pending.** The source `Start.command` continues to use sudo. An ad hoc development build cannot enable the privileged helper. There is no released signed installer to download yet.
 
-## Recommended approach
+## Using the packaged app
 
-Package Better Portal as a signed macOS app with a narrowly scoped privileged helper managed by **SMAppService**. The user approves the helper through macOS during initial setup. The TUI then runs as the user and asks the helper to perform an allowed Portal session.
+This flow requires macOS 13 or later and a signed Better Portal installer for your Mac's architecture. The installer includes Python and the existing six-language TUI.
 
-Apple recommends SMAppService for bundled helpers on macOS 13 and later. A LaunchDaemon requires administrator approval; once approved, it can be bootstrapped on subsequent boots. The app must check the service's authorization state and guide the user to System Settings when approval is needed. [SMAppService](https://developer.apple.com/documentation/servicemanagement/smappservice), [register()](https://developer.apple.com/documentation/servicemanagement/smappservice/register%28%29), [helper approval](https://developer.apple.com/documentation/servicemanagement/updating-helper-executables-from-earlier-versions-of-macos).
+1. Open the Better Portal `.pkg` installer and follow the macOS installation prompts. It installs **Better Portal** in **Applications**.
+2. Open **Applications → Better Portal**. Choose **Enable connection helper**.
+3. Approve Better Portal in the macOS permission flow. If the app says approval is needed, choose **System Settings**, allow Better Portal's background helper, then return to the app. Cancelling approval leaves the helper disabled.
+4. Choose **Open wizard**. The existing language choice, settings, device setup, 120-second countdown and result screens open in Terminal. The wizard runs as your normal user; session starts do not invoke sudo.
+5. For each new Portal connection, open Better Portal and choose **Open wizard** again. Authorization is reused while macOS continues to approve the helper.
 
-This supports **initial setup approval followed by normal launches without another sudo prompt**. It does not promise that macOS will never request approval again: revocation, reinstalling, signing changes or managed-device policy can change authorization.
+The system may ask for administrator authorization during installation and helper approval. Better Portal never reads or saves that password. Revocation, reinstalling, a signing change or managed-device policy may require approval again. This is not a promise of a single lifetime password prompt.
 
-## Intended user experience
+### Settings, reports and recovery
 
-1. Open Better Portal and choose **Enable connection helper**.
-2. Complete the macOS approval flow. Better Portal never reads or stores the administrator password.
-3. Use the existing four-step TUI. Each new Portal connection still needs another session, but normal session starts no longer invoke sudo.
-4. Show a clear **Helper disabled** action if permission is revoked, with a link to the relevant System Settings page.
-5. Offer **Remove connection helper**, finishing any active recovery before unregistering it.
+The packaged app stores your addresses, language and profile in `~/Library/Application Support/Better Portal/`. Session summaries are in its `reports` folder. Your source checkout's settings are unchanged; enter the device addresses once in the packaged wizard.
 
-The existing source launcher remains the fallback while this packaged flow is developed. Attempts retried inside the same currently running wizard already share its initial sudo authorization.
+Reports are written by the normal user. Raw captures and recovery state stay in the helper's private, root-owned `/Library/Application Support/Better Portal/sessions/` directory. They are not exported by the IPC interface. Removing the helper retains these diagnostics and your settings.
 
-## Integration boundaries for this codebase
+If the terminal closes, the bridge disconnects or the helper exits, the running session stops and attempts restoration. The independent watchdog remains available if the relay fails. Keep the Mac awake until recovery finishes. An unresolved recovery blocks another attempt and helper removal. The helper never accepts a client-provided recovery file or a command to run.
 
-These are proposed project requirements, not behavior supplied automatically by SMAppService:
+If permissions are revoked, the app shows **Helper disabled**. Open **System Settings** to review approval. A lost helper connection during a session produces a recovery warning, not a success result. Bitrate confirmation still does not prove actual picture, sound, input latency or throughput.
 
-- Keep the TUI unprivileged. A signed client bridge communicates with the helper over authenticated XPC. The helper checks the caller's code identity and user identity before allowing operations.
-- Expose only session start, progress, cancellation and result retrieval. Validate the interface, distinct local IPv4 addresses and the allowed 65/100/200 profiles in the helper. Accept no shell command, executable path, import path or arbitrary restoration file from the client.
-- Execute only an installed, protected and code-validated worker and its dependencies. Do not run Python from a user's writable checkout or virtual environment through a permanent privileged service.
-- Derive the requesting user from the authenticated connection. Replace the current reliance on sudo-provided identity with an explicit trusted caller context; do not trust a client-supplied UID or forged SUDO_UID.
-- Preserve the existing single-session lock, 120-second connection window, confirmation window and independent recovery. Losing the UI connection must trigger bounded cleanup rather than leaving the network redirected.
-- Keep helper-owned recovery state protected. Deliver user-owned settings and reports through a controlled interface without allowing arbitrary root file writes.
+### Remove or update
 
-Apple's authorization model separates restricted operations into a helper and lets the system handle authentication. The XPC boundary still needs its own authorization design. [Using Authorization](https://developer.apple.com/library/archive/documentation/Security/Conceptual/AuthenticationAndAuthorizationGuide/Authorization/Authorization.html).
+Choose **Remove connection helper** in Better Portal. It stops your active attempt, waits for recovery and prevents another attempt from starting while unregistering. It refuses to interrupt another Mac user's session. You can then move the app to the Trash.
 
-## Packaging and validation before release
+Before installing an update, remove the helper this way. The installer refuses to overwrite a loaded helper or an outstanding recovery. Install the new package and enable the helper again. Existing user settings remain available. Do not delete a recovery lock to force an update or removal.
 
-Build an app bundle and helper with stable identifiers and the same Apple-issued signing identity. Apple DTS specifically warns that ad hoc signatures can cause helper authorization problems across restarts. Follow the native daemon setup first, then add IPC. [Getting Started with SMAppService](https://developer.apple.com/forums/thread/802443), [Apple DTS on signing and persistence](https://developer.apple.com/forums/thread/799910).
+Until a signed installer is available, keep using the [source installation guide](../README.md#get-started). Retries inside the same source wizard already reuse its initial sudo authorization.
 
-For public distribution, supply a Developer ID-signed, hardened and notarized build. Signing credentials stay outside the repository and must be configured by the maintainer. [Apple distribution guidance](https://developer.apple.com/documentation/security/notarizing-macos-software-before-distribution).
+## How the privilege boundary works
 
-Before calling this ready, verify initial approval, denial, cancellation, reboot, upgrade, revocation and uninstall on a Mac. Exercise an actual Portal session and recovery after UI/helper failure. Reject unauthorized clients, modified payloads, malformed requests, concurrent starts and attempts to execute arbitrary commands or overwrite files.
+| Component | Runs as | Allowed work |
+| --- | --- | --- |
+| Better Portal app | Current user | Register/check/remove the bundled SMAppService daemon; open settings and Terminal |
+| TUI and signed native bridge | Current user | Configure the existing wizard; submit one session; poll, cancel and retrieve its result |
+| Connection helper | root | Authenticate the XPC peer, validate session input, serialize attempts and launch the installed worker |
+| Bundled worker and detached watchdog | root | Run the existing bounded relay and recovery, using private helper-owned files |
 
-## Password handling decision
+The daemon requires an Apple-signed client with the same Team ID and the exact app or bridge identifier. The bridge verifies the helper's identity too. The caller UID comes from `NSXPCConnection.effectiveUserIdentifier`; a supplied UID, `SUDO_UID`, executable, import path, shell command or output path is rejected.
 
-Do not store the Mac login password in settings or Keychain for replay into sudo. Do not grant blanket NOPASSWD access to Python, make a launcher setuid, or extend the system-wide sudo timeout. A saved password or a broad executable exemption gives a much wider capability than a validated Portal-session request.
+The helper accepts only a Mac `enN` interface, distinct unicast IPv4 addresses and profiles **65 / 100 / 200**. The worker checks that both peers are directly reachable through that interface before changing mappings. It preserves the existing 120-second connection window, 15-second confirmation allowance, target validation, media forwarding during repair and machine-wide attempt lock.
 
-The deliverable needed next is the signed app/helper integration and its lifecycle tests. This research commit changes no launch behavior and installs no background service.
+The installer makes the complete app root-owned and not writable by other users. Before starting a worker, the daemon checks payload ownership, internal links and code signatures. The frozen runtime includes its dependencies; it never imports code from a user's checkout or virtual environment. Its environment and working directory are fixed.
+
+The session channel has bounded messages and progress history. A disconnected client or a ten-second missed heartbeat requests cancellation. A stuck worker is terminated after the cleanup allowance, while its independent watchdog and recovery lock remain. Removal uses a drain state: no new session can start between recovery completion and unregistration.
+
+No Mac password storage, Keychain password replay, sudoers exemption, setuid launcher or system-wide sudo timeout change is involved.
+
+## Build and verify
+
+Use a Mac with current Xcode or Swift Command Line Tools and Python 3.12+. Build each architecture on a matching Mac. The runtime's own minimum OS requirements also apply; test the oldest macOS version you plan to distribute to.
+
+```sh
+python3 -m venv .venv
+.venv/bin/python -m pip install -r requirements.txt -r macos/requirements-build.txt
+sh macos/scripts/test-native.sh
+.venv/bin/python -m unittest discover -s tests -v
+.venv/bin/python macos/scripts/build.py --development
+.venv/bin/python macos/scripts/check_bundle.py
+```
+
+The development app appears under `macos/build/installer-root/Better Portal.app`. It is ad hoc signed for local UI/build tests; registration is deliberately rejected. Preview the packaged wizard without authorization or network changes:
+
+```sh
+'macos/build/installer-root/Better Portal.app/Contents/Resources/PortalRuntime/PortalRuntime' tui --demo
+```
+
+For release, configure your **Developer ID Application** and **Developer ID Installer** identities in the local signing Keychain. Keep certificates, private keys and notary credentials outside the repository. The build script uses the supplied identities and an existing `notarytool` Keychain profile; it does not collect credentials.
+
+```sh
+.venv/bin/python macos/scripts/build.py \
+  --identity 'Developer ID Application: YOUR NAME (TEAMID)' \
+  --installer-identity 'Developer ID Installer: YOUR NAME (TEAMID)' \
+  --notary-profile 'better-portal-notary' \
+  --version 0.1.0
+```
+
+This builds and checks the app, signs the installer, submits it for notarization and staples the result. Omitting `--notary-profile` creates a signed but unnotarized package; do not publish it as a completed release. No build or test command installs a daemon or changes host networking.
+
+## Acceptance before release
+
+Automated tests cover request rejection, authenticated caller ownership, concurrent starts, cancellation, heartbeat loss, cleanup deadlines, pending-recovery retry blocking, removal draining, protected payloads, native XPC acceptance/rejection, packaged imports and the existing relay fault cases. CI builds an ad hoc app and exercises these without administrator authorization or a live Portal session.
+
+The following require a **signed installation and a real Mac** and must be recorded before release:
+
+- Fresh install → approve → quit → reopen → run without sudo; also deny and cancel approval.
+- Restart the Mac and verify helper approval persists and the TUI still runs as the logged-in user.
+- Establish actual PS5/Portal playback; check picture, sound and controls after restoration.
+- Close or kill the TUI, bridge, worker and helper separately during preparation, waiting and confirmation; verify device recovery and retry.
+- Revoke approval while idle and active; verify the disabled state and bounded cleanup.
+- Attempt replacement or modified payloads, an unrelated signed client, malformed requests and another user's access; reject them before privileged work.
+- Remove while idle and active; install an update after removal; verify no stale service, overlapping attempt or lost user settings.
+
+A passing loopback test is not proof of SMAppService approval, persistence across reboot, notarization or real playback. No signed lifecycle or playback result is claimed until that checklist is completed.
+
+## Apple references
+
+The implementation uses [SMAppService](https://developer.apple.com/documentation/servicemanagement/smappservice) and its [registration lifecycle](https://developer.apple.com/forums/thread/802443). Apple recommends consistent Apple-issued signing identities for [helper authorization across restarts](https://developer.apple.com/forums/thread/799910). XPC peer checks use [connection code-signing requirements](https://developer.apple.com/documentation/foundation/nsxpcconnection/setcodesigningrequirement(_:)) and [listener requirements](https://developer.apple.com/documentation/foundation/nsxpclistener/setconnectioncodesigningrequirement(_:)). Public packages follow Apple's [notarization guidance](https://developer.apple.com/documentation/security/notarizing-macos-software-before-distribution).

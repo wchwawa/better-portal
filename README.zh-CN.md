@@ -6,6 +6,8 @@
 
 # Better Portal
 
+**macOS 授权预览：**打包应用已实现通过 macOS 授权、之后无需 sudo 打开向导的流程。签名安装包和实机验收尚未完成；下方源码启动方式仍使用 sudo。查看[设置、移除与发布状态](docs/macos-authorization.md)。
+
 [English](README.md) · **简体中文** · [日本語](README.ja.md) · [한국어](README.ko.md) · [Español](README.es.md) · [Français](README.fr.md)
 
 用 PlayStation Portal 玩自己的 PS5 时，通过 Mac 上的逐步向导选择更高的画面码率目标。
