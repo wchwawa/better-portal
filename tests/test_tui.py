@@ -125,6 +125,7 @@ class ResultTests(unittest.TestCase):
 @unittest.skipIf(os.name == 'nt', 'Mocked POSIX relay lifecycle')
 class RelayLifecycleTests(unittest.TestCase):
     def setUp(self):
+        self.real_restore = network.restore
         self.temporary = tempfile.TemporaryDirectory()
         self.addCleanup(self.temporary.cleanup)
         self.root = Path(self.temporary.name)
@@ -259,6 +260,83 @@ class RelayLifecycleTests(unittest.TestCase):
         self.assertEqual(report['unique_mutated_sequences'], 1)
         self.witness.expect.assert_called_once_with(b'outbound')
         self.assertEqual(tui.summarize(report).kind, 'success')
+
+    def wire_session(self, *, disconnect=False):
+        """Feed real Ethernet/protocol bytes through run(), including cleanup."""
+        from scapy.all import Ether, IP, UDP, Raw
+        from test_probe import fixture, field
+
+        def frame(payload, direction):
+            src, dst = ((network.PORTAL, network.PS5) if direction == 'out'
+                        else (network.PS5, network.PORTAL))
+            source_mac = self.state['portal_mac' if direction == 'out' else 'ps5_mac']
+            ports = (50000, 9296) if direction == 'out' else (9296, 50000)
+            return bytes(Ether(src=source_mac, dst=self.state['own_mac'])
+                         / IP(src=src, dst=dst) / UDP(sport=ports[0], dport=ports[1])
+                         / Raw(payload))
+
+        def control(kind, body=b''):
+            header = bytearray(26)
+            header[14] = 1
+            return bytes(header) + field(1, kind) + body
+
+        startup = fixture()[0]
+        quality = control(16, field(17, field(1, 58_374_000)))
+        packets = [
+            (6.00, frame(startup, 'out')),
+            (6.05, frame(control(1, field(3, field(1, 20) + field(3, 1)
+                                        + field(4, 1))), 'in')),
+            (6.10, frame(control(13), 'in')),
+            (6.15, frame(quality, 'in')),
+            (6.20, frame(quality, 'in')),
+            (6.25, frame(quality, 'in')),
+        ]
+        if disconnect:
+            packets.append((6.30, frame(control(8), 'in')))
+        else:
+            packets.extend([(6.30, frame(b'pending-media-packet', 'in')),
+                            (6.35, frame(startup, 'out'))])
+        sent = []
+
+        def select(*args, remain=.05):
+            self.clock = round(self.clock + remain, 6)
+            return bool(packets and packets[0][0] <= self.clock)
+
+        def receive():
+            _, packet = packets.pop(0)
+            return None, packet, self.clock
+
+        def send(packet):
+            sent.append(bytes(packet))
+            return len(bytes(packet))
+
+        def sleep(seconds):
+            self.clock += seconds
+
+        self.rx.select.side_effect = select
+        self.rx.recv_raw.side_effect = receive
+        self.tx.send.side_effect = send
+        self.restore.side_effect = self.real_restore
+        self.witness.report.return_value = {'all_expected_observed': True}
+        with patch.object(network.time, 'sleep', side_effect=sleep), \
+                patch.object(probe, 'CONFIRM_TARGET', 50_000_000):
+            report = self.run_relay()
+        payloads = [bytes(Ether(packet)[UDP].payload) for packet in sent
+                    if len(packet) > 42 and UDP in Ether(packet)]
+        return report, payloads, probe.mutate(startup)[0]
+
+    def test_restore_keeps_forwarding_in_flight_packets_and_patched_retransmissions(self):
+        report, payloads, modified = self.wire_session()
+        self.assertEqual(report['restoration_errors'], [])
+        self.assertTrue(report['high_target_confirmed'])
+        self.assertIn(b'pending-media-packet', payloads)
+        self.assertEqual(payloads.count(modified), 2)
+        self.assertEqual(report['unique_mutated_sequences'], 1)
+
+    def test_disconnect_during_restore_cannot_leave_a_success_result(self):
+        report, _, _ = self.wire_session(disconnect=True)
+        self.assertFalse(report['high_target_confirmed'])
+        self.assertNotEqual(tui.summarize(report).kind, 'success')
 
     def test_send_failure_restores_before_stopping_watchdog(self):
         self.tx.send.side_effect = OSError('synthetic send failure')
