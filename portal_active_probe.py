@@ -163,7 +163,7 @@ class TargetConfirmation:
 
 
 def run(active, finish_on_high_target=False, *, connect_timeout=35,
-        confirmation_timeout=0, progress=None, config=None):
+        confirmation_timeout=0, progress=None, config=None, output_root=None):
     """Run the existing relay; an optional callback receives structured UI events."""
     def notify(kind, message=None, **details):
         if progress is not None:
@@ -193,7 +193,7 @@ def run(active, finish_on_high_target=False, *, connect_timeout=35,
     except FileExistsError:
         raise PreflightError('Another attempt or recovery is active. Wait for it to finish.') from None
     os.close(fd)
-    folder = network.ROOT / 'experiments' / (
+    folder = (Path(output_root) if output_root is not None else network.ROOT) / 'experiments' / (
         'portal-' + ('patch-' if active else 'baseline-')
         + datetime.datetime.now().strftime('%Y%m%d-%H%M%S-%f'))
     saved = rx = tx = watcher = witness = None

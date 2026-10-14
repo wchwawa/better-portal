@@ -12,6 +12,17 @@ Choose a higher picture-quality target when playing your PS5 through PlayStation
 
 [Install and open](#get-started) · [First session](#your-first-session) · [Find device addresses](#find-device-addresses) · [Get unstuck](#questions-and-fixes)
 
+## Install and update with Homebrew (Mac)
+
+If you use [Homebrew](https://brew.sh), install with these two commands. Homebrew installs Python and the required packages for you:
+
+```sh
+brew tap wchwawa/better-portal https://github.com/wchwawa/better-portal
+brew install --HEAD wchwawa/better-portal/better-portal
+```
+
+Open with **`better-portal`**. Close the wizard before updating, then run **`better-portal update`**. Addresses, language, bitrate and reports stay in your user folder. This follows the latest `main` branch and still uses the Mac password prompt for live sessions. [Full guide and importing your old settings](docs/homebrew.md). The ZIP instructions below remain available.
+
 ## Windows quick start
 
 The same guided TUI is available on **Windows 11 and Windows 10**. Windows device testing is still in progress; see the [Windows guide](WINDOWS.md) for requirements and troubleshooting.
@@ -23,7 +34,7 @@ The same guided TUI is available on **Windows 11 and Windows 10**. Windows devic
 
 The languages, **S** settings shortcut, animations, connection stages and result rules are shared with the Mac version shown below. Windows uses **PC LAN adapter** in Devices. Language, addresses and bitrate are remembered. A confirmed bitrate target still requires checking picture, sound and controls on Portal.
 
-**On a Mac?** Follow the instructions below: **Setup.command** once, then **Start.command** each time.
+**On a Mac?** Use Homebrew above, or follow the ZIP instructions below.
 
 
 ## Before you start
@@ -37,6 +48,8 @@ Have these ready:
 This is an experimental community tool. Start with **65 Mbps**. Bitrate describes how much picture data can be sent each second; a higher setting can help detail, but can also cause stuttering on a less stable connection.
 
 ## Get started
+
+These steps are for ZIP installs. If you installed with Homebrew, run **`better-portal`** and continue with **Your first session** below. In the guide, use that command wherever it says to open Start.command.
 
 You only need to install once. Keep the downloaded folder: it contains the file you will open each time you play.
 

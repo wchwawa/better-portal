@@ -12,6 +12,17 @@ PlayStation Portal로 자신의 PS5를 플레이할 때 더 높은 화질을 위
 
 [설치 및 실행](#get-started) · [처음 사용하기](#first-session) · [기기 주소 찾기](#find-device-addresses) · [문제 해결](#questions-and-fixes)
 
+## Homebrew로 설치 및 업데이트（Mac）
+
+[Homebrew](https://brew.sh)를 사용한다면 터미널에서 다음 두 명령을 차례대로 실행하세요. Python과 필요한 패키지도 자동으로 설치됩니다:
+
+```sh
+brew tap wchwawa/better-portal https://github.com/wchwawa/better-portal
+brew install --HEAD wchwawa/better-portal/better-portal
+```
+
+**`better-portal`**로 실행합니다. 업데이트 전 마법사를 닫고 **`better-portal update`**를 실행하세요. 주소, 언어, 비트레이트와 보고서는 사용자 폴더에 유지됩니다. 최신 `main` 브랜치를 사용하며 실제 연결 시에는 여전히 Mac 암호를 요청합니다. [자세한 안내 및 이전 설정 가져오기](docs/homebrew.md). 아래 ZIP 설치 방법도 계속 사용할 수 있습니다.
+
 ## Windows 빠른 시작
 
 **Windows 11과 Windows 10**에서도 같은 설정 가이드를 사용할 수 있습니다. Windows 실기기 검증은 진행 중입니다. 자세한 내용은 [Windows 가이드(영어)](WINDOWS.md)를 확인하세요.
@@ -23,7 +34,7 @@ PlayStation Portal로 자신의 PS5를 플레이할 때 더 높은 화질을 위
 
 언어, **S** 설정 단축키, 애니메이션, 연결 단계와 결과 판단은 아래 Mac 버전과 같습니다. Windows에서는 **PC LAN 어댑터**를 선택합니다. 언어, 주소와 비트레이트가 저장됩니다. 목표 비트레이트가 확인되어도 Portal의 화면, 소리와 조작을 확인하세요.
 
-**Mac 사용자:** 아래 안내에 따라 처음에는 **Setup.command**, 다음부터는 **Start.command**를 여세요.
+**Mac을 사용하나요?** 위의 Homebrew 방법이나 아래 ZIP 설치 방법을 선택하세요.
 
 
 ## 시작하기 전에
@@ -39,6 +50,8 @@ PlayStation Portal로 자신의 PS5를 플레이할 때 더 높은 화질을 위
 <a id="get-started"></a>
 
 ## 설치 및 실행
+
+아래는 ZIP 설치 단계입니다. Homebrew로 설치했다면 **`better-portal`**을 실행하고 아래의 첫 사용 안내로 이동하세요. 안내에서 Start.command를 열라고 하면 대신 이 명령을 실행하세요.
 
 설치는 처음 한 번만 하면 됩니다. 내려받은 폴더 전체를 보관하세요. 다음에도 그 안의 파일로 실행합니다.
 

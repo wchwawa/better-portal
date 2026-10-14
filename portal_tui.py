@@ -159,12 +159,13 @@ class Wizard:
     MIN_ROWS = 24
     MIN_COLS = 72
 
-    def __init__(self, screen, curses, demo=False, animations=True, platform=None):
+    def __init__(self, screen, curses, demo=False, animations=True, platform=None, data_dir=None):
         self.screen, self.curses, self.demo = screen, curses, demo
         self.windows = (platform or sys.platform) == 'win32'
         self.animations = animations
-        self.config_path = ROOT / ('config.windows.json' if self.windows else 'config.json')
-        self.preferences_path = ROOT / 'tui-settings.json'
+        self.data_dir = Path(data_dir) if data_dir is not None else ROOT
+        self.config_path = self.data_dir / ('config.windows.json' if self.windows else 'config.json')
+        self.preferences_path = self.data_dir / 'tui-settings.json'
         self.adapter_error = ''
         self.adapters = []
         if self.windows:
@@ -928,7 +929,8 @@ class Wizard:
             probe.set_profile(self.profile)
             started = True
             return probe.run(True, finish_on_high_target=True, connect_timeout=CONNECT_SECONDS,
-                             confirmation_timeout=CONFIRM_SECONDS, progress=self.progress, config=config)
+                             confirmation_timeout=CONFIRM_SECONDS, progress=self.progress, config=config,
+                             output_root=self.data_dir)
         except KeyboardInterrupt:
             return {'completed': False, 'run_error': 'Cancelled by user', 'restoration_errors': []}
         except Exception as exc:
@@ -959,10 +961,14 @@ class Wizard:
                                          if deadline else 'The independent recovery process has its own deadline.') + 1
                     state = report.get('watchdog_state')
                     if state:
+                        packaged = not self.windows and self.data_dir != ROOT
                         hint = ('Manual recovery in administrator PowerShell from this project folder: {command}'
-                                if self.windows else 'Manual recovery from this project folder: {command}')
+                                if self.windows else 'Manual recovery in Terminal: {command}' if packaged
+                                else 'Manual recovery from this project folder: {command}')
                         self.paragraph(row, self.t(hint,
-                                       command=recovery_command(state, self.windows)))
+                                       command=recovery_command(state, self.windows,
+                                           python=sys.executable if packaged else None,
+                                           script=ROOT / 'portal_capture.py' if packaged else None)))
                 elif report.get('directory'):
                     self.paragraph(row, 'The report and captures stay local. Share only a redacted summary.')
                 else:
@@ -1030,8 +1036,9 @@ class Wizard:
 
 
 def main():
+    data_dir = ROOT
     def t(text, **values):
-        language = load_preferences(ROOT / 'tui-settings.json').get('language')
+        language = load_preferences(data_dir / 'tui-settings.json').get('language')
         return translate(text, language, **values)
 
     parser = argparse.ArgumentParser(description=t(__doc__))
@@ -1039,7 +1046,12 @@ def main():
                         help=t('Preview the wizard with simulated events; no administrator access or network changes'))
     parser.add_argument('--no-animations', action='store_true',
                         help=t('Keep state labels and highlights, without motion'))
+    parser.add_argument('--data-dir', type=Path, help=argparse.SUPPRESS)
     args = parser.parse_args()
+    if args.data_dir is not None:
+        data_dir = args.data_dir.resolve()
+        if not data_dir.is_dir():
+            parser.error('The settings directory must already exist.')
     if not sys.stdin.isatty() or not sys.stdout.isatty():
         parser.exit(2, t('Open this wizard in an interactive Terminal window.') + '\n')
     if not args.demo:
@@ -1057,7 +1069,8 @@ def main():
                          else 'This Python installation needs the standard curses module.') + '\n')
     try:
         return curses.wrapper(lambda screen: Wizard(screen, curses, demo=args.demo,
-                                                     animations=not args.no_animations).run())
+                                                     animations=not args.no_animations,
+                                                     data_dir=data_dir).run())
     except KeyboardInterrupt:
         print(t('Demo closed.' if args.demo else 'Wizard closed.'))
         return 1

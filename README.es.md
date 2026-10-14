@@ -12,6 +12,17 @@ Elige un bitrate objetivo más alto para mejorar la imagen al jugar a tu PS5 con
 
 [Instalar y abrir](#get-started) · [Primera sesión](#first-session) · [Buscar las direcciones](#find-device-addresses) · [Resolver problemas](#questions-and-fixes)
 
+## Instalar y actualizar con Homebrew (Mac)
+
+Si usas [Homebrew](https://brew.sh), ejecuta estas dos líneas en Terminal. Homebrew también instala Python y los paquetes necesarios:
+
+```sh
+brew tap wchwawa/better-portal https://github.com/wchwawa/better-portal
+brew install --HEAD wchwawa/better-portal/better-portal
+```
+
+Abre el asistente con **`better-portal`**. Ciérralo antes de actualizar y ejecuta **`better-portal update`**. Las direcciones, el idioma, el bitrate y los informes se conservan en tu carpeta de usuario. Esta opción sigue la última versión de la rama `main`; las conexiones reales siguen solicitando la contraseña del Mac cuando es necesario. [Guía completa e importación de ajustes anteriores](docs/homebrew.md). También puedes seguir usando la instalación ZIP descrita abajo.
+
 ## Inicio rápido en Windows
 
 La misma interfaz guiada está disponible en **Windows 11 y Windows 10**. Las pruebas con dispositivos reales en Windows siguen en curso; consulta la [guía para Windows (en inglés)](WINDOWS.md).
@@ -23,7 +34,7 @@ La misma interfaz guiada está disponible en **Windows 11 y Windows 10**. Las pr
 
 Los idiomas, los ajustes con **S**, las animaciones, las fases y los resultados se comparten con la versión Mac que aparece abajo. En Windows se elige **Adaptador LAN del PC**. El idioma, las direcciones y el bitrate se guardan. Aunque se confirme el bitrate objetivo, comprueba la imagen, el sonido y los controles en Portal.
 
-**¿Usas Mac?** Sigue las instrucciones de abajo: **Setup.command** una vez y **Start.command** en cada sesión.
+**¿Usas Mac?** Elige Homebrew arriba o la instalación ZIP de abajo.
 
 
 ## Antes de empezar
@@ -39,6 +50,8 @@ Esta es una herramienta experimental de la comunidad. Empieza con **65 Mbps**. E
 <a id="get-started"></a>
 
 ## Instalar y abrir
+
+Estos pasos son para la instalación ZIP. Si instalaste con Homebrew, ejecuta **`better-portal`** y sigue con **Tu primera sesión**. Usa ese comando donde la guía indique abrir Start.command.
 
 Solo necesitas instalar una vez. Conserva toda la carpeta descargada: contiene el archivo que abrirás cada vez que quieras jugar.
 
