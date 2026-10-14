@@ -1,5 +1,6 @@
 """Small protobuf wire readers; no keys or captured session data."""
-def fields(data):
+def fields(data, *, with_wire=False):
+    """Read fields, optionally retaining their wire type for schema validation."""
     def varint(pos):
         n = 0
         for shift in range(0, 70, 7):
@@ -19,7 +20,7 @@ def fields(data):
             value = data[pos:pos+size]; pos += size
         else: raise ValueError('unsupported wire type')
         if field in result: raise ValueError('duplicate field')
-        result[field] = value
+        result[field] = (wire, value) if with_wire else value
     return result
 
 def readvar(b, p):
