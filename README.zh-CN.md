@@ -6,7 +6,7 @@
 
 # Better Portal
 
-[English](README.md) · **简体中文** · [日本語](README.ja.md) · [한국어](README.ko.md) · [Español](README.es.md) · [Français](README.fr.md)
+[English](README.md) · **简体中文** · [日本語](README.ja.md) · [한국어](README.ko.md) · [Español](README.es.md) · [Français](README.fr.md) · [Türkçe](README.tr.md)
 
 用 PlayStation Portal 玩自己的 PS5 时，通过 **macOS 或 Windows** 上的逐步向导选择更高的画面码率目标。
 
@@ -211,6 +211,8 @@ Portal 连上后，保持连接，等电脑显示**结果页**再关闭窗口。
 ![同一个设备页的日语、韩语、西班牙语和法语版本](docs/images/languages.gif)
 
 </details>
+
+<a id="troubleshooting-and-recovery"></a>
 
 ## 常见问题
 

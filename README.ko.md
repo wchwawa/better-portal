@@ -6,7 +6,7 @@
 
 # Better Portal
 
-[English](README.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja.md) · **한국어** · [Español](README.es.md) · [Français](README.fr.md)
+[English](README.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja.md) · **한국어** · [Español](README.es.md) · [Français](README.fr.md) · [Türkçe](README.tr.md)
 
 PlayStation Portal로 자신의 PS5를 플레이할 때 더 높은 화질을 위한 비트레이트 목표를 설정하세요. **macOS 또는 Windows**의 설정 도우미가 화면마다 필요한 조작을 안내합니다.
 
@@ -213,6 +213,8 @@ Portal이 연결되면 연결을 유지하세요. 컴퓨터에 **결과 화면**
 
 </details>
 
+
+<a id="troubleshooting-and-recovery"></a>
 
 <a id="questions-and-fixes"></a>
 

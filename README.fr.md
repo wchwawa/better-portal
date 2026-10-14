@@ -6,7 +6,7 @@ Sous licence [MIT](LICENSE). Logiciel communautaire indépendant ; sans affiliat
 
 # Better Portal
 
-[English](README.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · [Español](README.es.md) · **Français**
+[English](README.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · [Español](README.es.md) · **Français** · [Türkçe](README.tr.md)
 
 Choisissez un débit cible pour améliorer l’image lorsque vous jouez à votre PS5 depuis PlayStation Portal. Better Portal vous guide dans la configuration sur **macOS ou Windows**, un écran à la fois.
 
@@ -213,6 +213,8 @@ Pendant la connexion, le compte à rebours continue même si les réglages sont 
 
 </details>
 
+
+<a id="troubleshooting-and-recovery"></a>
 
 <a id="questions-and-fixes"></a>
 

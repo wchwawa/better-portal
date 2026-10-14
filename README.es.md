@@ -6,7 +6,7 @@ Bajo licencia [MIT](LICENSE). Software independiente de la comunidad; sin afilia
 
 # Better Portal
 
-[English](README.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · **Español** · [Français](README.fr.md)
+[English](README.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · **Español** · [Français](README.fr.md) · [Türkçe](README.tr.md)
 
 Elige un objetivo de mayor calidad de imagen al jugar a tu PS5 desde PlayStation Portal. Better Portal te guía por la configuración en **macOS o Windows**, una pantalla a la vez.
 
@@ -213,6 +213,8 @@ Durante la conexión, el contador sigue avanzando aunque los ajustes estén abie
 
 </details>
 
+
+<a id="troubleshooting-and-recovery"></a>
 
 <a id="questions-and-fixes"></a>
 

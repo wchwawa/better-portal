@@ -6,7 +6,7 @@
 
 # Better Portal
 
-[English](README.md) · [简体中文](README.zh-CN.md) · **日本語** · [한국어](README.ko.md) · [Español](README.es.md) · [Français](README.fr.md)
+[English](README.md) · [简体中文](README.zh-CN.md) · **日本語** · [한국어](README.ko.md) · [Español](README.es.md) · [Français](README.fr.md) · [Türkçe](README.tr.md)
 
 PlayStation Portal で自分の PS5 を遊ぶときに、より高い画質を目指すビットレートを設定できます。**macOS または Windows** の設定ガイドが、画面ごとに操作を案内します。
 
@@ -213,6 +213,8 @@ Portal が接続できたら、そのまま接続を維持します。パソコ�
 
 </details>
 
+
+<a id="troubleshooting-and-recovery"></a>
 
 <a id="questions-and-fixes"></a>
 
