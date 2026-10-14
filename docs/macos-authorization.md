@@ -1,6 +1,6 @@
 # macOS authorization: approve setup, then use normally
 
-**Status: implemented as a packaged-app preview; signed installation and physical-device acceptance are still pending.** The source and Homebrew launchers now require the signed helper for live sessions; neither launches Python with sudo. An ad hoc development build cannot enable the privileged helper. There is no released signed installer to download yet, so these launchers currently support demo mode only.
+**Status: implemented as a packaged-app preview; signed installation and physical-device acceptance are still pending.** Source and Homebrew launchers, including a direct `portal_tui.py` launch, require the signed helper for live sessions; they never launch Python with sudo. The old direct `portal_active_probe.py` macOS live command is disabled. An ad hoc development build cannot enable the privileged helper. There is no released signed installer to download yet, so these launchers currently support demo mode only.
 
 ## Using the packaged app
 

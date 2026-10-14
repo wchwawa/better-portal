@@ -41,7 +41,7 @@ Kalıcı cihaz değişikliği yapılmaz. Her yeni oturumda işlem gerekir. Norma
 - `UNCONFIRMED`: paket değişti ama yüksek hedef doğrulanmadı.
 - `restoration_errors`: boş olmalı. Hata varsa [İngilizce kurtarma adımlarını](README.md#troubleshooting-and-recovery) uygula.
 
-Sihirbazda 5 saniyelik hazırlıktan sonra tam 120 saniyelik bağlantı süresi ve ilk değiştirilen paketten sonra en fazla 15 saniyelik doğrulama süresi vardır. Ayrı kurtarma süreci 155 saniye sonra özgün ağ ayarlarını geri yüklemeyi dener. Eski `portal_active_probe.py` komutunun varsayılan 40 saniyelik aktarma ve 55 saniyelik kurtarma süreleri korunur. Başlangıç ve temizleme ek süre alabilir. Mac kapanırsa kurtarma çalışamaz.
+Sihirbazda 5 saniyelik hazırlıktan sonra tam 120 saniyelik bağlantı süresi ve ilk değiştirilen paketten sonra en fazla 15 saniyelik doğrulama süresi vardır. Ayrı kurtarma süreci 155 saniye sonra özgün ağ ayarlarını geri yüklemeyi dener. Başlangıç ve temizleme ek süre alabilir. Mac kapanırsa kurtarma çalışamaz.
 
 Özel IP'ler, raporlar ve ham paket kayıtları yerel kalır. Ham kayıtları GitHub'a yükleme. Bu araç jailbreak değildir; Sony ile bağlantısı yoktur.
 

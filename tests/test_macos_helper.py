@@ -122,6 +122,49 @@ class ClientTests(unittest.TestCase):
                 runtime.recovery_path(root / 'state.json')
 
 
+@unittest.skipIf(os.name == 'nt', 'macOS source launcher checks')
+class SourceLauncherTests(unittest.TestCase):
+    def test_direct_probe_rejects_root_python_before_network_access(self):
+        with patch.object(probe.sys, 'platform', 'darwin'), \
+             patch.object(probe.network, 'configure') as configure:
+            with self.assertRaisesRegex(RuntimeError, 'installed connection helper'):
+                probe.run(True)
+            configure.assert_not_called()
+            with patch.object(probe.sys, 'argv', ['portal_active_probe.py']), \
+                 contextlib.redirect_stderr(io.StringIO()) as stderr, \
+                 self.assertRaises(SystemExit) as stopped:
+                probe.main()
+            self.assertEqual(stopped.exception.code, 2)
+            self.assertIn('do not run this script with sudo', stderr.getvalue())
+            configure.assert_not_called()
+
+    def test_direct_mac_launch_uses_helper_and_rejects_sudo(self):
+        with tempfile.TemporaryDirectory() as directory:
+            user_data = Path(directory) / 'user data'
+            with patch.object(tui, 'ROOT', Path(directory)), \
+                 patch.object(tui.sys, 'platform', 'darwin'), \
+                 patch.object(tui.sys, 'argv', ['portal_tui.py']), \
+                 patch.object(tui.sys.stdin, 'isatty', return_value=True), \
+                 patch.object(tui.sys.stdout, 'isatty', return_value=True), \
+                 patch('portal_macos_client.user_directory', return_value=user_data), \
+                 patch('curses.wrapper', side_effect=lambda draw: draw(MagicMock())), \
+                 patch.object(tui, 'Wizard') as wizard:
+                wizard.return_value.run.return_value = 0
+                with patch.object(tui.os, 'geteuid', return_value=501):
+                    self.assertEqual(tui.main(), 0)
+                self.assertTrue(wizard.call_args.kwargs['helper'])
+                self.assertEqual(wizard.call_args.kwargs['data_dir'], user_data)
+                self.assertTrue(user_data.is_dir())
+                wizard.reset_mock()
+                with patch.object(tui.os, 'geteuid', return_value=0), \
+                     contextlib.redirect_stderr(io.StringIO()) as stderr, \
+                     self.assertRaises(SystemExit) as stopped:
+                    tui.main()
+                self.assertEqual(stopped.exception.code, 2)
+                self.assertIn('normal Mac user', stderr.getvalue())
+                wizard.assert_not_called()
+
+
 @unittest.skipIf(os.name == 'nt', 'POSIX relay fixture')
 class HelperRelayTests(relay_tests.RelayLifecycleTests):
     """Run the existing timing/cancel/retransmit/failure tests through helper mode."""

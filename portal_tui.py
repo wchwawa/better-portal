@@ -1061,6 +1061,10 @@ def main():
                         help=t('Use the installed macOS connection helper without sudo'))
     parser.add_argument('--data-dir', type=Path, help=argparse.SUPPRESS)
     args = parser.parse_args()
+    # Direct source launches must use the same privilege boundary as the ZIP
+    # and Homebrew launchers. Never suggest rerunning mutable Python with sudo.
+    if sys.platform == 'darwin' and not args.demo:
+        args.helper = True
     if args.helper:
         if args.data_dir is not None:
             parser.error('The installed helper chooses its own settings directory.')
@@ -1084,8 +1088,6 @@ def main():
             parser.exit(2, t('Live setup supports macOS and native Windows 10/11.') + '\n')
         elif args.helper and os.geteuid() == 0:
             parser.exit(2, t('Open Better Portal as your normal Mac user.') + '\n')
-        elif not args.helper and (os.geteuid() != 0 or 'SUDO_UID' not in os.environ):
-            parser.exit(2, t('Double-click Start.command, or run: sudo .venv/bin/python portal_tui.py') + '\n')
     try:
         import curses
     except ImportError:

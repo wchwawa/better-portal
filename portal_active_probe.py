@@ -190,8 +190,10 @@ def run(active, finish_on_high_target=False, *, connect_timeout=35,
         return True
 
     timing = RelayWindow(0, connect_timeout, confirmation_timeout)
+    if sys.platform == 'darwin' and helper_context is None:
+        raise RuntimeError('Live macOS sessions require the installed connection helper; do not run Python with sudo')
     if os.geteuid() != 0:
-        raise RuntimeError('Use local Terminal launcher with sudo')
+        raise RuntimeError('The connection worker must run through the installed helper')
     if helper_context is None:
         uid, gid = int(os.environ['SUDO_UID']), int(os.environ['SUDO_GID'])
     else:
@@ -479,6 +481,8 @@ def main():
     parser.add_argument('--connect-timeout', type=int, default=35,
                         help='Seconds to connect after READY (1-120; default 35)')
     args=parser.parse_args()
+    if sys.platform == 'darwin':
+        parser.exit(2, 'Use the installed macOS connection helper; do not run this script with sudo.\n')
     if not 1 <= args.connect_timeout <= 120:
         parser.error('--connect-timeout must be between 1 and 120 seconds')
     set_profile(args.profile)
