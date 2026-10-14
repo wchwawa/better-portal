@@ -26,7 +26,7 @@ jobs:
           import sys
           source = Path('Formula/better-portal.rb').read_text()
           source = source.replace('https://github.com/wchwawa/better-portal.git', Path.cwd().as_uri())
-          source = source.replace('branch: "main"', 'branch: "homebrew-package-test"')
+          source = source.replace('branch: "main"', 'branch: "homebrew-package-test", using: :git')
           (Path(sys.argv[1]) / 'Formula/better-portal.rb').write_text(source)
           PY
       - name: Install through Homebrew

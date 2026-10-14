@@ -22,7 +22,7 @@ class BetterPortal < Formula
     (libexec/"app").install Dir["*.py"], "locales"
     (libexec/"app/installation.json").write JSON.generate(
       version: "HEAD-#{Utils.safe_popen_read("git", "rev-parse", "--short=12", "HEAD").strip}",
-      brew: HOMEBREW_PREFIX/"bin/brew",
+      brew:    (HOMEBREW_PREFIX/"bin/brew").to_s,
     )
     (bin/"better-portal").write_env_script libexec/"bin/python",
                                          [(libexec/"app/portal_cli.py").to_s.shellescape], {}
