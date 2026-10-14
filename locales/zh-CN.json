@@ -156,5 +156,22 @@
   "Remembered for next time.": "下次启动将使用所选语言。",
   "DEMO: language is not saved.": "演示模式：本次选择不会保存。",
   "Continue ->": "继续 ->",
-  "↑/↓: select    Enter: confirm    Esc: back": "↑/↓ 选择    Enter 确认    Esc 返回"
+  "↑/↓: select    Enter: confirm    Esc: back": "↑/↓ 选择    Enter 确认    Esc 返回",
+  "  /  PC + PS5 + Portal": " / PC + PS5 + Portal",
+  "PC awake": "PC 唤醒",
+  "PC LAN adapter": "PC 局域网网卡",
+  "Restoring the direct path; please keep this PC awake.": "正在恢复直连，请保持 PC 唤醒。",
+  "Keep this PC awake until the result appears.": "请保持 PC 唤醒，直到结果出现。",
+  "D: recovery details    Q / Esc: quit (keep PC awake)": "D 恢复详情    Q / Esc 退出（保持 PC 唤醒）",
+  "Keep this PC awake for automatic recovery. Reconnect Portal if needed. Press D for recovery details. Start another attempt only after recovery.": "保持 PC 唤醒，等待自动恢复，必要时重连 Portal。按 D 查看恢复详情，恢复完成后再重试。",
+  "Guided setup for macOS and Windows. Demo mode never changes configuration or networking.": "macOS 与 Windows 设置向导。演示模式不会修改配置或网络。",
+  "Preview the wizard with simulated events; no administrator access or network changes": "以模拟事件预览界面，无需管理员权限，不修改网络",
+  "Choose an available LAN adapter with the arrow keys": "请用方向键选择可用的局域网网卡",
+  "Choose adapter": "选择网卡",
+  "Use ← / → to choose the adapter on the PS5 / Portal LAN.": "用 ← / → 选择与 PS5 / Portal 同一局域网的网卡。",
+  "No LAN adapter found. Install Npcap and reopen Start-Windows.cmd.": "未发现局域网网卡。请安装 Npcap 后重新打开 Start-Windows.cmd。",
+  "Double-click Start-Windows.cmd and accept the Windows permission prompt.": "请双击 Start-Windows.cmd 并允许 Windows 的权限请求。",
+  "Live setup supports macOS and native Windows 10/11.": "实际连接支持 macOS 和原生 Windows 10/11。",
+  "Run Setup-Windows.cmd to install terminal support.": "请运行 Setup-Windows.cmd 安装终端界面依赖。",
+  "Terminal setup failed: {error}. Try Windows Terminal.": "终端初始化失败：{error}。请尝试 Windows Terminal。"
 }
