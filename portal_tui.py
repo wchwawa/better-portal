@@ -137,9 +137,9 @@ def summarize(report):
                    if isinstance(value, (int, float))), None)
     witness = report.get('egress_witness') or {}
     if report.get('high_target_confirmed') and witness.get('all_expected_observed'):
-        return Result('success', 'Ready to play',
-                      'PS5 confirmed the higher target. Direct-path restoration completed.',
-                      'Keep this Portal session connected. This Mac is no longer relaying. '
+        return Result('success', 'Bitrate target confirmed',
+                      'PS5 reported the higher target. Playback has not been verified.',
+                      'Check picture, sound and controls on Portal. If blank, reconnect normally. '
                       'Run the wizard again for each new connection.', target)
     if report.get('high_target_confirmed'):
         return Result('warning', 'Target reported; verification incomplete',
@@ -710,7 +710,7 @@ class Wizard:
     def result_art(self, row, summary):
         """Show the completed attempt, without suggesting ongoing monitoring."""
         label, marker = {
-            'success': ('READY', '[OK]'),
+            'success': ('CONFIRMED', '[OK]'),
             'warning': ('CHECK', '[?]'),
             'error': ('RECOVER', '[!]'),
         }[summary.kind]

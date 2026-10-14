@@ -103,6 +103,13 @@ class ResultTests(unittest.TestCase):
         self.assertEqual(result.kind, 'success')
         self.assertAlmostEqual(result.target, 63.106)
 
+    def test_target_confirmation_does_not_claim_playable_audio_or_video(self):
+        result = tui.summarize(self.confirmed_report())
+        self.assertEqual(result.title, 'Bitrate target confirmed')
+        self.assertIn('Playback has not been verified', result.message)
+        self.assertIn('Check picture, sound and controls', result.advice)
+        self.assertIn('If blank, reconnect normally', result.advice)
+
     def test_restoration_failure_has_priority_over_high_target(self):
         report = self.confirmed_report()
         report['restoration_errors'] = ['ARP restore: synthetic']
@@ -135,6 +142,7 @@ class RelayLifecycleTests(unittest.TestCase):
         self.events = []
         self.actions = []
         self.rx, self.tx, self.watcher = MagicMock(), MagicMock(), MagicMock()
+        self.tx.send.side_effect = lambda packet: len(bytes(packet))
         self.watcher.poll.return_value = None
         self.watcher.terminate.side_effect = lambda: self.actions.append('watchdog_stop')
         self.rx.select.side_effect = self.advance
@@ -177,7 +185,7 @@ class RelayLifecycleTests(unittest.TestCase):
         self.clock += 1
         return False
 
-    def restored(self, state):
+    def restored(self, state, **kwargs):
         self.actions.append('restore')
         return []
 
@@ -261,7 +269,7 @@ class RelayLifecycleTests(unittest.TestCase):
         self.witness.expect.assert_called_once_with(b'outbound')
         self.assertEqual(tui.summarize(report).kind, 'success')
 
-    def wire_session(self, *, disconnect=False):
+    def wire_session(self, *, disconnect=False, short_restore_write=False):
         """Feed real Ethernet/protocol bytes through run(), including cleanup."""
         from scapy.all import Ether, IP, UDP, Raw
         from test_probe import fixture, field
@@ -308,6 +316,8 @@ class RelayLifecycleTests(unittest.TestCase):
 
         def send(packet):
             sent.append(bytes(packet))
+            if short_restore_write and self.clock >= 6.30 and len(bytes(packet)) > 42:
+                return len(bytes(packet)) - 1
             return len(bytes(packet))
 
         def sleep(seconds):
@@ -329,14 +339,25 @@ class RelayLifecycleTests(unittest.TestCase):
         report, payloads, modified = self.wire_session()
         self.assertEqual(report['restoration_errors'], [])
         self.assertTrue(report['high_target_confirmed'])
+        self.assertFalse(report['playback_verified'])
+        self.assertFalse(report['restoration_peer_state_verified'])
         self.assertIn(b'pending-media-packet', payloads)
         self.assertEqual(payloads.count(modified), 2)
         self.assertEqual(report['unique_mutated_sequences'], 1)
+        self.assertEqual(report['restoration_forwarded_packets'], {'in': 1, 'out': 1})
 
     def test_disconnect_during_restore_cannot_leave_a_success_result(self):
         report, _, _ = self.wire_session(disconnect=True)
         self.assertFalse(report['high_target_confirmed'])
         self.assertNotEqual(tui.summarize(report).kind, 'success')
+
+    def test_incomplete_relay_write_during_restore_keeps_recovery_available(self):
+        report, _, _ = self.wire_session(short_restore_write=True)
+        self.assertTrue(any('Incomplete Ethernet transmission' in error
+                            for error in report['restoration_errors']))
+        self.assertEqual(tui.summarize(report).kind, 'error')
+        self.watcher.terminate.assert_not_called()
+        self.assertTrue((self.root / 'relay.lock').exists())
 
     def test_send_failure_restores_before_stopping_watchdog(self):
         self.tx.send.side_effect = OSError('synthetic send failure')
@@ -347,7 +368,7 @@ class RelayLifecycleTests(unittest.TestCase):
         self.assertLess(self.actions.index('restore'), self.actions.index('watchdog_stop'))
 
     def test_failed_restoration_retains_watchdog_and_blocks_overlapping_retry(self):
-        self.restore.side_effect = lambda state: ['ARP restore: synthetic failure']
+        self.restore.side_effect = lambda state, **kwargs: ['ARP restore: synthetic failure']
         report = self.run_relay()
         self.assertEqual(tui.summarize(report).kind, 'error')
         self.watcher.terminate.assert_not_called()

@@ -203,6 +203,9 @@ def run(active, finish_on_high_target=False, *, connect_timeout=35,
     confirmation = TargetConfirmation()
     run_error = None
     last_target = None
+    restoring = False
+    service_restore = None
+    restoration_forwarded = collections.Counter()
     old_handlers = {sig: signal.getsignal(sig)
                     for sig in (signal.SIGINT, signal.SIGTERM, signal.SIGHUP)}
     old_umask = os.umask(0o077)
@@ -234,6 +237,61 @@ def run(active, finish_on_high_target=False, *, connect_timeout=35,
                              confirmation_timeout if active else 0)
         next_arp = next_progress = start
         ready_announced = early_session_warned = False
+
+        def relay_frame(frame, now):
+            nonlocal last_target, early_session_warned
+            result = transform(frame, state, active)
+            if result is None:
+                return
+            outbound, data, direction, changed = result
+            if tx.send(outbound) != len(outbound):
+                raise RuntimeError('Incomplete Ethernet transmission')
+            counts['forwarded_' + direction] += 1
+            if restoring:
+                restoration_forwarded[direction] += 1
+            if changed:
+                witness.expect(outbound)
+                counts['mutated_packets_including_retransmits'] += 1
+                if data[17:21] not in seen:
+                    confirmation.modified()
+                    last_target = None
+                    window.startup(now)
+                seen.add(data[17:21])
+                if counts['mutated_packets_including_retransmits'] == 1 and not restoring:
+                    notify('modified', 'Startup packet modified; waiting for PS5 response.')
+            if data is not None and direction == 'in':
+                rates[int(now - start)] += len(data)
+                observed = []
+                observe(data, observed)
+                events.extend(observed)
+                for event in observed:
+                    confirmation.observe(event)
+                    if event['type'] == 'CONNECTIONQUALITY' and confirmation.streaming:
+                        last_target = event.get('target_bitrate_raw')
+                    if event['type'] == 'DISCONNECT':
+                        last_target = None
+                    if not restoring:
+                        notify('observed', event=event, accepted=confirmation.accepted,
+                               streaming=confirmation.streaming, samples=confirmation.samples,
+                               target_bitrate=last_target)
+                    if (active and not seen and not early_session_warned and not restoring
+                            and event['type'] == 'CONNECTIONQUALITY'):
+                        early_session_warned = True
+                        notify('reconnect', 'Stream detected without modified startup. Disconnect Portal and reconnect.')
+
+        def service_restore(seconds):
+            # Stop redirecting peers, but forward packets that still reach the Mac.
+            # Reuse mutation/observation so startup retransmits stay identical and
+            # a DISCONNECT during cleanup invalidates the target confirmation.
+            deadline = time.monotonic() + seconds
+            while time.monotonic() < deadline:
+                remaining = deadline - time.monotonic()
+                if not rx.select([rx], remain=max(0, min(.05, remaining))):
+                    continue
+                _, frame, _ = rx.recv_raw()
+                if frame:
+                    relay_frame(frame, time.monotonic())
+
         notify('preparing', 'Preparing network path; keep Portal disconnected.')
         while time.monotonic() < window.deadline:
             now = time.monotonic()
@@ -262,43 +320,10 @@ def run(active, finish_on_high_target=False, *, connect_timeout=35,
             _, frame, stamp = rx.recv_raw()
             if not frame:
                 continue
-            result = transform(frame, state, active)
-            if result is None:
-                continue
-            outbound, data, direction, changed = result
-            tx.send(outbound)
-            counts['forwarded_' + direction] += 1
-            if changed:
-                witness.expect(outbound)
-                counts['mutated_packets_including_retransmits'] += 1
-                if data[17:21] not in seen:
-                    confirmation.modified()
-                    last_target = None
-                    window.startup(now)
-                seen.add(data[17:21])
-                if counts['mutated_packets_including_retransmits'] == 1:
-                    notify('modified', 'Startup packet modified; waiting for PS5 response.')
-            if data is not None and direction == 'in':
-                rates[int(now - start)] += len(data)
-                observed = []
-                observe(data, observed)
-                events.extend(observed)
-                for event in observed:
-                    confirmation.observe(event)
-                    if event['type'] == 'CONNECTIONQUALITY' and confirmation.streaming:
-                        last_target = event.get('target_bitrate_raw')
-                    if event['type'] == 'DISCONNECT':
-                        last_target = None
-                    notify('observed', event=event, accepted=confirmation.accepted,
-                           streaming=confirmation.streaming, samples=confirmation.samples,
-                           target_bitrate=last_target)
-                    if (active and not seen and not early_session_warned
-                            and event['type'] == 'CONNECTIONQUALITY'):
-                        early_session_warned = True
-                        notify('reconnect', 'Stream detected without modified startup. Disconnect Portal and reconnect.')
-                if active and finish_on_high_target and confirmation.ready:
-                    notify('confirmed', 'PS5 reported high target bitrate. Restoring direct connection.')
-                    break
+            relay_frame(frame, now)
+            if active and finish_on_high_target and confirmation.ready:
+                notify('confirmed', 'PS5 reported high target bitrate. Restoring direct connection.')
+                break
         completed = True
     except KeyboardInterrupt:
         run_error = 'Cancelled by user'
@@ -306,6 +331,7 @@ def run(active, finish_on_high_target=False, *, connect_timeout=35,
     except Exception as exc:
         run_error = f'{type(exc).__name__}: {exc}'
     finally:
+        restoring = True
         for sig in old_handlers:
             signal.signal(sig, signal.SIG_IGN)
         try:
@@ -316,7 +342,7 @@ def run(active, finish_on_high_target=False, *, connect_timeout=35,
                 pass
             if altered:
                 try:
-                    errors.extend(network.restore(state))
+                    errors.extend(network.restore(state, service=service_restore))
                 except Exception as exc:
                     errors.append('Network restore: ' + str(exc))
             if witness:
@@ -357,14 +383,18 @@ def run(active, finish_on_high_target=False, *, connect_timeout=35,
                 'candidate_is_verified_portal_plaintext': False,
                 'counts': dict(counts), 'unique_mutated_sequences': len(seen),
                 'ps5_messages': events, 'high_target_confirmed': confirmation.ready,
+                'playback_verified': False,
                 'udp_9296_mbps_by_second': {str(k): round(v * 8 / 1e6, 3)
                                            for k, v in sorted(rates.items())},
                 'restoration_errors': errors,
+                'restoration_forwarded_packets': dict(restoration_forwarded),
+                'restoration_peer_state_verified': False,
                 'sysctl_after': sysctl_after,
                 'egress_witness': witness_report,
                 'limits': ['Candidate offset is a static template hypothesis, not decrypted Portal data.',
                            'Target bitrate is a console report, not a pure video throughput measure.',
-                           'User-space relay latency/loss is not independently measured.'],
+                           'User-space relay latency/loss is not independently measured.',
+                           'Restoration sends do not verify peer ARP caches or Portal playback.'],
                 'xor_mask': PATCH_DELTA[0] if active and len(PATCH_DELTA) == 1 else None,
                 'xor_bytes_hex': PATCH_DELTA.hex() if active else None,
                 'profile': PROFILE_LABEL, 'directory': str(folder),

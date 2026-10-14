@@ -1,7 +1,7 @@
 """Device discovery diagnostics without packets, sudo, or network changes."""
 import unittest
 from types import SimpleNamespace
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 import portal_capture as network
 
@@ -19,7 +19,7 @@ class RestorationTests(unittest.TestCase):
         }
         self.peer_mappings = {network.PS5: self.state['own_mac'],
                               network.PORTAL: self.state['own_mac']}
-        self.socket = unittest.mock.MagicMock()
+        self.socket = MagicMock()
         self.socket.send.side_effect = self.send
         for override in (patch.object(network, 'configure'),
                          patch.object(network.conf, 'L2socket', return_value=self.socket),
@@ -67,6 +67,33 @@ class RestorationTests(unittest.TestCase):
         self.assertEqual(self.peer_mappings[network.PORTAL], self.state['ps5_mac'])
         self.assertEqual(self.syswrite.call_count, 2)
         self.socket.close.assert_called_once()
+
+    def test_early_returning_service_cannot_skip_the_cache_lock_wait(self):
+        self.assertEqual(network.restore(self.state, service=lambda seconds: None), [])
+        self.assertEqual(self.peer_mappings[network.PORTAL], self.state['ps5_mac'])
+
+    def test_short_arp_write_is_not_reported_as_success(self):
+        self.socket.send.side_effect = lambda packet: len(bytes(packet)) - 1
+        errors = network.restore(self.state)
+        self.assertTrue(any('Incomplete Ethernet transmission' in error for error in errors))
+        self.assertEqual(self.syswrite.call_count, 2)
+
+    def test_failed_first_reply_does_not_skip_later_repairs(self):
+        calls = 0
+
+        def send(packet):
+            nonlocal calls
+            calls += 1
+            if calls == 1:
+                raise OSError('synthetic send failure')
+            return self.send(packet)
+
+        self.socket.send.side_effect = send
+        errors = network.restore(self.state)
+        self.assertTrue(any('synthetic send failure' in error for error in errors))
+        self.assertEqual(self.peer_mappings[network.PS5], self.state['portal_mac'])
+        self.assertEqual(self.peer_mappings[network.PORTAL], self.state['ps5_mac'])
+        self.assertEqual(self.syswrite.call_count, 2)
 
 
 class DeviceDiscoveryTests(unittest.TestCase):

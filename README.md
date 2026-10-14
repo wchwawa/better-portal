@@ -147,9 +147,11 @@ This repeating demo moves from WAIT to READY, connection checks and success. It 
 
 </details>
 
-### 4. Look for Ready to play
+### 4. Check the bitrate target, then check Portal
 
-A green **Ready to play** with **`[OK]`** means setup succeeded and the normal direct connection has been restored. **Keep Portal connected and play.** Press **Q** on the Mac to quit the wizard; when the launcher says `Press Enter to close`, press Return and close its window.
+A green **Bitrate target confirmed** with **`[OK]`** means PS5 reported the higher target. **Check picture, sound and controls on Portal before playing.** The tool cannot verify playback or the devices' address mappings. If the screen stays black, disconnect and reconnect normally without Better Portal, then report the problem. Keep the Mac awake until restoration finishes. Press **Q** to quit; when the launcher says `Press Enter to close`, press Return and close its window.
+
+The screenshots and animations show an earlier version, which called this result **Ready to play**. That message also confirmed the target only.
 
 ![Successful result: Ready to play and a green OK link between Portal and PS5](docs/images/result-success.png)
 

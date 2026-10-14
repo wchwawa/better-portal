@@ -154,9 +154,11 @@ Cette démo passe d’ATTENDEZ à CONNECTEZ-VOUS, puis aux vérifications et au 
 
 </details>
 
-### 4. Vérifier le message « Prêt à jouer »
+### 4. Confirmer le débit cible, puis vérifier Portal
 
-**Prêt à jouer** en vert avec **`[OK]`** signifie que la configuration a réussi et que la connexion directe habituelle est rétablie. **Gardez Portal connecté et jouez.** Appuyez sur **Q** sur le Mac pour quitter l’assistant. Quand `Press Enter to close` apparaît, appuyez sur Return, puis fermez la fenêtre.
+**Débit cible confirmé** en vert avec **`[OK]`** signifie que la PS5 a signalé le débit cible supérieur. **Vérifiez l’image, le son et les commandes sur Portal avant de jouer.** L’outil ne vérifie ni la lecture ni les tables d’adresses des appareils. Si l’écran reste noir, déconnectez-vous puis reconnectez-vous normalement sans Better Portal, et signalez le problème. Gardez le Mac éveillé jusqu’à la fin de la restauration. Appuyez sur **Q** pour quitter, puis sur Return quand `Press Enter to close` apparaît, et fermez la fenêtre.
+
+Les images et animations montrent une ancienne version qui appelait ce résultat **Prêt à jouer**. Ce message confirmait lui aussi uniquement le débit cible.
 
 ![Résultat réussi : Prêt à jouer et lien vert OK entre Portal et PS5](docs/images/result-success-fr.png)
 

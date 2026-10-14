@@ -334,6 +334,25 @@ class LanguageTests(unittest.TestCase):
                 self.assertGreater(hint[1], last_choice[1] + cell_width(last_choice[2]))
                 self.assertLessEqual(hint[1] + cell_width(hint[2]), 71)
 
+    def test_result_keeps_playback_check_visible_in_every_language(self):
+        summary = tui.summarize({
+            'completed': True, 'unique_mutated_sequences': 1,
+            'high_target_confirmed': True, 'restoration_errors': [],
+            'egress_witness': {'all_expected_observed': True},
+            'ps5_messages': [{'type': 'CONNECTIONQUALITY', 'target_bitrate_raw': 58_374_000}],
+        })
+        for language in LANGUAGES:
+            with self.subTest(language=language):
+                wizard = self.wizard(demo=True)
+                wizard.language = language
+                wizard.draw_result(summary, 2)
+                draws = wizard.screen.addstr.call_args_list
+                body = ''.join(call.args[2] for call in draws if 16 <= call.args[0] < 20)
+                self.assertEqual(''.join(body.split()),
+                                 ''.join((wizard.t(summary.message) + wizard.t(summary.advice)).split()))
+                for call in draws:
+                    self.assertLessEqual(call.args[1] + cell_width(call.args[2]), 71)
+
 
 class TerminalTextTests(unittest.TestCase):
     def test_clip_and_padding_never_split_a_wide_character(self):

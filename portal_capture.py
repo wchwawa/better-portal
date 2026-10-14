@@ -49,15 +49,37 @@ def frames(state,restore=False):
     return [Ether(src=own,dst=a)/ARP(op=2,psrc=PORTAL,pdst=PS5,hwsrc=b if restore else own,hwdst=a),
             Ether(src=own,dst=b)/ARP(op=2,psrc=PS5,pdst=PORTAL,hwsrc=a if restore else own,hwdst=b)]
 
-def restore(state):
+def restore(state, *, service=None):
+    """Send corrective ARP again after a peer's short cache-update lock.
+
+    A successful send only proves local transmission. The optional service
+    callback forwards in-flight traffic during the waits; the detached watchdog
+    uses the same bounded repair schedule without a live relay.
+    """
     configure(state['config'])
     errors=[]
     try:
         s=conf.L2socket(iface=IFACE)
         try:
-            for _ in range(3):
-                for p in frames(state,True): s.send(p)
-                time.sleep(.1)
+            start=time.monotonic()
+            for offset in (0, .1, .2, 1.5, 1.6, 1.7):
+                remaining=max(0, start+offset-time.monotonic())
+                if remaining and service is not None:
+                    try:
+                        service(remaining)
+                    except Exception as e:
+                        errors.append('Relay during restore: '+str(e))
+                        service=None
+                # Also finish the wait if a relay callback failed or returned early.
+                remaining=max(0, start+offset-time.monotonic())
+                if remaining:
+                    time.sleep(remaining)
+                for p in frames(state,True):
+                    try:
+                        if s.send(p)!=len(bytes(p)):
+                            raise RuntimeError('Incomplete Ethernet transmission')
+                    except Exception as e:
+                        errors.append('ARP restore: '+str(e))
         finally: s.close()
     except Exception as e: errors.append('ARP restore: '+str(e))
     for key in KEYS:
