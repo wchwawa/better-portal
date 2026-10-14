@@ -41,7 +41,7 @@ Until a signed installer is available, the [source](../README.md#get-started) an
 | Connection helper | root | Authenticate the XPC peer, validate session input, serialize attempts and launch the protected worker |
 | Protected worker and detached watchdog | root | Run the existing bounded relay and recovery, using private helper-owned files |
 
-The daemon requires an Apple-signed client with the same Team ID and the exact app or bridge identifier. The bridge verifies the helper's identity too. The caller UID comes from `NSXPCConnection.effectiveUserIdentifier`; a supplied UID, `SUDO_UID`, executable, import path, shell command or output path is rejected.
+The daemon requires an Apple-signed client with the same Team ID and the exact app or bridge identifier. The bridge verifies the helper's identity too. The caller UID comes from `NSXPCConnection.effectiveUserIdentifier` and must match the active macOS console user. Switching accounts cancels an active session. A supplied UID, `SUDO_UID`, executable, import path, shell command or output path is rejected. A process already running as that same user can launch the signed bridge, so this boundary limits *what* the helper can do rather than proving which user-level program requested it.
 
 The helper accepts only a Mac `enN` interface, distinct unicast IPv4 addresses and profiles **65 / 100 / 200**. The worker checks that both peers are directly reachable through that interface before changing mappings. It preserves the existing 120-second connection window, 15-second confirmation allowance, target validation, media forwarding during repair and machine-wide attempt lock.
 

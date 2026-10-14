@@ -46,7 +46,7 @@ final class SessionTests {
             config["portal_ip"] = address; value["config"] = config; attacks.append(value)
         }
         let worker = FakeWorker()
-        let manager = SessionManager(factory: { worker }, recoveryPending: { false })
+        let manager = SessionManager(factory: { worker }, recoveryPending: { false }, activeUser: { 501 })
         for value in attacks { XCTAssertNotNil(send(manager, value)["error"], "\(value)") }
         XCTAssertEqual(worker.starts, 0)
         XCTAssertThrowsError(try decode(Data(repeating: 0, count: 4097)))
@@ -54,7 +54,7 @@ final class SessionTests {
     }
     @Test func testAuthenticatedCallerCannotBeOverriddenAndResultsBelongToConnection() {
         let worker = FakeWorker()
-        let manager = SessionManager(factory: { worker }, recoveryPending: { false })
+        let manager = SessionManager(factory: { worker }, recoveryPending: { false }, activeUser: { 502 })
         XCTAssertNotNil(send(manager, start, uid: 0)["error"])
         XCTAssertEqual(send(manager, start, uid: 502)["started"] as? Bool, true)
         XCTAssertEqual(worker.uid, 502)
@@ -65,7 +65,7 @@ final class SessionTests {
     }
     @Test func testConcurrentStartCancelAndRetryHaveNoStaleEvents() {
         let worker = FakeWorker()
-        let manager = SessionManager(factory: { worker }, recoveryPending: { false })
+        let manager = SessionManager(factory: { worker }, recoveryPending: { false }, activeUser: { 501 })
         XCTAssertNotNil(send(manager, start)["started"])
         XCTAssertNotNil(send(manager, start, caller: UUID())["error"])
         worker.event?(["type": "ready", "seconds": 120])
@@ -81,7 +81,7 @@ final class SessionTests {
     }
     @Test func testDisconnectAndMissingHeartbeatsCancelThenBoundWorkerLifetime() {
         let worker = FakeWorker(); var now: Double = 0
-        let manager = SessionManager(factory: { worker }, recoveryPending: { false }, clock: { now })
+        let manager = SessionManager(factory: { worker }, recoveryPending: { false }, activeUser: { 501 }, clock: { now })
         _ = send(manager, start)
         now = 11; manager.tick()
         XCTAssertEqual(worker.cancels, 1)
@@ -92,9 +92,26 @@ final class SessionTests {
         _ = send(manager, ["op": "status"])
         XCTAssertEqual(worker.cancels, 2)
     }
+    @Test func testInactiveMacUserCannotStartAndSwitchingUsersCancelsTheOwner() {
+        let worker = FakeWorker()
+        var active: uid_t? = 501
+        let manager = SessionManager(factory: { worker }, recoveryPending: { false },
+                                     activeUser: { active })
+        XCTAssertNotNil(send(manager, start, uid: 502)["error"])
+        XCTAssertEqual(worker.starts, 0)
+        XCTAssertEqual(send(manager, start, uid: 501)["started"] as? Bool, true)
+        active = 502
+        XCTAssertNotNil(send(manager, ["op": "poll"], uid: 501)["error"])
+        manager.tick()
+        XCTAssertEqual(worker.cancels, 1)
+        XCTAssertNotNil(send(manager, start, uid: 502)["error"])
+        worker.finish?(["completed": false, "restoration_errors": []])
+        _ = send(manager, ["op": "status"], uid: 502)
+        XCTAssertEqual(send(manager, start, uid: 502)["started"] as? Bool, true)
+    }
     @Test func testRemovalDrainsRecoveryAndBlocksNewStartsUntilDisconnect() {
         let worker = FakeWorker(); var recovery = false
-        let manager = SessionManager(factory: { worker }, recoveryPending: { recovery })
+        let manager = SessionManager(factory: { worker }, recoveryPending: { recovery }, activeUser: { 501 })
         _ = send(manager, start)
         let remover = UUID()
         XCTAssertEqual(send(manager, ["op": "prepareRemoval"], caller: remover)["ready"] as? Bool, false)
@@ -110,16 +127,16 @@ final class SessionTests {
     }
     @Test func testLaunchFailureReleasesSlotAndRecoveryOnDaemonRestartBlocksStart() {
         let worker = FakeWorker(); worker.failure = true
-        let manager = SessionManager(factory: { worker }, recoveryPending: { false })
+        let manager = SessionManager(factory: { worker }, recoveryPending: { false }, activeUser: { 501 })
         XCTAssertNotNil(send(manager, start)["error"])
         worker.failure = false; XCTAssertNotNil(send(manager, start)["started"])
-        let restarted = SessionManager(factory: { worker }, recoveryPending: { true })
+        let restarted = SessionManager(factory: { worker }, recoveryPending: { true }, activeUser: { 501 })
         XCTAssertNotNil(send(restarted, start)["error"])
         XCTAssertEqual(send(restarted, ["op": "prepareRemoval"])["ready"] as? Bool, false)
     }
     @Test func testProgressAndPipeBuffersAreBounded() throws {
         let worker = FakeWorker()
-        let manager = SessionManager(factory: { worker }, recoveryPending: { false })
+        let manager = SessionManager(factory: { worker }, recoveryPending: { false }, activeUser: { 501 })
         _ = send(manager, start)
         for index in 0..<1000 { worker.event?(["type": "tick", "seconds": index]) }
         XCTAssertEqual((send(manager, ["op": "poll"])["events"] as? [Any])?.count, 256)
@@ -175,23 +192,24 @@ final class XPCTests {
         XCTAssertEqual(SecCodeCopyStaticCode(code!, [], &staticCode), errSecSuccess)
         XCTAssertEqual(SecCodeCopyDesignatedRequirement(staticCode!, [], &requirement), errSecSuccess)
         XCTAssertEqual(SecRequirementCopyString(requirement!, [], &text), errSecSuccess)
-        for allowed in [true, false] {
+        for (signed, active) in [(true, true), (false, true), (true, false)] {
             let worker = FakeWorker()
-            let manager = SessionManager(factory: { worker }, recoveryPending: { false })
+            let manager = SessionManager(factory: { worker }, recoveryPending: { false },
+                                         activeUser: { active ? getuid() : getuid() + 1 })
             let delegate = ServiceListener(manager: manager)
             let listener = NSXPCListener.anonymous()
             listener.delegate = delegate
-            listener.setConnectionCodeSigningRequirement(allowed ? text! as String : "identifier \"untrusted-client-must-fail\"")
+            listener.setConnectionCodeSigningRequirement(signed ? text! as String : "identifier \"untrusted-client-must-fail\"")
             listener.resume()
             let connection = NSXPCConnection(listenerEndpoint: listener.endpoint)
             connection.remoteObjectInterface = NSXPCInterface(with: PortalService.self)
             connection.resume()
             let finished = DispatchSemaphore(value: 0)
             let proxy = connection.remoteObjectProxyWithErrorHandler { _ in
-                XCTAssertFalse(allowed); finished.signal()
+                XCTAssertFalse(signed && active); finished.signal()
             } as! PortalService
             proxy.exchange(encode(["op": "status"])) { data in
-                XCTAssertTrue(allowed)
+                XCTAssertTrue(signed && active)
                 XCTAssertEqual((try? decode(data))?["busy"] as? Bool, false)
                 finished.signal()
             }

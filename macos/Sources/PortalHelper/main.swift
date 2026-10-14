@@ -66,7 +66,7 @@ do {
     try CodeIdentity.validate(Portal.app, team: team, identifier: Portal.appID)
     let manager = SessionManager(factory: { Worker() }, recoveryPending: {
         FileManager.default.fileExists(atPath: Portal.lock)
-    })
+    }, activeUser: consoleUserUID)
     let delegate = ServiceListener(manager: manager)
     let listener = NSXPCListener(machServiceName: Portal.helperID)
     listener.setConnectionCodeSigningRequirement(CodeIdentity.requirement(

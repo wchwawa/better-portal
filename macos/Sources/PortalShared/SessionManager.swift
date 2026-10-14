@@ -1,4 +1,12 @@
 import Foundation
+import SystemConfiguration
+
+public func consoleUserUID() -> uid_t? {
+    var uid: uid_t = 0
+    var gid: gid_t = 0
+    guard SCDynamicStoreCopyConsoleUser(nil, &uid, &gid) != nil, uid >= 501 else { return nil }
+    return uid
+}
 
 public protocol SessionWorker: AnyObject {
     func start(_ request: SessionRequest, uid: uid_t,
@@ -13,6 +21,7 @@ public final class SessionManager {
     private let queue = DispatchQueue(label: "portal.sessions")
     private let factory: () -> SessionWorker
     private let recoveryPending: () -> Bool
+    private let activeUser: () -> uid_t?
     private let clock: () -> TimeInterval
     private var worker: SessionWorker?
     private var owner: UUID?
@@ -26,14 +35,18 @@ public final class SessionManager {
 
     public init(factory: @escaping () -> SessionWorker,
                 recoveryPending: @escaping () -> Bool,
+                activeUser: @escaping () -> uid_t?,
                 clock: @escaping () -> TimeInterval = { ProcessInfo.processInfo.systemUptime }) {
-        self.factory = factory; self.recoveryPending = recoveryPending; self.clock = clock
+        self.factory = factory; self.recoveryPending = recoveryPending
+        self.activeUser = activeUser; self.clock = clock
     }
+
+    public func allows(_ uid: uid_t) -> Bool { uid >= 501 && activeUser() == uid }
 
     public func exchange(_ data: Data, caller: UUID, uid: uid_t) -> Data {
         queue.sync {
             do {
-                guard uid >= 501 else { throw PortalError("Use Better Portal as your normal Mac user") }
+                guard allows(uid) else { throw PortalError("Use Better Portal from the active Mac desktop") }
                 let message = try decode(data)
                 guard let operation = message["op"] as? String else { throw PortalError("Missing operation") }
                 if operation != "start", Set(message.keys) != ["op"] { throw PortalError("Unexpected request fields") }
@@ -103,6 +116,7 @@ public final class SessionManager {
     public func tick() {
         queue.sync {
             guard worker != nil else { return }
+            if ownerUID != activeUser() { cancel() }
             if clock() - heartbeat > 10 || clock() - started > 200 { cancel() }
             if let cancelledAt, clock() - cancelledAt > 20 {
                 // The detached watchdog remains alive; its lock still gates retry/removal.
@@ -127,7 +141,7 @@ public final class ServiceListener: NSObject, NSXPCListenerDelegate {
     private let manager: SessionManager
     public init(manager: SessionManager) { self.manager = manager }
     public func listener(_ listener: NSXPCListener, shouldAcceptNewConnection connection: NSXPCConnection) -> Bool {
-        guard connection.effectiveUserIdentifier >= 501 else { return false }
+        guard manager.allows(connection.effectiveUserIdentifier) else { return false }
         let endpoint = ServiceEndpoint(manager: manager, uid: connection.effectiveUserIdentifier)
         connection.exportedInterface = NSXPCInterface(with: PortalService.self)
         connection.exportedObject = endpoint
