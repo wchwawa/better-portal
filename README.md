@@ -12,6 +12,17 @@ Choose a higher picture-quality target when playing your PS5 through PlayStation
 
 [Install and open](#get-started) · [First session](#your-first-session) · [Find device addresses](#find-device-addresses) · [Get unstuck](#questions-and-fixes)
 
+## Install and update with Homebrew (Mac)
+
+If you use [Homebrew](https://brew.sh), install with these two commands. Homebrew installs Python and the required packages for you:
+
+```sh
+brew tap wchwawa/better-portal https://github.com/wchwawa/better-portal
+brew install --HEAD wchwawa/better-portal/better-portal
+```
+
+Open with **`better-portal`**. Close the wizard before updating, then run **`better-portal update`**. Addresses, language, bitrate and reports stay in your user folder. This follows the latest `main` branch and still uses the Mac password prompt for live sessions. [Full guide and importing your old settings](docs/homebrew.md). The ZIP instructions below remain available.
+
 ## Windows quick start
 
 The same guided TUI is available on **Windows 11 and Windows 10**. Windows device testing is still in progress; see the [Windows guide](WINDOWS.md) for requirements and troubleshooting.

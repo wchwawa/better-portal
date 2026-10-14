@@ -174,5 +174,19 @@
   "Live setup supports macOS and native Windows 10/11.": "実際の接続は macOS とネイティブ Windows 10/11 に対応しています。",
   "Run Setup-Windows.cmd to install terminal support.": "Setup-Windows.cmd を実行して端末サポートをインストールしてください。",
   "Terminal setup failed: {error}. Try Windows Terminal.": "端末の初期化に失敗しました：{error}。Windows Terminal をお試しください。",
-  "Manual recovery in administrator PowerShell from this project folder: {command}": "このフォルダーで管理者 PowerShell を開き、手動復旧：{command}"
+  "Manual recovery in administrator PowerShell from this project folder: {command}": "このフォルダーで管理者 PowerShell を開き、手動復旧：{command}",
+  "Open Better Portal or update its Homebrew installation.": "Better Portal を開くか、Homebrew で更新します。",
+  "Preview the wizard without network changes.": "ネットワークを変更せずにウィザードを表示します。",
+  "Update with Homebrew, or import settings from an old folder.": "Homebrew で更新するか、以前のフォルダから設定を読み込みます。",
+  "Close the other Better Portal window before continuing.": "別の Better Portal ウィンドウを閉じてから続行してください。",
+  "Install Better Portal with Homebrew before using this command.": "このコマンドを使う前に Homebrew で Better Portal をインストールしてください。",
+  "A Portal connection or recovery is active. Wait until it finishes.": "Portal の接続処理または復旧が進行中です。完了するまでお待ちください。",
+  "The Homebrew launcher supports macOS.": "Homebrew ランチャーは macOS 用です。",
+  "Run better-portal without sudo. It requests permission when needed.": "sudo を付けずに better-portal を実行してください。必要なときに認証を求めます。",
+  "Updating Better Portal with Homebrew. Your settings stay in place.": "Homebrew で Better Portal を更新しています。設定は保持されます。",
+  "Update complete. Run better-portal to open the wizard.": "更新が完了しました。better-portal でウィザードを開けます。",
+  "Homebrew could not finish. Read the error above, then retry better-portal update.": "Homebrew の更新が完了しませんでした。上のエラーを確認し、better-portal update を再実行してください。",
+  "Imported {count} settings files. Existing settings were kept.": "設定ファイルを {count} 個読み込みました。既存の設定は保持されました。",
+  "Opening Better Portal. Enter your Mac login password if requested.": "Better Portal を開いています。求められたら Mac のログインパスワードを入力してください。",
+  "Manual recovery in Terminal: {command}": "ターミナルで手動復旧：{command}"
 }

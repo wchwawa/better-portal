@@ -174,5 +174,19 @@
   "Live setup supports macOS and native Windows 10/11.": "La connexion réelle prend en charge macOS et Windows 10/11 natif.",
   "Run Setup-Windows.cmd to install terminal support.": "Exécutez Setup-Windows.cmd pour installer la prise en charge du terminal.",
   "Terminal setup failed: {error}. Try Windows Terminal.": "Initialisation du terminal impossible : {error}. Essayez Windows Terminal.",
-  "Manual recovery in administrator PowerShell from this project folder: {command}": "Restauration depuis ce dossier dans PowerShell administrateur : {command}"
+  "Manual recovery in administrator PowerShell from this project folder: {command}": "Restauration depuis ce dossier dans PowerShell administrateur : {command}",
+  "Open Better Portal or update its Homebrew installation.": "Ouvrir Better Portal ou mettre à jour son installation Homebrew.",
+  "Preview the wizard without network changes.": "Afficher un aperçu sans modifier le réseau.",
+  "Update with Homebrew, or import settings from an old folder.": "Mettre à jour avec Homebrew ou importer les réglages d’un ancien dossier.",
+  "Close the other Better Portal window before continuing.": "Fermez l’autre fenêtre Better Portal avant de continuer.",
+  "Install Better Portal with Homebrew before using this command.": "Installez Better Portal avec Homebrew avant d’utiliser cette commande.",
+  "A Portal connection or recovery is active. Wait until it finishes.": "Une connexion ou une restauration Portal est en cours. Attendez la fin.",
+  "The Homebrew launcher supports macOS.": "Le lanceur Homebrew est destiné à macOS.",
+  "Run better-portal without sudo. It requests permission when needed.": "Lancez better-portal sans sudo. L’autorisation sera demandée si nécessaire.",
+  "Updating Better Portal with Homebrew. Your settings stay in place.": "Mise à jour de Better Portal avec Homebrew. Vos réglages sont conservés.",
+  "Update complete. Run better-portal to open the wizard.": "Mise à jour terminée. Lancez better-portal pour ouvrir l’assistant.",
+  "Homebrew could not finish. Read the error above, then retry better-portal update.": "Homebrew n’a pas pu terminer. Consultez l’erreur ci-dessus, puis relancez better-portal update.",
+  "Imported {count} settings files. Existing settings were kept.": "{count} fichiers de réglages importés. Les réglages existants ont été conservés.",
+  "Opening Better Portal. Enter your Mac login password if requested.": "Ouverture de Better Portal. Saisissez le mot de passe de votre Mac si demandé.",
+  "Manual recovery in Terminal: {command}": "Restauration manuelle dans Terminal : {command}"
 }

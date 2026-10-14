@@ -174,5 +174,19 @@
   "Live setup supports macOS and native Windows 10/11.": "실제 연결은 macOS 및 네이티브 Windows 10/11에서 지원됩니다.",
   "Run Setup-Windows.cmd to install terminal support.": "Setup-Windows.cmd를 실행해 터미널 지원을 설치하세요.",
   "Terminal setup failed: {error}. Try Windows Terminal.": "터미널 초기화 실패: {error}. Windows Terminal을 사용해 보세요.",
-  "Manual recovery in administrator PowerShell from this project folder: {command}": "이 프로젝트 폴더의 관리자 PowerShell에서 수동 복구: {command}"
+  "Manual recovery in administrator PowerShell from this project folder: {command}": "이 프로젝트 폴더의 관리자 PowerShell에서 수동 복구: {command}",
+  "Open Better Portal or update its Homebrew installation.": "Better Portal을 열거나 Homebrew로 업데이트합니다.",
+  "Preview the wizard without network changes.": "네트워크 변경 없이 마법사를 미리 봅니다.",
+  "Update with Homebrew, or import settings from an old folder.": "Homebrew로 업데이트하거나 이전 폴더의 설정을 가져옵니다.",
+  "Close the other Better Portal window before continuing.": "다른 Better Portal 창을 닫은 후 계속하세요.",
+  "Install Better Portal with Homebrew before using this command.": "이 명령을 사용하기 전에 Homebrew로 Better Portal을 설치하세요.",
+  "A Portal connection or recovery is active. Wait until it finishes.": "Portal 연결 준비 또는 복구가 진행 중입니다. 완료될 때까지 기다리세요.",
+  "The Homebrew launcher supports macOS.": "Homebrew 실행기는 macOS용입니다.",
+  "Run better-portal without sudo. It requests permission when needed.": "sudo 없이 better-portal을 실행하세요. 필요할 때 권한을 요청합니다.",
+  "Updating Better Portal with Homebrew. Your settings stay in place.": "Homebrew로 Better Portal을 업데이트합니다. 기존 설정은 유지됩니다.",
+  "Update complete. Run better-portal to open the wizard.": "업데이트가 완료되었습니다. better-portal로 마법사를 여세요.",
+  "Homebrew could not finish. Read the error above, then retry better-portal update.": "Homebrew 업데이트를 완료하지 못했습니다. 위 오류를 확인한 후 better-portal update를 다시 실행하세요.",
+  "Imported {count} settings files. Existing settings were kept.": "설정 파일 {count}개를 가져왔습니다. 기존 설정은 유지되었습니다.",
+  "Opening Better Portal. Enter your Mac login password if requested.": "Better Portal을 엽니다. 요청하면 Mac 로그인 암호를 입력하세요.",
+  "Manual recovery in Terminal: {command}": "터미널에서 수동 복구: {command}"
 }
