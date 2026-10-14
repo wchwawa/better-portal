@@ -173,5 +173,6 @@
   "Double-click Start-Windows.cmd and accept the Windows permission prompt.": "请双击 Start-Windows.cmd 并允许 Windows 的权限请求。",
   "Live setup supports macOS and native Windows 10/11.": "实际连接支持 macOS 和原生 Windows 10/11。",
   "Run Setup-Windows.cmd to install terminal support.": "请运行 Setup-Windows.cmd 安装终端界面依赖。",
-  "Terminal setup failed: {error}. Try Windows Terminal.": "终端初始化失败：{error}。请尝试 Windows Terminal。"
+  "Terminal setup failed: {error}. Try Windows Terminal.": "终端初始化失败：{error}。请尝试 Windows Terminal。",
+  "Manual recovery in administrator PowerShell from this project folder: {command}": "在此项目文件夹的管理员 PowerShell 中手动恢复：{command}"
 }

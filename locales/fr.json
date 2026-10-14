@@ -173,5 +173,6 @@
   "Double-click Start-Windows.cmd and accept the Windows permission prompt.": "Double-cliquez sur Start-Windows.cmd et acceptez la demande d’autorisation Windows.",
   "Live setup supports macOS and native Windows 10/11.": "La connexion réelle prend en charge macOS et Windows 10/11 natif.",
   "Run Setup-Windows.cmd to install terminal support.": "Exécutez Setup-Windows.cmd pour installer la prise en charge du terminal.",
-  "Terminal setup failed: {error}. Try Windows Terminal.": "Initialisation du terminal impossible : {error}. Essayez Windows Terminal."
+  "Terminal setup failed: {error}. Try Windows Terminal.": "Initialisation du terminal impossible : {error}. Essayez Windows Terminal.",
+  "Manual recovery in administrator PowerShell from this project folder: {command}": "Restauration depuis ce dossier dans PowerShell administrateur : {command}"
 }

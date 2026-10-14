@@ -959,7 +959,9 @@ class Wizard:
                                          if deadline else 'The independent recovery process has its own deadline.') + 1
                     state = report.get('watchdog_state')
                     if state:
-                        self.paragraph(row, self.t('Manual recovery from this project folder: {command}',
+                        hint = ('Manual recovery in administrator PowerShell from this project folder: {command}'
+                                if self.windows else 'Manual recovery from this project folder: {command}')
+                        self.paragraph(row, self.t(hint,
                                        command=recovery_command(state, self.windows)))
                 elif report.get('directory'):
                     self.paragraph(row, 'The report and captures stay local. Share only a redacted summary.')

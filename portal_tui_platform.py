@@ -2,7 +2,6 @@
 import ctypes
 from dataclasses import dataclass
 import ipaddress
-import subprocess
 
 
 # Keep the existing Mac copy; Windows uses the corresponding localized PC copy.
@@ -50,7 +49,9 @@ def windows_admin():
 
 def recovery_command(state, windows=False):
     if windows:
-        return subprocess.list2cmdline([
-            r'.venv\Scripts\python.exe', 'portal_windows.py', '--restore', str(state)])
+        # This is displayed for pasting into PowerShell, not passed to CreateProcess.
+        # Single quotes keep $, &, backticks and spaces literal in folder names.
+        arguments = [r'.venv\Scripts\python.exe', 'portal_windows.py', '--restore', str(state)]
+        return '& ' + ' '.join("'" + value.replace("'", "''") + "'" for value in arguments)
     import shlex
     return 'sudo .venv/bin/python portal_capture.py --restore ' + shlex.quote(str(state))

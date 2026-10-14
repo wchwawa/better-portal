@@ -173,5 +173,6 @@
   "Double-click Start-Windows.cmd and accept the Windows permission prompt.": "Start-Windows.cmd をダブルクリックし、Windows の許可画面で承認してください。",
   "Live setup supports macOS and native Windows 10/11.": "実際の接続は macOS とネイティブ Windows 10/11 に対応しています。",
   "Run Setup-Windows.cmd to install terminal support.": "Setup-Windows.cmd を実行して端末サポートをインストールしてください。",
-  "Terminal setup failed: {error}. Try Windows Terminal.": "端末の初期化に失敗しました：{error}。Windows Terminal をお試しください。"
+  "Terminal setup failed: {error}. Try Windows Terminal.": "端末の初期化に失敗しました：{error}。Windows Terminal をお試しください。",
+  "Manual recovery in administrator PowerShell from this project folder: {command}": "このフォルダーで管理者 PowerShell を開き、手動復旧：{command}"
 }

@@ -135,11 +135,12 @@ class WindowsWizardTests(unittest.TestCase):
         wizard.save_preferences(language='fr')
         self.assertEqual(list(self.root.iterdir()), [])
 
-    def test_windows_recovery_command_has_native_path_and_quotes_spaces(self):
-        state = r'C:\Users\Test User\Portal & PS5\recovery-state.json'
+    def test_windows_recovery_command_quotes_powershell_metacharacters(self):
+        state = "C:\\Users\\Test's PC\\Portal&$(literal)`\\recovery-state.json"
         command = recovery_command(state, windows=True)
-        self.assertEqual(command, subprocess.list2cmdline([
-            r'.venv\Scripts\python.exe', 'portal_windows.py', '--restore', state]))
+        self.assertEqual(command,
+                         "& '.venv\\Scripts\\python.exe' 'portal_windows.py' '--restore' "
+                         "'C:\\Users\\Test''s PC\\Portal&$(literal)`\\recovery-state.json'")
         self.assertNotIn('sudo', command)
         self.assertNotIn('portal_capture.py', command)
 

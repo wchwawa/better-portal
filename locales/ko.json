@@ -173,5 +173,6 @@
   "Double-click Start-Windows.cmd and accept the Windows permission prompt.": "Start-Windows.cmd를 더블 클릭하고 Windows 권한 요청을 허용하세요.",
   "Live setup supports macOS and native Windows 10/11.": "실제 연결은 macOS 및 네이티브 Windows 10/11에서 지원됩니다.",
   "Run Setup-Windows.cmd to install terminal support.": "Setup-Windows.cmd를 실행해 터미널 지원을 설치하세요.",
-  "Terminal setup failed: {error}. Try Windows Terminal.": "터미널 초기화 실패: {error}. Windows Terminal을 사용해 보세요."
+  "Terminal setup failed: {error}. Try Windows Terminal.": "터미널 초기화 실패: {error}. Windows Terminal을 사용해 보세요.",
+  "Manual recovery in administrator PowerShell from this project folder: {command}": "이 프로젝트 폴더의 관리자 PowerShell에서 수동 복구: {command}"
 }

@@ -64,7 +64,7 @@ Disconnect Portal from PS5. Retry in the wizard and reconnect only after the nex
 
 Keep the PC awake. Press **D** and read the report path and automatic recovery deadline. The independent watchdog retains a machine-wide lock while recovery is pending; another attempt cannot run over it. The wizard also disables retry after a recovery error.
 
-If recovery still fails after the displayed deadline, wait until the attempt/watchdog has stopped. In an **administrator terminal**, use the exact recovery command shown by **D** with a state file created by this tool. Do not delete locks to force a retry. Reconnecting the devices’ network connections can also refresh their mappings. A powered-off PC cannot run its watchdog.
+If recovery still fails after the displayed deadline, wait until the attempt/watchdog has stopped. In **PowerShell opened as administrator**, use the exact recovery command shown by **D** with a state file created by this tool. Do not delete locks to force a retry. Reconnecting the devices’ network connections can also refresh their mappings. A powered-off PC cannot run its watchdog.
 
 ## Optional diagnostic commands
 
