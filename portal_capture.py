@@ -2,6 +2,7 @@
 import argparse, ipaddress, json, os, re, signal, subprocess, sys, time
 from pathlib import Path
 from scapy.all import ARP, Ether, conf, get_if_hwaddr, srp
+from portal_recovery import restore_peer_mappings
 ROOT=Path(__file__).resolve().parent
 KEYS=('net.inet.ip.forwarding','net.inet.ip.redirect')
 IFACE='en0'
@@ -61,25 +62,10 @@ def restore(state, *, service=None):
     try:
         s=conf.L2socket(iface=IFACE)
         try:
-            start=time.monotonic()
-            for offset in (0, .1, .2, 1.5, 1.6, 1.7):
-                remaining=max(0, start+offset-time.monotonic())
-                if remaining and service is not None:
-                    try:
-                        service(remaining)
-                    except Exception as e:
-                        errors.append('Relay during restore: '+str(e))
-                        service=None
-                # Also finish the wait if a relay callback failed or returned early.
-                remaining=max(0, start+offset-time.monotonic())
-                if remaining:
-                    time.sleep(remaining)
-                for p in frames(state,True):
-                    try:
-                        if s.send(p)!=len(bytes(p)):
-                            raise RuntimeError('Incomplete Ethernet transmission')
-                    except Exception as e:
-                        errors.append('ARP restore: '+str(e))
+            def send(packet):
+                if s.send(packet)!=len(bytes(packet)):
+                    raise RuntimeError('Incomplete Ethernet transmission')
+            errors.extend(restore_peer_mappings(send, frames(state,True), service=service))
         finally: s.close()
     except Exception as e: errors.append('ARP restore: '+str(e))
     for key in KEYS:

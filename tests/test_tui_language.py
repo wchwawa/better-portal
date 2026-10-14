@@ -37,7 +37,7 @@ class LanguageTests(unittest.TestCase):
         screen = MagicMock()
         screen.getmaxyx.return_value = (24, 72)
         screen.getch.side_effect = keys
-        return tui.Wizard(screen, self.curses, demo=demo)
+        return tui.Wizard(screen, self.curses, demo=demo, platform='darwin')
 
     def save(self, value):
         self.preferences.write_text(json.dumps(value), encoding='utf-8')

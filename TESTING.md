@@ -1,13 +1,16 @@
 # Community test report
 
-## macOS guided terminal wizard
+## macOS and Windows guided terminal wizard
 
 Offline tests cover enrollment validation and atomic saving, elapsed-time connection/confirmation deadlines, watchdog timing, cancellation and repeated attempts, relay failures, recovery failures and honest result classification. `portal_tui.py --demo` exercises the screens without network or configuration changes. These checks do not replace a real-device test of the wizard.
 
 The [black-screen investigation](docs/macos-restoration-tests.md) includes an isolated real-kernel ARP recovery test, its before/after results, and the remaining real-device checks. New offline cases cover packets, patched retransmissions and disconnect notices arriving during restoration.
 
+The [Windows validation guide](docs/windows-tui-validation.md) adds native terminal, UAC-launch, adapter, session-parity and kernel-lock checks. Run `python tests/integration/windows_tui_smoke.py` on native Windows to exercise the real console in all six languages with simulated networking. Physical Windows 11 playback and UAC consent still require the device checklist.
+
 - macOS / Python / Portal firmware versions:
 - Start.command opened the wizard; terminal dimensions:
+- On Windows: Setup-Windows.cmd completed; Start-Windows.cmd opened the same wizard after one UAC prompt; PC LAN adapter selected correctly:
 - Saved enrollment was pre-filled correctly; new enrollment saved and reloaded:
 - Prerequisite keywords, editable fields and bitrate selection were clear:
 - WAIT changed visibly to READY; CONNECT NOW showed a full 120-second countdown:

@@ -12,6 +12,20 @@ PlayStation Portal で自分の PS5 を遊ぶときに、より高い画質を�
 
 [インストールと起動](#get-started) · [初めて使うとき](#first-session) · [機器のアドレスを調べる](#find-device-addresses) · [困ったとき](#questions-and-fixes)
 
+## Windows で始める
+
+**Windows 11 / Windows 10** でも同じ設定ガイドを使えます。Windows の実機検証は継続中です。詳しくは [Windows ガイド（英語）](WINDOWS.md)をご覧ください。
+
+1. [Python](https://www.python.org/downloads/windows/)（3.10 以降、`py` ランチャー付き）と [Npcap](https://npcap.com/#download) をインストールします。Npcap の WinPcap 互換モードはオフにします。
+2. [Better Portal ZIP](https://github.com/wchwawa/better-portal/archive/refs/heads/main.zip) をダウンロードしてすべて展開します。初回だけ **Setup-Windows.cmd** を開き、**Setup complete** を待ちます。
+3. **次回から：Start-Windows.cmd** をダブルクリックし、Windows の許可画面で承認します。コマンド入力や別の設定ツールは不要です。
+4. 言語と 2 台の IPv4 アドレスを設定し、**← / →** で PC の Wi-Fi / Ethernet アダプターとビットレートを選びます。Portal は切断したまま待ち、**CONNECT NOW** が出たら **120 秒以内**に PS5 へ接続します。
+
+言語、**S** キーの設定、アニメーション、接続段階、結果判定は下の Mac 版と共通です。Windows では **PC LAN アダプター** を選びます。言語・アドレス・ビットレートは保存されます。目標ビットレートの確認後も、Portal の映像・音声・操作を確認してください。
+
+**Mac の場合：**以下の手順で最初に **Setup.command**、次回から **Start.command** を開きます。
+
+
 ## 始める前に
 
 次のものを用意してください。
@@ -307,4 +321,4 @@ cd better-portal
 
 </details>
 
-**Windows / Linux を使う場合**：この設定ガイドは **macOS** 向けです。元のプロジェクトには [Windows](https://github.com/atameric/ps5-portal-high-bitrate/blob/main/WINDOWS.md) と [Linux / 自動設定](https://github.com/atameric/ps5-portal-high-bitrate/blob/main/AUTOMATION.md)の別ガイドがあります（英語）。
+**Linux の場合：**元のプロジェクトの [Linux / 自動設定ガイド](https://github.com/atameric/ps5-portal-high-bitrate/blob/main/AUTOMATION.md)をご覧ください。

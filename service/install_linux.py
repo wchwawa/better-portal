@@ -26,7 +26,8 @@ def main():
     target.mkdir(mode=0o700)
     runtime.mkdir(mode=0o700)
     names = ['portal_auto.py', 'portal_auto_platform.py', 'portal_active_probe.py', 'portal_capture.py',
-             'portal_egress_witness.py', 'portal_windows_network.py', 'protocol.py', 'requirements.txt', 'auto-config.json']
+             'portal_egress_witness.py', 'portal_windows_network.py', 'portal_recovery.py',
+             'protocol.py', 'requirements.txt', 'auto-config.json']
     for name in names:
         shutil.copyfile(ROOT / name, target / name)
         (target / name).chmod(0o600)
