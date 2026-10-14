@@ -4,6 +4,8 @@
 
 Offline tests cover enrollment validation and atomic saving, elapsed-time connection/confirmation deadlines, watchdog timing, cancellation and repeated attempts, relay failures, recovery failures and honest result classification. `portal_tui.py --demo` exercises the screens without network or configuration changes. These checks do not replace a real-device test of the wizard.
 
+The [black-screen investigation](docs/macos-restoration-tests.md) includes an isolated real-kernel ARP recovery test, its before/after results, and the remaining real-device checks. New offline cases cover packets, patched retransmissions and disconnect notices arriving during restoration.
+
 - macOS / Python / Portal firmware versions:
 - Start.command opened the wizard; terminal dimensions:
 - Saved enrollment was pre-filled correctly; new enrollment saved and reloaded:

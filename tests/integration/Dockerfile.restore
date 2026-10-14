@@ -1,0 +1,8 @@
+FROM python:3.12-slim
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends iproute2 libpcap0.8 \
+    && rm -rf /var/lib/apt/lists/*
+RUN pip install --no-cache-dir scapy==2.6.1
+WORKDIR /src
+ENV PYTHONDONTWRITEBYTECODE=1
+CMD ["python", "tests/integration/restore_kernel_check.py"]

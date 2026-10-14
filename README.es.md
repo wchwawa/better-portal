@@ -154,9 +154,11 @@ Esta demo repetida pasa de ESPERA a CONECTA AHORA, las comprobaciones y el resul
 
 </details>
 
-### 4. Comprueba que aparece «Listo para jugar»
+### 4. Confirma el objetivo y comprueba Portal
 
-**Listo para jugar** en verde y **`[OK]`** indican que la configuración se completó y se restauró la conexión directa habitual. **Mantén Portal conectado y juega.** Pulsa **Q** en el Mac para cerrar el asistente. Cuando aparezca `Press Enter to close`, pulsa Return y cierra la ventana.
+**Objetivo de bitrate confirmado** en verde y **`[OK]`** indican que PS5 informó del objetivo más alto. **Comprueba imagen, sonido y controles en Portal antes de jugar.** La herramienta no verifica la reproducción ni las tablas de direcciones de los dispositivos. Si la pantalla sigue negra, desconecta y vuelve a conectar normalmente sin Better Portal, y comunica el problema. Mantén el Mac despierto hasta que termine la restauración. Pulsa **Q** para salir y, cuando aparezca `Press Enter to close`, pulsa Return y cierra la ventana.
+
+Las imágenes y animaciones muestran una versión anterior que llamaba a este resultado **Listo para jugar**. Ese mensaje también confirmaba únicamente el objetivo.
 
 ![Resultado correcto: Listo para jugar y un enlace verde OK entre Portal y PS5](docs/images/result-success-es.png)
 

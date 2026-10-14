@@ -3,6 +3,17 @@ on: [push, pull_request]
 permissions:
   contents: read
 jobs:
+  restore-peer:
+    name: ARP restoration with Linux peers
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -f tests/integration/Dockerfile.restore -t portal-restore-test tests/integration
+      - run: |
+          docker run --rm --network none --cap-drop ALL --cap-add NET_ADMIN --cap-add NET_RAW \
+            --mount "type=bind,src=$GITHUB_WORKSPACE,dst=/src,readonly" \
+            portal-restore-test python tests/integration/restore_kernel_check.py --expect-fixed
   test:
     runs-on: ${{ matrix.os }}
     strategy:
