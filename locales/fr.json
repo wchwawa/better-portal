@@ -156,5 +156,21 @@
   "Remembered for next time.": "Ce choix sera conservé pour la prochaine fois.",
   "DEMO: language is not saved.": "DÉMO : la langue n'est pas enregistrée.",
   "Continue ->": "Continuer ->",
-  "↑/↓: select    Enter: confirm    Esc: back": "↑/↓ : choisir    Enter : confirmer    Esc : retour"
+  "↑/↓: select    Enter: confirm    Esc: back": "↑/↓ : choisir    Enter : confirmer    Esc : retour",
+  "Enable connection helper": "Activer l’assistant de connexion",
+  "Open wizard": "Ouvrir le guide",
+  "System Settings": "Réglages Système",
+  "Remove connection helper": "Supprimer l’assistant de connexion",
+  "Connection helper enabled": "Assistant de connexion activé",
+  "Helper disabled": "Assistant désactivé",
+  "Open the wizard normally. macOS manages authorization; Better Portal never stores your password.": "Ouvrez le guide normalement. macOS gère l’autorisation ; Better Portal ne conserve jamais votre mot de passe.",
+  "Approve Better Portal in System Settings, then return here.": "Autorisez Better Portal dans Réglages Système, puis revenez ici.",
+  "Enable the helper once through macOS to use the wizard without sudo.": "Activez l’assistant une fois via macOS pour utiliser le guide sans sudo.",
+  "Install Better Portal in Applications using its installer first.": "Installez d’abord Better Portal dans Applications avec son programme d’installation.",
+  "Recovery is still pending. Keep this Mac awake and try again after it finishes.": "La restauration est encore en cours. Gardez le Mac éveillé et réessayez une fois terminée.",
+  "Finishing recovery before removal…": "Fin de la restauration avant suppression…",
+  "Keep this Mac awake. The helper will be removed when the network is restored.": "Gardez ce Mac éveillé. L’assistant sera supprimé après la restauration du réseau.",
+  "Open Better Portal to check the connection helper. Keep this Mac awake for recovery.": "Ouvrez Better Portal pour vérifier l’assistant. Gardez le Mac éveillé pour la restauration.",
+  "Use the installed macOS connection helper without sudo": "Utiliser l’assistant macOS installé sans sudo",
+  "Open Better Portal as your normal Mac user.": "Ouvrez Better Portal avec votre compte Mac habituel."
 }

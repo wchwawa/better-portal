@@ -156,5 +156,21 @@
   "Remembered for next time.": "次回からこの言語を使用します。",
   "DEMO: language is not saved.": "デモ：言語設定は保存しません。",
   "Continue ->": "続行 ->",
-  "↑/↓: select    Enter: confirm    Esc: back": "↑/↓ 選択    Enter 確定    Esc 戻る"
+  "↑/↓: select    Enter: confirm    Esc: back": "↑/↓ 選択    Enter 確定    Esc 戻る",
+  "Enable connection helper": "接続ヘルパーを有効にする",
+  "Open wizard": "ウィザードを開く",
+  "System Settings": "システム設定",
+  "Remove connection helper": "接続ヘルパーを削除",
+  "Connection helper enabled": "接続ヘルパーは有効です",
+  "Helper disabled": "ヘルパーは無効です",
+  "Open the wizard normally. macOS manages authorization; Better Portal never stores your password.": "通常どおりウィザードを開いてください。認証は macOS が管理し、Better Portal はパスワードを保存しません。",
+  "Approve Better Portal in System Settings, then return here.": "システム設定で Better Portal を許可してから、ここに戻ってください。",
+  "Enable the helper once through macOS to use the wizard without sudo.": "macOS でヘルパーを一度有効にすると、sudo なしでウィザードを使えます。",
+  "Install Better Portal in Applications using its installer first.": "まずインストーラで Better Portal を「アプリケーション」にインストールしてください。",
+  "Recovery is still pending. Keep this Mac awake and try again after it finishes.": "ネットワークの復元がまだ完了していません。Mac をスリープさせず、完了後に再試行してください。",
+  "Finishing recovery before removal…": "復元完了後に削除します…",
+  "Keep this Mac awake. The helper will be removed when the network is restored.": "Mac をスリープさせないでください。ネットワークの復元後にヘルパーを削除します。",
+  "Open Better Portal to check the connection helper. Keep this Mac awake for recovery.": "Better Portal を開いて接続ヘルパーを確認してください。復元のため Mac をスリープさせないでください。",
+  "Use the installed macOS connection helper without sudo": "インストール済みの macOS 接続ヘルパーを sudo なしで使う",
+  "Open Better Portal as your normal Mac user.": "通常の Mac ユーザとして Better Portal を開いてください。"
 }

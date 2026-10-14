@@ -156,5 +156,21 @@
   "Remembered for next time.": "다음 실행에도 이 언어를 사용합니다.",
   "DEMO: language is not saved.": "데모: 언어를 저장하지 않습니다.",
   "Continue ->": "계속 ->",
-  "↑/↓: select    Enter: confirm    Esc: back": "↑/↓ 선택    Enter 확인    Esc 뒤로"
+  "↑/↓: select    Enter: confirm    Esc: back": "↑/↓ 선택    Enter 확인    Esc 뒤로",
+  "Enable connection helper": "연결 도우미 활성화",
+  "Open wizard": "마법사 열기",
+  "System Settings": "시스템 설정",
+  "Remove connection helper": "연결 도우미 제거",
+  "Connection helper enabled": "연결 도우미가 활성화되었습니다",
+  "Helper disabled": "도우미가 비활성화되었습니다",
+  "Open the wizard normally. macOS manages authorization; Better Portal never stores your password.": "평소처럼 마법사를 여세요. macOS가 권한을 관리하며 Better Portal은 비밀번호를 저장하지 않습니다.",
+  "Approve Better Portal in System Settings, then return here.": "시스템 설정에서 Better Portal을 허용한 뒤 돌아오세요.",
+  "Enable the helper once through macOS to use the wizard without sudo.": "macOS에서 도우미를 한 번 활성화하면 sudo 없이 마법사를 사용할 수 있습니다.",
+  "Install Better Portal in Applications using its installer first.": "먼저 설치 프로그램으로 Better Portal을 응용 프로그램 폴더에 설치하세요.",
+  "Recovery is still pending. Keep this Mac awake and try again after it finishes.": "복구가 아직 진행 중입니다. Mac을 깨어 있게 유지하고 완료 후 다시 시도하세요.",
+  "Finishing recovery before removal…": "복구를 마친 후 제거합니다…",
+  "Keep this Mac awake. The helper will be removed when the network is restored.": "Mac을 깨어 있게 유지하세요. 네트워크가 복구되면 도우미가 제거됩니다.",
+  "Open Better Portal to check the connection helper. Keep this Mac awake for recovery.": "Better Portal을 열어 연결 도우미를 확인하세요. 복구를 위해 Mac을 깨어 있게 유지하세요.",
+  "Use the installed macOS connection helper without sudo": "설치된 macOS 연결 도우미를 sudo 없이 사용",
+  "Open Better Portal as your normal Mac user.": "일반 Mac 사용자로 Better Portal을 여세요."
 }

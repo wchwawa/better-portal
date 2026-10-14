@@ -17,7 +17,7 @@ ETC=/etc/portal-bitrate
 CONTAINER=${PORTAL_CONTAINER:-}
 FILES="portal_active_probe.py portal_auto.py portal_auto_platform.py portal_capture.py
        portal_egress_witness.py portal_windows.py portal_windows_network.py protocol.py
-       portal_tui.py portal_tui_text.py
+       portal_tui.py portal_tui_text.py portal_macos_client.py portal_macos_runtime.py
        locales/zh-CN.json locales/ja.json locales/ko.json locales/es.json locales/fr.json
        requirements.txt LICENSE"
 

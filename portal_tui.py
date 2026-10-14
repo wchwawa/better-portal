@@ -155,11 +155,18 @@ class Wizard:
     MIN_ROWS = 24
     MIN_COLS = 72
 
-    def __init__(self, screen, curses, demo=False, animations=True):
+    def __init__(self, screen, curses, demo=False, animations=True, helper=False):
         self.screen, self.curses, self.demo = screen, curses, demo
         self.animations = animations
-        self.config_path = ROOT / 'config.json'
-        self.preferences_path = ROOT / 'tui-settings.json'
+        self.helper = helper
+        data_root = ROOT
+        if helper:
+            from portal_macos_client import user_directory
+            data_root = user_directory()
+            if not demo:
+                data_root.mkdir(parents=True, mode=0o700, exist_ok=True)
+        self.config_path = data_root / 'config.json'
+        self.preferences_path = data_root / 'tui-settings.json'
         saved = load_config(self.config_path)
         self.values = [saved.get('ps5_ip', ''), saved.get('portal_ip', ''),
                        saved.get('interface') or default_interface()]
@@ -882,6 +889,13 @@ class Wizard:
         try:
             if self.demo:
                 return self.simulate()
+            if self.helper:
+                from portal_macos_client import run_session, HelperUnavailable
+                try:
+                    return run_session(self.profile, config, self.progress)
+                except HelperUnavailable as exc:
+                    return {'completed': False, 'run_error': str(exc), 'restoration_errors': [],
+                            'preflight_failed': True}
             import portal_active_probe as probe
             probe.set_profile(self.profile)
             started = True
@@ -916,7 +930,9 @@ class Wizard:
                                                     seconds=deadline)
                                          if deadline else 'The independent recovery process has its own deadline.') + 1
                     state = report.get('watchdog_state')
-                    if state:
+                    if report.get('managed_helper'):
+                        self.paragraph(row, 'Open Better Portal to check the connection helper. Keep this Mac awake for recovery.')
+                    elif state:
                         self.paragraph(row, self.t('Manual recovery from this project folder: {command}',
                                        command='sudo .venv/bin/python portal_capture.py --restore ' + state))
                 elif report.get('directory'):
@@ -987,7 +1003,11 @@ class Wizard:
 
 def main():
     def t(text, **values):
-        language = load_preferences(ROOT / 'tui-settings.json').get('language')
+        preferences = ROOT / 'tui-settings.json'
+        if '--helper' in sys.argv:
+            from portal_macos_client import user_directory
+            preferences = user_directory() / 'tui-settings.json'
+        language = load_preferences(preferences).get('language')
         return translate(text, language, **values)
 
     parser = argparse.ArgumentParser(description=t(__doc__))
@@ -995,13 +1015,17 @@ def main():
                         help=t('Preview the wizard with simulated events; no sudo or network changes'))
     parser.add_argument('--no-animations', action='store_true',
                         help=t('Keep state labels and highlights, without motion'))
+    parser.add_argument('--helper', action='store_true',
+                        help=t('Use the installed macOS connection helper without sudo'))
     args = parser.parse_args()
     if not sys.stdin.isatty() or not sys.stdout.isatty():
         parser.exit(2, t('Open this wizard in an interactive Terminal window.') + '\n')
     if not args.demo:
         if sys.platform != 'darwin':
             parser.exit(2, t('This guided launcher currently supports macOS.') + '\n')
-        if os.geteuid() != 0 or 'SUDO_UID' not in os.environ:
+        if args.helper and os.geteuid() == 0:
+            parser.exit(2, t('Open Better Portal as your normal Mac user.') + '\n')
+        if not args.helper and (os.geteuid() != 0 or 'SUDO_UID' not in os.environ):
             parser.exit(2, t('Double-click Start.command, or run: sudo .venv/bin/python portal_tui.py') + '\n')
     try:
         import curses
@@ -1009,7 +1033,8 @@ def main():
         parser.exit(2, t('This Python installation needs the standard curses module.') + '\n')
     try:
         return curses.wrapper(lambda screen: Wizard(screen, curses, demo=args.demo,
-                                                     animations=not args.no_animations).run())
+                                                     animations=not args.no_animations,
+                                                     helper=args.helper).run())
     except KeyboardInterrupt:
         print(t('Demo closed.' if args.demo else 'Wizard closed.'))
         return 1

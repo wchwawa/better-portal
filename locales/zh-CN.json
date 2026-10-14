@@ -156,5 +156,21 @@
   "Remembered for next time.": "下次启动将使用所选语言。",
   "DEMO: language is not saved.": "演示模式：本次选择不会保存。",
   "Continue ->": "继续 ->",
-  "↑/↓: select    Enter: confirm    Esc: back": "↑/↓ 选择    Enter 确认    Esc 返回"
+  "↑/↓: select    Enter: confirm    Esc: back": "↑/↓ 选择    Enter 确认    Esc 返回",
+  "Enable connection helper": "启用连接助手",
+  "Open wizard": "打开向导",
+  "System Settings": "系统设置",
+  "Remove connection helper": "移除连接助手",
+  "Connection helper enabled": "连接助手已启用",
+  "Helper disabled": "连接助手未启用",
+  "Open the wizard normally. macOS manages authorization; Better Portal never stores your password.": "正常打开向导即可。授权由 macOS 管理；Better Portal 不会保存密码。",
+  "Approve Better Portal in System Settings, then return here.": "在系统设置中允许 Better Portal，然后回到这里。",
+  "Enable the helper once through macOS to use the wizard without sudo.": "通过 macOS 启用一次连接助手，之后使用向导无需 sudo。",
+  "Install Better Portal in Applications using its installer first.": "请先通过安装包将 Better Portal 安装到“应用程序”。",
+  "Recovery is still pending. Keep this Mac awake and try again after it finishes.": "网络仍在恢复。请保持 Mac 唤醒，恢复完成后再试。",
+  "Finishing recovery before removal…": "正在完成网络恢复，随后移除…",
+  "Keep this Mac awake. The helper will be removed when the network is restored.": "请保持 Mac 唤醒。网络恢复完成后将移除连接助手。",
+  "Open Better Portal to check the connection helper. Keep this Mac awake for recovery.": "打开 Better Portal 检查连接助手。保持 Mac 唤醒，以便完成恢复。",
+  "Use the installed macOS connection helper without sudo": "使用已安装的 macOS 连接助手，无需 sudo",
+  "Open Better Portal as your normal Mac user.": "请以普通 Mac 用户身份打开 Better Portal。"
 }

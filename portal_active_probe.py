@@ -6,6 +6,7 @@ Raw Ethernet forwarding only for the two authorized local devices; no scanning.
 """
 import argparse, base64, collections, datetime, json, math, os, signal, socket, struct, subprocess, sys, tempfile, time
 from pathlib import Path
+from dataclasses import dataclass
 from scapy.all import conf
 import portal_capture as network
 from protocol import fields
@@ -31,6 +32,19 @@ def set_profile(profile):
 
 class PreflightError(RuntimeError):
     """An attempt could not start; no network mappings were changed."""
+
+
+@dataclass(frozen=True)
+class HelperContext:
+    """Trusted native-helper context, never populated from a TUI request.
+
+    Files remain root-owned. The unprivileged client receives a report over IPC
+    and writes its own copy; no root operation targets a user's directory.
+    """
+    caller_uid: int
+    storage: Path
+    watchdog_command: tuple
+    lock_token: str
 
 
 class RelayWindow:
@@ -163,7 +177,7 @@ class TargetConfirmation:
 
 
 def run(active, finish_on_high_target=False, *, connect_timeout=35,
-        confirmation_timeout=0, progress=None, config=None):
+        confirmation_timeout=0, progress=None, config=None, helper_context=None):
     """Run the existing relay; an optional callback receives structured UI events."""
     def notify(kind, message=None, **details):
         if progress is not None:
@@ -178,7 +192,12 @@ def run(active, finish_on_high_target=False, *, connect_timeout=35,
     timing = RelayWindow(0, connect_timeout, confirmation_timeout)
     if os.geteuid() != 0:
         raise RuntimeError('Use local Terminal launcher with sudo')
-    uid, gid = int(os.environ['SUDO_UID']), int(os.environ['SUDO_GID'])
+    if helper_context is None:
+        uid, gid = int(os.environ['SUDO_UID']), int(os.environ['SUDO_GID'])
+    else:
+        if not isinstance(helper_context, HelperContext) or helper_context.caller_uid < 501:
+            raise RuntimeError('Invalid helper caller context')
+        uid = gid = 0
     notify('checking')
     try:
         network.configure(config)
@@ -192,8 +211,13 @@ def run(active, finish_on_high_target=False, *, connect_timeout=35,
         fd = os.open(lock, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o600)
     except FileExistsError:
         raise PreflightError('Another attempt or recovery is active. Wait for it to finish.') from None
-    os.close(fd)
-    folder = network.ROOT / 'experiments' / (
+    try:
+        if helper_context is not None:
+            os.write(fd, helper_context.lock_token.encode('ascii'))
+    finally:
+        os.close(fd)
+    output_root = helper_context.storage if helper_context else network.ROOT / 'experiments'
+    folder = output_root / (
         'portal-' + ('patch-' if active else 'baseline-')
         + datetime.datetime.now().strftime('%Y%m%d-%H%M%S-%f'))
     saved = rx = tx = watcher = witness = None
@@ -217,7 +241,14 @@ def run(active, finish_on_high_target=False, *, connect_timeout=35,
         signal.signal(sig, interrupted)
     try:
         folder.mkdir(mode=0o700, parents=True)
-        saved = Path(tempfile.mkdtemp(prefix='portal-lab-restore-', dir='/var/tmp')) / 'state.json'
+        if helper_context is not None:
+            # Keep recovery under the protected helper directory, never /tmp.
+            recovery = folder / 'recovery'
+            recovery.mkdir(mode=0o700)
+            saved = recovery / 'state.json'
+            state['helper_lock_token'] = helper_context.lock_token
+        else:
+            saved = Path(tempfile.mkdtemp(prefix='portal-lab-restore-', dir='/var/tmp')) / 'state.json'
         saved.write_text(json.dumps(state))
         filt = (f'ether dst {state["own_mac"]} and ip '
                 f'and host {network.PS5} and host {network.PORTAL}')
@@ -225,10 +256,24 @@ def run(active, finish_on_high_target=False, *, connect_timeout=35,
         tx = conf.L2socket(iface=network.IFACE)
         witness = Witness(folder, state, network.IFACE, network.PS5, network.PORTAL)
         watchdog_seconds = timing.watchdog_seconds if active else 55
+        watchdog_command = (list(helper_context.watchdog_command) if helper_context else
+                            [sys.executable, str(network.ROOT / 'portal_capture.py')])
+        watchdog_options = ({'env': {
+            'PATH': '/usr/bin:/bin:/usr/sbin:/sbin', 'HOME': '/var/root',
+            'LANG': 'en_US.UTF-8', 'PYTHONNOUSERSITE': '1',
+            'PYINSTALLER_RESET_ENVIRONMENT': '1',
+        }} if helper_context else {})
         watcher = subprocess.Popen(
-            [sys.executable, str(network.ROOT / 'portal_capture.py'),
+            [*watchdog_command,
              '--watchdog', str(saved), '--watchdog-seconds', str(watchdog_seconds)],
-            start_new_session=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            start_new_session=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+            **watchdog_options)
+        if helper_context is not None:
+            ready_deadline = time.monotonic() + 5
+            while not saved.with_suffix('.ready').exists():
+                if watcher.poll() is not None or time.monotonic() >= ready_deadline:
+                    raise RuntimeError('Independent recovery did not become ready; no network changes')
+                time.sleep(.05)
         altered = True
         network.syswrite('net.inet.ip.redirect', '0')
         # Forwarding remains OFF. Only the configured pair is relayed.
@@ -404,14 +449,16 @@ def run(active, finish_on_high_target=False, *, connect_timeout=35,
                 'confirmation_timeout_seconds': confirmation_timeout if active else 0,
             }
             try:
-                for artifact in folder.iterdir():
-                    os.chown(artifact, uid, gid)
+                if helper_context is None:
+                    for artifact in folder.iterdir():
+                        os.chown(artifact, uid, gid)
                 report_path = folder / 'report.json'
                 report_path.write_text(json.dumps(report, indent=2) + '\n')
-                os.chown(report_path, uid, gid)
-                os.chown(folder, uid, gid)
-                # The original root-owned parent prevented users reading their reports.
-                os.chown(folder.parent, uid, gid)
+                if helper_context is None:
+                    os.chown(report_path, uid, gid)
+                    os.chown(folder, uid, gid)
+                    # Legacy sudo launches retain user-readable reports.
+                    os.chown(folder.parent, uid, gid)
             except Exception as exc:
                 report['report_write_error'] = f'{type(exc).__name__}: {exc}'
             if progress is None:
