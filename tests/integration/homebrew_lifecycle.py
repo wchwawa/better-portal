@@ -70,7 +70,8 @@ def main():
 
         try:
             run('01-clone', ['git', 'clone', '--quiet', '--no-hardlinks', '--single-branch', ROOT, source])
-            subprocess.run(['git', 'branch', '-M', 'main'], cwd=source, check=True)
+            # Pull-request checkouts can start at a detached merge commit.
+            subprocess.run(['git', 'checkout', '--quiet', '-B', 'main'], cwd=source, check=True)
             subprocess.run(['git', 'config', 'user.name', 'Jason'], cwd=source, check=True)
             subprocess.run(['git', 'config', 'user.email', 'wch19961116@gmail.com'], cwd=source, check=True)
             launcher = source / 'portal_cli.py'
