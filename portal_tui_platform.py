@@ -47,11 +47,12 @@ def windows_admin():
     return bool(ctypes.windll.shell32.IsUserAnAdmin())
 
 
-def recovery_command(state, windows=False):
+def recovery_command(state, windows=False, *, python=None, script=None):
     if windows:
         # This is displayed for pasting into PowerShell, not passed to CreateProcess.
         # Single quotes keep $, &, backticks and spaces literal in folder names.
         arguments = [r'.venv\Scripts\python.exe', 'portal_windows.py', '--restore', str(state)]
         return '& ' + ' '.join("'" + value.replace("'", "''") + "'" for value in arguments)
     import shlex
-    return 'sudo .venv/bin/python portal_capture.py --restore ' + shlex.quote(str(state))
+    return shlex.join(['sudo', str(python or '.venv/bin/python'),
+                       str(script or 'portal_capture.py'), '--restore', str(state)])

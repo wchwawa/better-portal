@@ -28,18 +28,34 @@
 
 ## 快速开始
 
-只需要安装一次。请保留下载的整个文件夹，以后每次使用都从这里打开。
+只需要安装一次。通过 ZIP 安装时，请保留下载的整个文件夹，以后每次使用都从这里打开。
 
-按**你使用的电脑**选择下方步骤。Setup 只需安装一次；以后每次设置新的 Portal 连接，都打开对应的 Start 文件。
+按**你使用的电脑**选择下方步骤。
 
 | 你的电脑 | 首次设置 | 启动连接向导 |
 | --- | --- | --- |
-| **macOS** | 双击 **Setup.command** | 双击 **Start.command** |
+| **macOS — Homebrew** | 执行下方两条命令 | 运行 **`better-portal`** |
+| **macOS — ZIP** | 双击 **Setup.command** | 双击 **Start.command** |
 | **Windows 10 / 11** | 双击 **Setup-Windows.cmd** | 双击 **Start-Windows.cmd** |
 
 <a id="macos-quick-start"></a>
 
 ### macOS 快速开始
+
+#### 通过 Homebrew 安装和更新（Mac）
+
+如果已经使用 [Homebrew](https://brew.sh)，在终端依次运行以下两行。Python 和依赖会自动安装：
+
+```sh
+brew tap wchwawa/better-portal https://github.com/wchwawa/better-portal
+brew install --HEAD wchwawa/better-portal/better-portal
+```
+
+以后运行 **`better-portal`** 打开向导。更新前关闭向导，再运行 **`better-portal update`**。地址、语言、码率和报告保留在用户目录里。此方式跟随最新的 `main` 分支；真实连接仍会按需提示输入 Mac 密码。[完整说明与旧设置导入](docs/homebrew.md)。也可以继续使用下方的 ZIP 安装方式。
+
+下面是 ZIP 安装步骤。如果已经通过 Homebrew 安装，运行 **`better-portal`**，直接看后面的**第一次使用**即可。指南中提到打开 Start.command 时，Brew 用户运行这个命令。
+
+#### 从 ZIP 安装
 
 <a id="a-安装-python"></a>
 
@@ -63,7 +79,7 @@
 
 Windows 与 Mac 共用向导、语言、设置和 120 秒连接倒计时。Windows 的设备页提供 **PC 局域网网卡**选择器。Windows 实机验证仍在进行，详细要求和排错请看 [Windows 中文指南](WINDOWS.zh-CN.md)。
 
-**两个平台都一样：**保留完整的解压文件夹，以后每次使用打开对应的 Start 文件。地址、语言和码率会保存。安装和启动都可以通过双击文件完成，无需修改代码。
+**两个平台的 ZIP 安装都一样：**保留完整的解压文件夹，以后每次使用打开对应的 Start 文件。地址、语言和码率会保存。安装和启动都可以通过双击文件完成，无需修改代码。
 
 ## 第一次使用
 

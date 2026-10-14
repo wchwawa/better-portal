@@ -26,16 +26,32 @@ This is an experimental community tool. Start with **65 Mbps**. Bitrate describe
 
 ## Quick start
 
-You only need to install once. Keep the downloaded folder: it contains the file you will open each time you play.
+You only need to install once. For ZIP installs, keep the downloaded folder: it contains the file you will open each time you play.
 
-Choose the instructions for **your computer**. Setup installs the dependencies once; Start opens the wizard each time you need a new Portal connection.
+Choose the instructions for **your computer**.
 
 | Your computer | First-time setup | Start a session |
 | --- | --- | --- |
-| **macOS** | Double-click **Setup.command** | Double-click **Start.command** |
+| **macOS — Homebrew** | Run the two commands below | Run **`better-portal`** |
+| **macOS — ZIP** | Double-click **Setup.command** | Double-click **Start.command** |
 | **Windows 10 / 11** | Double-click **Setup-Windows.cmd** | Double-click **Start-Windows.cmd** |
 
 ### macOS quick start
+
+#### Install and update with Homebrew (Mac)
+
+If you use [Homebrew](https://brew.sh), install with these two commands. Homebrew installs Python and the required packages for you:
+
+```sh
+brew tap wchwawa/better-portal https://github.com/wchwawa/better-portal
+brew install --HEAD wchwawa/better-portal/better-portal
+```
+
+Open with **`better-portal`**. Close the wizard before updating, then run **`better-portal update`**. Addresses, language, bitrate and reports stay in your user folder. This follows the latest `main` branch and still uses the Mac password prompt for live sessions. [Full guide and importing your old settings](docs/homebrew.md). The ZIP instructions below remain available.
+
+These steps are for ZIP installs. If you installed with Homebrew, run **`better-portal`** and continue with **Your first session** below. In the guide, use that command wherever it says to open Start.command.
+
+#### Install from ZIP
 
 <a id="a-install-python"></a>
 
@@ -57,7 +73,7 @@ If macOS blocks a launcher, see [“macOS won't open the file”](#macos-blocked
 
 Windows uses the same wizard, languages, settings and 120-second connection countdown. Its Devices screen has a **PC LAN adapter** selector. Real-device testing on Windows is still in progress; see the [Windows guide](WINDOWS.md) for detailed requirements and troubleshooting.
 
-**For both platforms:** keep the entire extracted folder, and open its Start file for each new session. Addresses, language and bitrate are saved. You can install and launch by double-clicking these files; you do not need to edit code.
+**For ZIP installs on either platform:** keep the entire extracted folder, and open its Start file for each new session. Addresses, language and bitrate are saved. You can install and launch by double-clicking these files; you do not need to edit code.
 
 ## Your first session
 

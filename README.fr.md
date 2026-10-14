@@ -26,18 +26,34 @@ Il s’agit d’un outil communautaire expérimental. Commencez par **65 Mbps**.
 
 ## Démarrage rapide
 
-L’installation ne se fait qu’une fois. Conservez tout le dossier téléchargé : il contient le fichier à ouvrir chaque fois que vous souhaitez jouer.
+L’installation ne se fait qu’une fois. Pour les installations ZIP, conservez tout le dossier téléchargé : il contient le fichier à ouvrir chaque fois que vous souhaitez jouer.
 
-Choisissez les instructions pour **votre ordinateur**. Setup installe les dépendances une fois ; Start ouvre l’assistant pour chaque nouvelle connexion de Portal.
+Choisissez les instructions pour **votre ordinateur**.
 
 | Votre ordinateur | Première installation | Démarrer une session |
 | --- | --- | --- |
-| **macOS** | Double-cliquez sur **Setup.command** | Double-cliquez sur **Start.command** |
+| **macOS — Homebrew** | Exécutez les deux commandes ci-dessous | Lancez **`better-portal`** |
+| **macOS — ZIP** | Double-cliquez sur **Setup.command** | Double-cliquez sur **Start.command** |
 | **Windows 10 / 11** | Double-cliquez sur **Setup-Windows.cmd** | Double-cliquez sur **Start-Windows.cmd** |
 
 <a id="macos-quick-start"></a>
 
 ### Démarrage rapide sur macOS
+
+#### Installer et mettre à jour avec Homebrew (Mac)
+
+Si vous utilisez [Homebrew](https://brew.sh), exécutez ces deux lignes dans Terminal. Homebrew installe aussi Python et les paquets nécessaires :
+
+```sh
+brew tap wchwawa/better-portal https://github.com/wchwawa/better-portal
+brew install --HEAD wchwawa/better-portal/better-portal
+```
+
+Lancez l’assistant avec **`better-portal`**. Fermez-le avant une mise à jour, puis lancez **`better-portal update`**. Les adresses, la langue, le débit et les rapports restent dans votre dossier utilisateur. Cette option suit la dernière version de la branche `main` ; les connexions réelles demandent toujours le mot de passe du Mac si nécessaire. [Guide complet et importation des anciens réglages](docs/homebrew.md). L’installation ZIP ci-dessous reste disponible.
+
+Ces étapes concernent l’installation ZIP. Si vous avez installé avec Homebrew, lancez **`better-portal`** et passez à **Votre première session**. Utilisez cette commande partout où le guide indique d’ouvrir Start.command.
+
+#### Installer depuis le ZIP
 
 <a id="install-python"></a>
 
@@ -61,7 +77,7 @@ Si macOS bloque un fichier, consultez [« macOS refuse d’ouvrir le fichier »]
 
 Windows utilise le même assistant, les mêmes langues et réglages, ainsi que le compte à rebours de 120 secondes. L’écran Appareils propose un sélecteur d’**adaptateur LAN du PC**. Les tests sur appareils réels sous Windows sont encore en cours ; consultez le [guide Windows (en anglais)](WINDOWS.md) pour les exigences et le dépannage.
 
-**Sur les deux plateformes :** conservez tout le dossier extrait et ouvrez son fichier Start pour chaque nouvelle session. Les adresses, la langue et le débit sont enregistrés. L’installation et le lancement se font en double-cliquant sur ces fichiers ; vous n’avez pas besoin de modifier le code.
+**Pour les installations ZIP sur les deux plateformes :** conservez tout le dossier extrait et ouvrez son fichier Start pour chaque nouvelle session. Les adresses, la langue et le débit sont enregistrés. L’installation et le lancement se font en double-cliquant sur ces fichiers ; vous n’avez pas besoin de modifier le code.
 
 <a id="first-session"></a>
 

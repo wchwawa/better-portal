@@ -26,18 +26,34 @@ Es una herramienta comunitaria experimental. Empieza con **65 Mbps**. El bitrate
 
 ## Inicio rápido
 
-Solo necesitas instalar una vez. Conserva toda la carpeta descargada: contiene el archivo que abrirás cada vez que quieras jugar.
+Solo necesitas instalar una vez. Para instalaciones ZIP, conserva toda la carpeta descargada: contiene el archivo que abrirás cada vez que quieras jugar.
 
-Elige las instrucciones para **tu ordenador**. Setup instala las dependencias una vez; Start abre el asistente para cada nueva conexión de Portal.
+Elige las instrucciones para **tu ordenador**.
 
 | Tu ordenador | Primera instalación | Iniciar una sesión |
 | --- | --- | --- |
-| **macOS** | Doble clic en **Setup.command** | Doble clic en **Start.command** |
+| **macOS — Homebrew** | Ejecuta los dos comandos siguientes | Ejecuta **`better-portal`** |
+| **macOS — ZIP** | Doble clic en **Setup.command** | Doble clic en **Start.command** |
 | **Windows 10 / 11** | Doble clic en **Setup-Windows.cmd** | Doble clic en **Start-Windows.cmd** |
 
 <a id="macos-quick-start"></a>
 
 ### Inicio rápido en macOS
+
+#### Instalar y actualizar con Homebrew (Mac)
+
+Si usas [Homebrew](https://brew.sh), ejecuta estas dos líneas en Terminal. Homebrew también instala Python y los paquetes necesarios:
+
+```sh
+brew tap wchwawa/better-portal https://github.com/wchwawa/better-portal
+brew install --HEAD wchwawa/better-portal/better-portal
+```
+
+Abre el asistente con **`better-portal`**. Ciérralo antes de actualizar y ejecuta **`better-portal update`**. Las direcciones, el idioma, el bitrate y los informes se conservan en tu carpeta de usuario. Esta opción sigue la última versión de la rama `main`; las conexiones reales siguen solicitando la contraseña del Mac cuando es necesario. [Guía completa e importación de ajustes anteriores](docs/homebrew.md). También puedes seguir usando la instalación ZIP descrita abajo.
+
+Estos pasos son para la instalación ZIP. Si instalaste con Homebrew, ejecuta **`better-portal`** y sigue con **Tu primera sesión**. Usa ese comando donde la guía indique abrir Start.command.
+
+#### Instalar desde ZIP
 
 <a id="install-python"></a>
 
@@ -61,7 +77,7 @@ Si macOS bloquea un archivo, consulta [«macOS no abre el archivo»](#macos-bloc
 
 Windows utiliza el mismo asistente, idiomas, ajustes y cuenta atrás de 120 segundos. En Dispositivos aparece un selector de **adaptador LAN del PC**. Las pruebas con dispositivos reales en Windows siguen en curso; consulta la [guía de Windows (en inglés)](WINDOWS.md) para ver los requisitos y resolver problemas.
 
-**En ambas plataformas:** conserva toda la carpeta extraída y abre su archivo Start para cada nueva sesión. Se guardan las direcciones, el idioma y el bitrate. Puedes instalar y abrir la aplicación haciendo doble clic en estos archivos; no necesitas editar código.
+**Para instalaciones ZIP en ambas plataformas:** conserva toda la carpeta extraída y abre su archivo Start para cada nueva sesión. Se guardan las direcciones, el idioma y el bitrate. Puedes instalar y abrir la aplicación haciendo doble clic en estos archivos; no necesitas editar código.
 
 <a id="first-session"></a>
 

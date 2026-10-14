@@ -28,18 +28,34 @@ Bu, topluluk tarafından geliştirilen deneysel bir araçtır. **65 Mbps** ile b
 
 ## Hızlı başlangıç
 
-Kurulumu yalnızca bir kez yapmanız gerekir. İndirdiğiniz klasörü bütünüyle saklayın; her oyun oturumunda açacağınız dosya bu klasördedir.
+Kurulumu yalnızca bir kez yapmanız gerekir. ZIP kurulumunda indirdiğiniz klasörü bütünüyle saklayın; her oyun oturumunda açacağınız dosya bu klasördedir.
 
-**Kullandığınız bilgisayara** uygun adımları izleyin. Setup bağımlılıkları bir kez kurar; Start, her yeni Portal bağlantısı için sihirbazı açar.
+**Kullandığınız bilgisayara** uygun adımları izleyin.
 
 | Bilgisayarınız | İlk kurulum | Oturum başlatma |
 | --- | --- | --- |
-| **macOS** | **Setup.command** dosyasına çift tıklayın | **Start.command** dosyasına çift tıklayın |
+| **macOS — Homebrew** | Aşağıdaki iki komutu çalıştırın | **`better-portal`** komutunu çalıştırın |
+| **macOS — ZIP** | **Setup.command** dosyasına çift tıklayın | **Start.command** dosyasına çift tıklayın |
 | **Windows 10 / 11** | **Setup-Windows.cmd** dosyasına çift tıklayın | **Start-Windows.cmd** dosyasına çift tıklayın |
 
 <a id="macos-quick-start"></a>
 
 ### macOS hızlı başlangıç
+
+#### Homebrew ile kurulum ve güncelleme (Mac)
+
+[Homebrew](https://brew.sh) kullanıyorsanız Terminal’de aşağıdaki iki komutu sırayla çalıştırın. Homebrew, Python’u ve gerekli paketleri de kurar:
+
+```sh
+brew tap wchwawa/better-portal https://github.com/wchwawa/better-portal
+brew install --HEAD wchwawa/better-portal/better-portal
+```
+
+Sihirbazı **`better-portal`** komutuyla açın. Güncellemeden önce sihirbazı kapatın, ardından **`better-portal update`** komutunu çalıştırın. Adresler, dil, bit hızı ve raporlar kullanıcı klasörünüzde saklanır. Bu yöntem en güncel `main` dalını izler; gerçek oturumlarda Mac parolası istendiğinde girmeniz gerekir. [Tam kılavuz ve eski ayarları içe aktarma (İngilizce)](docs/homebrew.md). Aşağıdaki ZIP kurulumu da kullanılabilir.
+
+Aşağıdaki adımlar ZIP kurulumu içindir. Homebrew ile kurduysanız **`better-portal`** komutunu çalıştırıp [İlk oturum](#first-session) bölümüne geçin. Kılavuzda Start.command dosyasını açmanız istendiğinde bu komutu kullanın.
+
+#### ZIP dosyasından kurulum
 
 <a id="install-python"></a>
 
@@ -63,7 +79,7 @@ macOS bir başlatıcıyı engellerse [“macOS dosyayı açmıyor”](#macos-blo
 
 Windows aynı sihirbazı, dilleri, ayarları ve 120 saniyelik bağlantı geri sayımını kullanır. Cihazlar ekranında **PC LAN adapter** seçimi bulunur. Windows’ta gerçek cihaz testleri devam etmektedir; ayrıntılı gereksinimler ve sorun giderme için [Windows kılavuzuna (İngilizce)](WINDOWS.md) bakın.
 
-**Her iki platformda da:** çıkarılan klasörü bütünüyle saklayın ve her yeni oturum için ilgili Start dosyasını açın. Adresler, dil ve bit hızı kaydedilir. Bu dosyalara çift tıklayarak kurulum yapabilir ve uygulamayı açabilirsiniz; kod düzenlemeniz gerekmez.
+**Her iki platformdaki ZIP kurulumları için:** çıkarılan klasörü bütünüyle saklayın ve her yeni oturum için ilgili Start dosyasını açın. Adresler, dil ve bit hızı kaydedilir. Bu dosyalara çift tıklayarak kurulum yapabilir ve uygulamayı açabilirsiniz; kod düzenlemeniz gerekmez.
 
 <a id="first-session"></a>
 

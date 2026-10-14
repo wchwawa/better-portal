@@ -26,18 +26,34 @@ PlayStation Portal로 자신의 PS5를 플레이할 때 더 높은 화질을 위
 
 ## 빠른 시작
 
-설치는 처음 한 번만 하면 됩니다. 내려받은 폴더 전체를 보관하세요. 다음에도 그 안의 파일로 실행합니다.
+설치는 처음 한 번만 하면 됩니다. ZIP 설치라면 내려받은 폴더 전체를 보관하세요. 다음에도 그 안의 파일로 실행합니다.
 
-**사용하는 컴퓨터**의 설명을 따르세요. Setup은 첫 설정용이고 Start는 새로운 Portal 연결을 설정할 때마다 여는 파일입니다.
+**사용하는 컴퓨터**의 설명을 따르세요.
 
 | 컴퓨터 | 첫 설정 | 연결 도우미 실행 |
 | --- | --- | --- |
-| **macOS** | **Setup.command** 더블 클릭 | **Start.command** 더블 클릭 |
+| **macOS — Homebrew** | 아래 두 명령 실행 | **`better-portal`** 실행 |
+| **macOS — ZIP** | **Setup.command** 더블 클릭 | **Start.command** 더블 클릭 |
 | **Windows 10 / 11** | **Setup-Windows.cmd** 더블 클릭 | **Start-Windows.cmd** 더블 클릭 |
 
 <a id="macos-quick-start"></a>
 
 ### macOS 빠른 시작
+
+#### Homebrew로 설치 및 업데이트（Mac）
+
+[Homebrew](https://brew.sh)를 사용한다면 터미널에서 다음 두 명령을 차례대로 실행하세요. Python과 필요한 패키지도 자동으로 설치됩니다:
+
+```sh
+brew tap wchwawa/better-portal https://github.com/wchwawa/better-portal
+brew install --HEAD wchwawa/better-portal/better-portal
+```
+
+**`better-portal`**로 실행합니다. 업데이트 전 마법사를 닫고 **`better-portal update`**를 실행하세요. 주소, 언어, 비트레이트와 보고서는 사용자 폴더에 유지됩니다. 최신 `main` 브랜치를 사용하며 실제 연결 시에는 여전히 Mac 암호를 요청합니다. [자세한 안내 및 이전 설정 가져오기](docs/homebrew.md). 아래 ZIP 설치 방법도 계속 사용할 수 있습니다.
+
+아래는 ZIP 설치 단계입니다. Homebrew로 설치했다면 **`better-portal`**을 실행하고 아래의 첫 사용 안내로 이동하세요. 안내에서 Start.command를 열라고 하면 대신 이 명령을 실행하세요.
+
+#### ZIP으로 설치
 
 <a id="install-python"></a>
 
@@ -61,7 +77,7 @@ macOS가 실행을 차단하면[‘macOS가 파일을 열지 않음’](#macos-b
 
 Windows에서도 같은 도우미, 언어, 설정과 120초 연결 카운트다운을 사용합니다. 기기 화면에는 **PC LAN 어댑터** 선택기가 있습니다. Windows 실기기 검증은 진행 중입니다. 자세한 요구 사항과 문제 해결은 [Windows 가이드(영어)](WINDOWS.md)를 참고하세요.
 
-**두 플랫폼 모두:**압축을 푼 폴더 전체를 보관하고 다음에도 해당 Start 파일을 여세요. 주소, 언어, 비트레이트는 저장됩니다. 파일을 더블 클릭하여 설치하고 실행할 수 있으며 코드를 수정할 필요는 없습니다.
+**두 플랫폼의 ZIP 설치 모두:**압축을 푼 폴더 전체를 보관하고 다음에도 해당 Start 파일을 여세요. 주소, 언어, 비트레이트는 저장됩니다. 파일을 더블 클릭하여 설치하고 실행할 수 있으며 코드를 수정할 필요는 없습니다.
 
 <a id="first-session"></a>
 
