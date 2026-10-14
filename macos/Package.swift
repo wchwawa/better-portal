@@ -1,0 +1,17 @@
+// swift-tools-version: 5.9
+import PackageDescription
+
+let package = Package(
+    name: "BetterPortal", platforms: [.macOS(.v13)],
+    products: [
+        .executable(name: "BetterPortal", targets: ["BetterPortal"]),
+        .executable(name: "PortalHelper", targets: ["PortalHelper"]),
+        .executable(name: "PortalBridge", targets: ["PortalBridge"]),
+    ],
+    targets: [
+        .target(name: "PortalShared"),
+        .executableTarget(name: "BetterPortal", dependencies: ["PortalShared"]),
+        .executableTarget(name: "PortalHelper", dependencies: ["PortalShared"]),
+        .executableTarget(name: "PortalBridge", dependencies: ["PortalShared"]),
+        .testTarget(name: "PortalSharedTests", dependencies: ["PortalShared"]),
+    ])

@@ -30,3 +30,7 @@ id_rsa*
 id_ed25519*
 *.mobileprovision
 release-assets/
+macos/.build/
+macos/build/
+macos/dist/
+*.pkg
