@@ -1,3 +1,5 @@
+import contextlib
+import io
 import json
 from pathlib import Path
 import queue
@@ -12,6 +14,19 @@ from test_probe import fixture
 
 
 class AutoTests(unittest.TestCase):
+    def test_new_mac_auto_sessions_stop_before_administrator_access(self):
+        for command in ('configure', 'baseline', 'run', 'verify-baseline'):
+            with self.subTest(command=command), \
+                 patch.object(a.sys, 'platform', 'darwin'), \
+                 patch.object(a.sys, 'argv', ['portal_auto.py', command]), \
+                 patch.object(n, 'require_admin') as require_admin, \
+                 contextlib.redirect_stderr(io.StringIO()) as stderr, \
+                 self.assertRaises(SystemExit) as stopped:
+                a.main()
+            self.assertEqual(stopped.exception.code, 2)
+            self.assertIn('new sessions are disabled', stderr.getvalue())
+            require_admin.assert_not_called()
+
     def setUp(self):
         self.old_network = p.network
         p.network = n

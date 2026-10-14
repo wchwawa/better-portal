@@ -1,5 +1,6 @@
 # PS5 Portal High Bitrate - Türkçe
 
+**macOS güvenlik önizlemesi:** ZIP ve Homebrew başlatıcıları artık sudo yerine imzalı bağlantı yardımcısını kullanır. İmzalı kurulum paketi ve gerçek cihaz doğrulaması henüz tamamlanmadığı için şimdilik yalnız demo modu kullanılabilir. [Kurulum ve yayın durumu](docs/macos-authorization.md).
 **Yeni deneysel sürüm: Windows / Linux otomasyon + isteğe bağlı Proxmox / Docker kurulumu.** [v0.3.0-preview.3 indir](https://github.com/atameric/ps5-portal-high-bitrate/releases/tag/v0.3.0-preview.3) | [Adım adım otomatik kurulum](AUTOMATION.tr.md) | [Container kılavuzu (EN)](deploy/README.md). SDNick484, Alpine LXC/OpenRC ve Linux Docker macvlan paketlemesini ekledi. Windows otomasyonu fiziksel doğrulama bekliyor; Linux/Pi yeniden başlatma ve yeni bağlantı, Proxmox için gerçek cihaz başarı raporları var. Docker yalnız sahte ağ uçlarıyla test edildi. Proxmox kurulumundan önce kart firewall'u kapsamını oku. Mac mini prototipi kullanıcı tarafından doğrulandı; yeni ortak uygulama ayrıca platform testi gerektiriyor. Aşağıdaki eski kurulum adımları macOS elle başlatıcı içindir.
 
 Mac üzerinden kendi PS5 ve Portal cihazların için **geçici yüksek bitrate isteği**. Çalışan prototip Portal 7.1.7 üzerinde denendi. Her firmware ve ağda çalışması garanti değil. Public paketleme çevrimdışı test edildi; başka cihazlarda canlı doğrulama bekliyor.
@@ -21,12 +22,12 @@ Mac üzerinden kendi PS5 ve Portal cihazların için **geçici yüksek bitrate i
 ## Kullanım
 
 1. Portal'ın PS5 bağlantısını kes; PS5 açık kalsın.
-2. `Start.command` aç. Parolayı yalnız Mac'in sudo istemine gir. Vurgulanan ön koşulları ve düzenlenebilir cihaz adreslerini kontrol et; ilk deneme için 65 Mbps seç. Tab veya yukarı/aşağı tuşları alanı, sağ/sol veya boşluk tuşu profili seçer. Yazarak seçili değeri değiştirebilirsin.
+2. `Start.command` aç. İmzalı yardımcı kurulduktan ve onaylandıktan sonra normal kullanıcı olarak çalışır; o zamana kadar yalnız demo modunu kullan. Vurgulanan ön koşulları ve düzenlenebilir cihaz adreslerini kontrol et; ilk deneme için 65 Mbps seç. Tab veya yukarı/aşağı tuşları alanı, sağ/sol veya boşluk tuşu profili seçer. Yazarak seçili değeri değiştirebilirsin.
 3. **WAIT** sırasında Portal bağlantısı kesik kalsın. Yeşil **READY / CONNECT NOW** mesajından sonra Portal'dan bağlan. Ekrandaki **02:00** ile başlayan **120 saniyelik geri sayım** bağlantı süresini gösterir.
 4. Başlangıç paketi değiştiğinde hedefi doğrulamak için en fazla 15 saniye daha beklenir. Üç yüksek hedef bildirimi gelirse doğrudan ağ yolu hemen geri yüklenir.
 5. **Ready to play**, hedef doğrulaması, yerel paket çıkışı doğrulaması ve hatasız geri yükleme gerektirir. Q/Esc ile çıkabilir, Enter ile yeni bir deneme başlatabilirsin. Deneme sırasında Q, Esc veya Ctrl-C ağın geri yüklenmesini başlatır. Kurtarma hatası varsa yeni deneme düğmesi devre dışı kalır; D ayrıntıları gösterir.
 
-Terminalden açmak için: `sudo .venv/bin/python portal_tui.py`. Ağ veya yapılandırma değişikliği yapmadan önizleme: `.venv/bin/python portal_tui.py --demo`. En az 72 sütun ve 24 satırlık terminal gerekir; yeni bağımlılık gerekmez.
+Terminalden açmak için: `.venv/bin/python portal_tui.py --helper`. Ağ veya yapılandırma değişikliği yapmadan önizleme: `.venv/bin/python portal_tui.py --demo`. En az 72 sütun ve 24 satırlık terminal gerekir; yeni bağımlılık gerekmez.
 
 Hazırlık, bağlantıya hazır olma ve sonuç durumları farklı işaretler ve kısa animasyonlarla gösterilir. Hareketi kapatmak için `--no-animations` ekle; durum etiketleri ve vurgular korunur. Animasyonlar ağ aktarımını duraklatmaz.
 
@@ -40,7 +41,7 @@ Kalıcı cihaz değişikliği yapılmaz. Her yeni oturumda işlem gerekir. Norma
 - `UNCONFIRMED`: paket değişti ama yüksek hedef doğrulanmadı.
 - `restoration_errors`: boş olmalı. Hata varsa [İngilizce kurtarma adımlarını](README.md#troubleshooting-and-recovery) uygula.
 
-Sihirbazda 5 saniyelik hazırlıktan sonra tam 120 saniyelik bağlantı süresi ve ilk değiştirilen paketten sonra en fazla 15 saniyelik doğrulama süresi vardır. Ayrı kurtarma süreci 155 saniye sonra özgün ağ ayarlarını geri yüklemeyi dener. Eski `portal_active_probe.py` komutunun varsayılan 40 saniyelik aktarma ve 55 saniyelik kurtarma süreleri korunur. Başlangıç ve temizleme ek süre alabilir. Mac kapanırsa kurtarma çalışamaz.
+Sihirbazda 5 saniyelik hazırlıktan sonra tam 120 saniyelik bağlantı süresi ve ilk değiştirilen paketten sonra en fazla 15 saniyelik doğrulama süresi vardır. Ayrı kurtarma süreci 155 saniye sonra özgün ağ ayarlarını geri yüklemeyi dener. Başlangıç ve temizleme ek süre alabilir. Mac kapanırsa kurtarma çalışamaz.
 
 Özel IP'ler, raporlar ve ham paket kayıtları yerel kalır. Ham kayıtları GitHub'a yükleme. Bu araç jailbreak değildir; Sony ile bağlantısı yoktur.
 

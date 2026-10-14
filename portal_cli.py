@@ -167,8 +167,7 @@ def update(info, run=subprocess.run, t=lambda text, **values: text.format(**valu
 
 
 def run_wizard(arguments):
-    # Ctrl+C reaches the whole terminal foreground group. Keep our lock until
-    # the wizard has finished its own cancellation and network restoration.
+    # Keep the update lock while the unprivileged wizard waits for recovery.
     with subprocess.Popen(arguments) as child:
         while True:
             try:
@@ -215,15 +214,15 @@ def main(argv=None):
                 count = import_settings(args.folder.expanduser().resolve(), directory)
                 print(t('Imported {count} settings files. Existing settings were kept.', count=count))
                 return 0
-            arguments = [sys.executable, str(ROOT / 'portal_tui.py'), '--data-dir', str(directory)]
+            arguments = [sys.executable, str(ROOT / 'portal_tui.py')]
             if args.demo:
-                arguments.append('--demo')
+                arguments.extend(['--demo', '--data-dir', str(directory)])
             else:
-                print(t('Opening Better Portal. Enter your Mac login password if requested.'), flush=True)
-                arguments.insert(0, '/usr/bin/sudo')
+                print(t('Opening Better Portal through the installed macOS connection helper.'), flush=True)
+                arguments.append('--helper')
             if args.no_animations:
                 arguments.append('--no-animations')
-            # The parent keeps the update lock while sudo and the wizard run.
+            # The parent keeps the update lock while the wizard runs.
             return run_wizard(arguments)
     except (OSError, ValueError, RuntimeError) as exc:
         print(t(str(exc)), file=sys.stderr)

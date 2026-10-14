@@ -227,8 +227,10 @@ class HomebrewTests(unittest.TestCase):
             self.assertIn('--demo', arguments)
             self.assertEqual(arguments[arguments.index('--data-dir') + 1], str(self.destination))
             self.assertEqual(cli.main([]), 0)
-            self.assertEqual(run.call_args.args[0][0], '/usr/bin/sudo')
-            self.assertEqual(run.call_args.args[0][2], str(cli.ROOT / 'portal_tui.py'))
+            self.assertEqual(run.call_args.args[0][0], sys.executable)
+            self.assertEqual(run.call_args.args[0][1], str(cli.ROOT / 'portal_tui.py'))
+            self.assertIn('--helper', run.call_args.args[0])
+            self.assertNotIn('/usr/bin/sudo', run.call_args.args[0])
 
     def test_root_launch_never_runs_brew_or_creates_a_root_profile(self):
         with patch.object(cli.sys, 'platform', 'darwin'), \

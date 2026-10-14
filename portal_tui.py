@@ -159,10 +159,12 @@ class Wizard:
     MIN_ROWS = 24
     MIN_COLS = 72
 
-    def __init__(self, screen, curses, demo=False, animations=True, platform=None, data_dir=None):
+    def __init__(self, screen, curses, demo=False, animations=True, platform=None, data_dir=None,
+                 helper=False):
         self.screen, self.curses, self.demo = screen, curses, demo
         self.windows = (platform or sys.platform) == 'win32'
         self.animations = animations
+        self.helper = helper
         self.data_dir = Path(data_dir) if data_dir is not None else ROOT
         self.config_path = self.data_dir / ('config.windows.json' if self.windows else 'config.json')
         self.preferences_path = self.data_dir / 'tui-settings.json'
@@ -919,6 +921,13 @@ class Wizard:
         try:
             if self.demo:
                 return self.simulate()
+            if self.helper:
+                from portal_macos_client import run_session, HelperUnavailable
+                try:
+                    return run_session(self.profile, config, self.progress)
+                except HelperUnavailable as exc:
+                    return {'completed': False, 'run_error': str(exc), 'restoration_errors': [],
+                            'preflight_failed': True}
             import portal_active_probe as probe
             if self.windows:
                 import portal_windows
@@ -960,7 +969,9 @@ class Wizard:
                                                     seconds=deadline)
                                          if deadline else 'The independent recovery process has its own deadline.') + 1
                     state = report.get('watchdog_state')
-                    if state:
+                    if report.get('managed_helper'):
+                        self.paragraph(row, 'Open Better Portal to check the connection helper. Keep this Mac awake for recovery.')
+                    elif state:
                         packaged = not self.windows and self.data_dir != ROOT
                         hint = ('Manual recovery in administrator PowerShell from this project folder: {command}'
                                 if self.windows else 'Manual recovery in Terminal: {command}' if packaged
@@ -1046,8 +1057,21 @@ def main():
                         help=t('Preview the wizard with simulated events; no administrator access or network changes'))
     parser.add_argument('--no-animations', action='store_true',
                         help=t('Keep state labels and highlights, without motion'))
+    parser.add_argument('--helper', action='store_true',
+                        help=t('Use the installed macOS connection helper without sudo'))
     parser.add_argument('--data-dir', type=Path, help=argparse.SUPPRESS)
     args = parser.parse_args()
+    # Direct source launches must use the same privilege boundary as the ZIP
+    # and Homebrew launchers. Never suggest rerunning mutable Python with sudo.
+    if sys.platform == 'darwin' and not args.demo:
+        args.helper = True
+    if args.helper:
+        if args.data_dir is not None:
+            parser.error('The installed helper chooses its own settings directory.')
+        from portal_macos_client import user_directory
+        data_dir = user_directory()
+        if not args.demo:
+            data_dir.mkdir(parents=True, mode=0o700, exist_ok=True)
     if args.data_dir is not None:
         data_dir = args.data_dir.resolve()
         if not data_dir.is_dir():
@@ -1056,12 +1080,14 @@ def main():
         parser.exit(2, t('Open this wizard in an interactive Terminal window.') + '\n')
     if not args.demo:
         if sys.platform == 'win32':
+            if args.helper:
+                parser.exit(2, t('The installed connection helper supports macOS only.') + '\n')
             if not windows_admin():
                 parser.exit(2, t('Double-click Start-Windows.cmd and accept the Windows permission prompt.') + '\n')
         elif sys.platform != 'darwin':
             parser.exit(2, t('Live setup supports macOS and native Windows 10/11.') + '\n')
-        elif os.geteuid() != 0 or 'SUDO_UID' not in os.environ:
-            parser.exit(2, t('Double-click Start.command, or run: sudo .venv/bin/python portal_tui.py') + '\n')
+        elif args.helper and os.geteuid() == 0:
+            parser.exit(2, t('Open Better Portal as your normal Mac user.') + '\n')
     try:
         import curses
     except ImportError:
@@ -1070,7 +1096,7 @@ def main():
     try:
         return curses.wrapper(lambda screen: Wizard(screen, curses, demo=args.demo,
                                                      animations=not args.no_animations,
-                                                     data_dir=data_dir).run())
+                                                     data_dir=data_dir, helper=args.helper).run())
     except KeyboardInterrupt:
         print(t('Demo closed.' if args.demo else 'Wizard closed.'))
         return 1

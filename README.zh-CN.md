@@ -6,6 +6,8 @@
 
 # Better Portal
 
+**macOS 安全预览：**源码和 Homebrew 启动器现通过已签名的 macOS 连接助手运行，不再使用 sudo。签名安装包与实机验收尚未完成，因此目前只能使用演示模式。查看[设置、移除与发布状态](docs/macos-authorization.md)。
+
 [English](README.md) · **简体中文** · [日本語](README.ja.md) · [한국어](README.ko.md) · [Español](README.es.md) · [Français](README.fr.md)
 
 用 PlayStation Portal 玩自己的 PS5 时，通过 Mac 上的逐步向导选择更高的画面码率目标。
@@ -21,7 +23,7 @@ brew tap wchwawa/better-portal https://github.com/wchwawa/better-portal
 brew install --HEAD wchwawa/better-portal/better-portal
 ```
 
-以后运行 **`better-portal`** 打开向导。更新前关闭向导，再运行 **`better-portal update`**。地址、语言、码率和报告保留在用户目录里。此方式跟随最新的 `main` 分支；真实连接仍会按需提示输入 Mac 密码。[完整说明与旧设置导入](docs/homebrew.md)。也可以继续使用下方的 ZIP 安装方式。
+以后运行 **`better-portal`** 打开向导。更新前关闭向导，再运行 **`better-portal update`**。地址、语言、码率和报告保留在用户目录里。此方式跟随最新的 `main` 分支，但不会以 sudo 运行 Python 代码。真实连接须先安装并批准签名连接助手；在安装包发布前可用 `better-portal --demo` 预览。[完整说明与旧设置导入](docs/homebrew.md)。也可以继续使用下方的 ZIP 安装方式。
 
 每次更新后，终端会显示实际安装的版本和更新内容。运行 **`better-portal changes`** 可随时再次查看，也支持离线使用。标题会使用你保存的语言，具体更新说明保留原始英文提交描述。
 
@@ -79,7 +81,7 @@ Python 用来运行 Better Portal，你不需要写代码。如果已经安装 P
 
 ### C. 打开向导
 
-双击同一文件夹中的 **Start.command**。如果出现 **`Password:`**，输入**登录 Mac 的密码**，再按 **Return**。**输入时不会显示字母，也不会显示圆点，这是正常现象。** 如果出现 `Sorry, try again`，重新输入密码即可。
+安装并批准签名连接助手后，双击同一文件夹中的 **Start.command**。它以普通 Mac 用户身份运行。签名安装包尚未发布前，请使用下方演示命令预览向导。
 
 如果 macOS 拦截启动文件，请看[“macOS 不让我打开文件”](#macos-blocked)。如果向导提示窗口太小，拖动终端窗口的一角，把它放大。
 
@@ -240,9 +242,9 @@ Portal 连上后，保持连接，等 Mac 显示**结果页**再关闭窗口。�
 
 完成 [A. 安装 Python](#a-安装-python)，包括 **Install Certificates.command**。关闭失败的设置窗口，重新打开 **Setup.command**。如果仍然失败，求助时提供错误文字。
 
-**密码一直不对，或提示当前账户不能使用 sudo。**
+**连接助手不可用或尚未获准。**
 
-请输入登录 Mac 的密码。如果当前账户没有管理员权限，请管理这台 Mac 的人协助授权启动。
+签名安装包发布后，先安装 Better Portal，在应用内启用连接助手，并在系统设置中批准。发布前可使用演示模式。向导不会要求 sudo。
 
 **文字显示不全，或提示窗口太小。**
 

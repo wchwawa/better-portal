@@ -46,7 +46,7 @@ class BetterPortal < Formula
       Settings and reports stay in ~/Library/Application Support/Better Portal.
       To import existing settings: better-portal import-settings /path/to/old/folder
       Close the wizard and wait for network recovery before updating.
-      Live sessions use the macOS sudo prompt; this does not install a background helper.
+      Live sessions require the signed macOS connection helper; no sudo is used by this launcher.
     EOS
   end
 

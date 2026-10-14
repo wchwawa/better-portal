@@ -33,7 +33,8 @@ class InstallerTests(unittest.TestCase):
                          'portal_egress_witness.py', 'portal_windows.py',
                          'portal_windows_network.py', 'protocol.py',
                          'portal_recovery.py', 'portal_tui.py', 'portal_tui_text.py',
-                         'portal_tui_platform.py', 'portal_windows_launcher.py', 'portal_cli.py',
+                          'portal_tui_platform.py', 'portal_windows_launcher.py', 'portal_cli.py',
+                          'portal_macos_client.py', 'portal_macos_runtime.py',
                          'requirements.txt', 'LICENSE'):
                 (source / name).write_text('# installer fixture\n')
             (deploy / 'portal').write_text('#!/bin/sh\nprintf "fixture version\\n"\n')

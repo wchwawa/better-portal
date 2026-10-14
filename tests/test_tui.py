@@ -155,6 +155,9 @@ class RelayLifecycleTests(unittest.TestCase):
         self.stack = contextlib.ExitStack()
         self.addCleanup(self.stack.close)
         overrides = (
+            # Exercise the legacy relay algorithm with synthetic I/O without
+            # reopening the removed direct macOS root-Python entry point.
+            patch.object(probe.sys, 'platform', 'linux'),
             patch.object(probe.os, 'geteuid', return_value=0),
             patch.dict(probe.os.environ, {'SUDO_UID': '1000', 'SUDO_GID': '1000'}),
             patch.object(probe.os, 'chown'),

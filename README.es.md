@@ -6,6 +6,8 @@ Bajo licencia [MIT](LICENSE). Software independiente de la comunidad; sin afilia
 
 # Better Portal
 
+**Vista previa de seguridad en macOS:** Los lanzadores ZIP y Homebrew usan el ayudante firmado de macOS sin sudo. Aún faltan el instalador firmado y la validación con dispositivos; por ahora solo está disponible la demostración. Consulta [configuración, eliminación y estado de publicación](docs/macos-authorization.md).
+
 [English](README.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · **Español** · [Français](README.fr.md)
 
 Elige un bitrate objetivo más alto para mejorar la imagen al jugar a tu PS5 con PlayStation Portal. Better Portal te guía por la configuración en tu Mac, una pantalla a la vez.
@@ -21,7 +23,7 @@ brew tap wchwawa/better-portal https://github.com/wchwawa/better-portal
 brew install --HEAD wchwawa/better-portal/better-portal
 ```
 
-Abre el asistente con **`better-portal`**. Ciérralo antes de actualizar y ejecuta **`better-portal update`**. Las direcciones, el idioma, el bitrate y los informes se conservan en tu carpeta de usuario. Esta opción sigue la última versión de la rama `main`; las conexiones reales siguen solicitando la contraseña del Mac cuando es necesario. [Guía completa e importación de ajustes anteriores](docs/homebrew.md). También puedes seguir usando la instalación ZIP descrita abajo.
+Abre el asistente con **`better-portal`**. Ciérralo antes de actualizar y ejecuta **`better-portal update`**. Las direcciones, el idioma, el bitrate y los informes se conservan en tu carpeta de usuario. Esta opción sigue la última versión de `main`, pero no ejecuta Python con sudo. Las conexiones reales requieren instalar y aprobar el ayudante firmado; hasta entonces, usa `better-portal --demo`. [Guía completa e importación de ajustes anteriores](docs/homebrew.md). También puedes seguir usando la instalación ZIP descrita abajo.
 
 Después de cada actualización, Terminal muestra la versión instalada y sus cambios. Ejecuta **`better-portal changes`** para volver a leerlos, incluso sin conexión. Los encabezados usan tu idioma guardado; las descripciones conservan el texto original de los commits en inglés.
 
@@ -83,7 +85,7 @@ Deja los demás archivos en la carpeta. No necesitas abrirlos ni editarlos.
 
 ### C. Abre el asistente
 
-Haz doble clic en **Start.command** dentro de la misma carpeta. Si aparece **`Password:`**, escribe tu **contraseña de inicio de sesión del Mac** y pulsa **Return**. **No aparecen letras ni puntos mientras escribes; es normal.** Si pone `Sorry, try again`, vuelve a escribir la contraseña.
+Tras instalar y aprobar el ayudante firmado, haz doble clic en **Start.command** dentro de la misma carpeta. Se ejecuta con tu usuario normal de Mac. Hasta que se publique el instalador firmado, usa el comando de demostración de abajo.
 
 Si macOS bloquea alguno de los archivos, consulta [«macOS no abre el archivo»](#macos-blocked). Si el asistente pide más espacio, arrastra una esquina de la ventana de Terminal para ampliarla.
 
@@ -250,9 +252,9 @@ Después de intentar abrir el archivo descargado de este repositorio, ve a **men
 
 Completa el [apartado A](#install-python), incluido **Install Certificates.command**. Cierra la ventana del intento fallido y vuelve a abrir **Setup.command**. Si sigue fallando, copia el error cuando pidas ayuda.
 
-**La contraseña no funciona o la cuenta no puede usar sudo.**
+**El ayudante de conexión no está disponible o no está aprobado.**
 
-Usa la contraseña de inicio de sesión del Mac. Si tu cuenta no es administradora, pide a quien administra el Mac que te ayude a autorizar el inicio.
+Cuando se publique, instala el paquete firmado de Better Portal, activa el ayudante en la app y apruébalo en Ajustes del Sistema. Hasta entonces, usa la demostración. El asistente no pide sudo.
 
 **El texto se corta o la aplicación pide una ventana más grande.**
 
