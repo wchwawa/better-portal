@@ -2,7 +2,7 @@
 
 The helper invokes worker with an authenticated UID and sends only validated
 session input over a private pipe. No user-supplied executable or output path is
-accepted. Source checkouts keep using the existing sudo launcher.
+accepted. Source checkouts require the installed helper for live sessions.
 """
 import argparse
 import json

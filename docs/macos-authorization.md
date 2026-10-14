@@ -64,6 +64,8 @@ sh macos/scripts/test-native.sh
 .venv/bin/python macos/scripts/check_bundle.py
 ```
 
+The bundle check also builds an unsigned test package and inspects its BOM: the protected service and worker must install as root-owned, non-writable files, with the private directory at mode 0700. It does not install the package.
+
 The development service app appears under `macos/build/installer-root/Library/Application Support/Better Portal/Better Portal.app`, with the unprivileged launcher at `macos/build/installer-root/Applications/Better Portal.app`. Both are ad hoc signed for local UI/build tests; registration is deliberately rejected. Preview the packaged wizard without authorization or network changes:
 
 ```sh

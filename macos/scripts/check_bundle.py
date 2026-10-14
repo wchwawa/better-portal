@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Verify a development bundle without sudo, registration, or live networking."""
+"""Verify a development bundle and installer payload without installing it."""
 import json
 import os
 from pathlib import Path
@@ -28,6 +28,36 @@ assert PROTECTED.stat().st_mode & 0o077 == 0
 assert BASE.stat().st_mode & 0o022 == 0
 assert not (LAUNCHER / 'Contents/Library/LaunchDaemons').exists()
 assert (PROTECTED / 'PortalRuntime/PortalRuntime').read_bytes() == runtime.read_bytes()
+
+# The daemon executes code from this installed payload. A staging-tree chmod is
+# insufficient: verify the ownership and modes recorded by pkgbuild itself.
+with tempfile.TemporaryDirectory(prefix='better-portal-payload-') as temporary:
+    package = Path(temporary) / 'payload.pkg'
+    expanded = Path(temporary) / 'expanded'
+    subprocess.run(['/usr/bin/pkgbuild', '--root', str(STAGE),
+                    '--identifier', 'com.wchwawa.betterportal.payload-check',
+                    '--version', '0.1.0', '--install-location', '/',
+                    '--ownership', 'recommended', str(package)],
+                   check=True, capture_output=True)
+    subprocess.run(['/usr/sbin/pkgutil', '--expand', str(package), str(expanded)],
+                   check=True, capture_output=True)
+    listing = subprocess.run(['/usr/bin/lsbom', '-p', 'fmug', str(expanded / 'Bom')],
+                             check=True, capture_output=True, text=True).stdout
+    protected_prefix = './Library/Application Support/Better Portal'
+    entries = {}
+    for line in listing.splitlines():
+        path, mode, uid, gid = line.rsplit('\t', 3)
+        if path != protected_prefix and not path.startswith(protected_prefix + '/'):
+            continue
+        permissions = int(mode, 8)
+        assert (int(uid), int(gid)) == (0, 0), (path, uid, gid)
+        if permissions & 0o170000 != 0o120000:  # Symlink modes do not control writes.
+            assert permissions & 0o022 == 0, (path, mode)
+        entries[path] = permissions
+    assert entries[protected_prefix] & 0o777 == 0o755
+    assert entries[protected_prefix + '/Private'] & 0o777 == 0o700
+    assert entries[protected_prefix + '/Private/PortalRuntime/PortalRuntime'] & 0o777 == 0o755
+
 with tempfile.TemporaryDirectory(prefix='better-portal-tamper-') as temporary:
     tampered = Path(temporary) / 'PortalRuntime'
     shutil.copy2(PROTECTED / 'PortalRuntime/PortalRuntime', tampered)
@@ -94,4 +124,4 @@ finally:
         process.kill()
         process.wait(timeout=5)
     os.close(master)
-print('Development bundle verified: signatures, tamper rejection, job, resources, frozen imports, real TUI, privileged-operation rejection')
+print('Development bundle verified: signatures, protected package ownership, tamper rejection, job, resources, frozen imports, real TUI, privileged-operation rejection')
