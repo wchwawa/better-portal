@@ -2,6 +2,8 @@
 
 **Status: implemented as a packaged-app preview; signed installation and physical-device acceptance are still pending.** Source and Homebrew launchers, including a direct `portal_tui.py` launch, require the signed helper for live sessions; they never launch Python with sudo. The old direct `portal_active_probe.py` macOS live command is disabled. An ad hoc development build cannot enable the privileged helper. There is no released signed installer to download yet, so these launchers currently support demo mode only.
 
+The separate experimental automatic relay has no signed-helper implementation, so its macOS CLI cannot start new sessions. Its status and legacy stop/recovery commands remain available to finish an existing session. The old direct capture preflight is also disabled; legacy watchdog and restoration commands remain available for recovery.
+
 ## Using the packaged app
 
 This flow requires macOS 13 or later and a signed Better Portal installer for your Mac's architecture. The installer includes Python and the existing six-language TUI.

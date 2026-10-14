@@ -89,11 +89,12 @@ if __name__=='__main__':
     p.add_argument('--watchdog',type=Path)
     p.add_argument('--watchdog-seconds', type=int, default=55)
     p.add_argument('--restore',type=Path)
-    p.add_argument('--check',action='store_true')
     a=p.parse_args()
     if not 16 <= a.watchdog_seconds <= 170:
         p.error('--watchdog-seconds must be between 16 and 170')
-    if os.geteuid()!=0: p.error('Run with sudo from your local Terminal')
+    if not (a.watchdog or a.restore):
+        p.error('Direct macOS preflight is disabled; use the installed connection helper')
+    if os.geteuid()!=0: p.error('Legacy recovery requires administrator authorization')
     if a.watchdog or a.restore:
         if a.watchdog:
             signal.signal(signal.SIGHUP,signal.SIG_IGN)
@@ -103,6 +104,3 @@ if __name__=='__main__':
         path.with_suffix('.result.json').write_text(json.dumps({'restoration_errors':errors}))
         print('Restoration complete' if not errors else errors)
         sys.exit(1 if errors else 0)
-    configure()
-    preflight()
-    print('Preflight passed. No network settings changed.')

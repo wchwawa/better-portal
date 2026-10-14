@@ -5,6 +5,8 @@ import json
 import os
 from pathlib import Path
 import signal
+import subprocess
+import sys
 import tempfile
 import unittest
 from unittest.mock import MagicMock, patch
@@ -124,6 +126,12 @@ class ClientTests(unittest.TestCase):
 
 @unittest.skipIf(os.name == 'nt', 'macOS source launcher checks')
 class SourceLauncherTests(unittest.TestCase):
+    def test_direct_capture_preflight_is_disabled_without_network_access(self):
+        script = Path(__file__).resolve().parents[1] / 'portal_capture.py'
+        result = subprocess.run([sys.executable, str(script)], capture_output=True, text=True)
+        self.assertEqual(result.returncode, 2)
+        self.assertIn('Direct macOS preflight is disabled', result.stderr)
+
     def test_direct_probe_rejects_root_python_before_network_access(self):
         with patch.object(probe.sys, 'platform', 'darwin'), \
              patch.object(probe.network, 'configure') as configure:

@@ -301,6 +301,8 @@ def main():
         print('Disabled:', (runtime / 'disabled').exists(), 'Recovery required:', (runtime / 'recovery-required').exists())
         print('Check the OS service/task state too; a timestamped report can be stale after a crash.')
         return 0
+    if sys.platform == 'darwin' and args.command in ('configure', 'baseline', 'run', 'verify-baseline'):
+        parser.exit(2, 'The experimental automatic relay has no signed macOS helper; new sessions are disabled.\n')
     net.require_admin()
     runtime.mkdir(parents=True, exist_ok=True)
     LOG.setLevel(logging.INFO)
