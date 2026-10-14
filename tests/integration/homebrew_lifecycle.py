@@ -97,7 +97,10 @@ def main():
             assert 'Changes in HEAD-' + first[:12] in output, 'Install did not display bundled notes.'
             run('03-dependencies', [brew, 'missing', FORMULA])
             run('04-formula-test', [brew, 'test', FORMULA])
-            run('05-pip-check', [prefix / 'opt' / NAME / 'libexec/bin/python', '-m', 'pip', 'check'])
+            # Brew deliberately creates application environments without pip.
+            # Its managed Python can check that environment without adding pip.
+            run('05-pip-check', [prefix / 'opt/python@3.14/bin/python3.14', '-m', 'pip', '--python',
+                                 prefix / 'opt' / NAME / 'libexec/bin/python', 'check'])
             run('06-terminal', [sys.executable, ROOT / 'tests/integration/homebrew_tui_smoke.py', command])
 
             old.mkdir()
@@ -128,13 +131,22 @@ def main():
 
             # A vanished unrelated tap must fail the refresh without a false
             # success message, an upgrade attempt or a change to user data.
-            subprocess.run(['git', '-C', str(tap), 'remote', 'add', 'origin', str(root / 'missing-tap')], check=True)
+            broken_tap = repository / 'Library/Taps/better-portal-tests/homebrew-broken-refresh'
+            assert not broken_tap.exists(), 'A broken-refresh test tap already exists.'
+            subprocess.run(['git', 'init', '--quiet', str(broken_tap)], check=True)
             try:
+                subprocess.run(['git', '-C', str(broken_tap), '-c', 'user.name=Jason',
+                                '-c', 'user.email=wch19961116@gmail.com', '-c', 'commit.gpgsign=false',
+                                'commit', '--allow-empty', '--quiet', '--signoff',
+                                '-m', 'Package fixture: reproduce an unrelated broken tap'], check=True)
+                subprocess.run(['git', '-C', str(broken_tap), 'remote', 'add', 'origin',
+                                str(root / 'missing-tap')], check=True)
                 output = run('10-broken-tap', [command, 'update'], success=False)
                 assert 'Homebrew could not finish' in output and 'Update complete.' not in output
                 assert metadata()['revision'] == second and saved_files() == saved
             finally:
-                subprocess.run(['git', '-C', str(tap), 'remote', 'remove', 'origin'], check=True)
+                subprocess.run([brew, 'untap', '--force', 'better-portal-tests/broken-refresh'],
+                               env=environment, check=True)
 
             # A failed source fetch must preserve the usable previous keg.
             unavailable = root / 'unavailable-source'
