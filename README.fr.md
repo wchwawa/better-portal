@@ -29,10 +29,12 @@ Après chaque mise à jour, le Terminal affiche la version installée et ses cha
 
 Le même assistant est disponible sous **Windows 11 et Windows 10**. Les essais sur appareils réels sous Windows sont encore en cours ; consultez le [guide Windows (en anglais)](WINDOWS.md).
 
-1. Installez [Python](https://www.python.org/downloads/windows/) (3.10 ou plus récent, avec le lanceur `py`) et [Npcap](https://npcap.com/#download). Laissez le mode de compatibilité WinPcap décoché.
-2. Téléchargez et extrayez tout le [ZIP Better Portal](https://github.com/wchwawa/better-portal/archive/refs/heads/main.zip). Ouvrez **Setup-Windows.cmd** une fois et attendez **Setup complete**.
-3. **À chaque utilisation :** double-cliquez sur **Start-Windows.cmd** et acceptez l’autorisation Windows. Aucune commande ni autre outil de configuration n’est nécessaire.
-4. Choisissez la langue, saisissez les deux adresses IPv4, puis utilisez **← / →** pour choisir l’adaptateur Wi-Fi ou Ethernet du PC et le débit. Gardez Portal déconnecté jusqu’à **CONNECT NOW**, puis connectez-le à la PS5 dans les **120 secondes**.
+1. Téléchargez le [ZIP Better Portal](https://github.com/wchwawa/better-portal/archive/refs/heads/main.zip). Faites un clic droit → **Extraire tout**, puis ouvrez le dossier extrait.
+2. Double-cliquez sur **Start-Windows.cmd**. Le lanceur vérifie Python et installe les dépendances manquantes. Si Python manque, il utilise le Gestionnaire de package Windows ; si celui-ci est indisponible, il ouvre la page officielle d'installation de Python.
+3. Si l'installation de **Npcap** est demandée, suivez la page officielle qui s'ouvre. Laissez **le mode de compatibilité WinPcap décoché**. Terminez l'installation, puis appuyez sur **Entrée** dans la fenêtre de démarrage. Cette étape est ignorée si Npcap est déjà installé.
+4. Acceptez l'autorisation Windows. Choisissez la langue, saisissez les deux adresses IPv4, puis utilisez **← / →** pour choisir l'adaptateur Wi-Fi ou Ethernet du PC et le débit. Gardez Portal déconnecté jusqu'à **CONNECT NOW**, puis connectez-le à la PS5 dans les **120 secondes**.
+
+**La prochaine fois, double-cliquez simplement sur Start-Windows.cmd.** Aucune étape Setup séparée ni commande à saisir n'est nécessaire. Ce démarrage rapide prend en charge les PC Windows x64.
 
 Les langues, les réglages avec **S**, les animations, les étapes et les résultats sont communs à la version Mac illustrée ci-dessous. Sous Windows, choisissez **Adaptateur LAN du PC**. La langue, les adresses et le débit sont enregistrés. Même si le débit cible est confirmé, vérifiez l’image, le son et les commandes sur Portal.
 

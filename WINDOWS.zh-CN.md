@@ -8,14 +8,14 @@ Windows 与 Mac 使用**同一个 TUI 向导**：选择语言、检查前提、�
 
 ## 首次安装
 
-准备 Windows 11 或 Windows 10 电脑、PS5 和 PlayStation Portal。普通 Remote Play 应已能正常使用。三台设备接入同一个家庭路由器，PS5 可以用网线。Portal 保持开机并连接 Wi-Fi，但断开当前 PS5 会话；电脑保持唤醒。
+准备 x64 Windows 11 或 Windows 10 电脑、PS5 和 PlayStation Portal。普通 Remote Play 应已能正常使用。三台设备接入同一个家庭路由器，PS5 可以用网线。Portal 保持开机并连接 Wi-Fi，但断开当前 PS5 会话；电脑保持唤醒。此快速启动暂不支持原生 ARM64 电脑。
 
-1. 从 [Python 官网](https://www.python.org/downloads/windows/)安装 **64 位 Python 3.14**，包含 `py` 启动器。使用 **x86-64** 安装包；当前固定版本的终端依赖没有原生 ARM64 Python 安装包。
-2. 从 [Npcap 官网](https://npcap.com/#download)安装 **Npcap**。**不要勾选 WinPcap 兼容模式**，也不需要 Wi-Fi 监听模式或 raw 802.11 支持。“仅管理员访问”可以保留，因为启动器会申请管理员权限。
-3. 下载 [Better Portal ZIP](https://github.com/wchwawa/better-portal/archive/refs/heads/main.zip)。在文件资源管理器右键 ZIP → **全部解压缩**，打开解压后的文件夹。保留完整目录，不要在 ZIP 内直接运行，也不要复制 Mac 的 `.venv` 文件夹。
-4. 双击 **Setup-Windows.cmd**。它会安装依赖并运行离线测试。看到 **Setup complete** 后按任意键关闭窗口。若出现错误，请先处理错误再继续。
+1. 下载 [Better Portal ZIP](https://github.com/wchwawa/better-portal/archive/refs/heads/main.zip)。在文件资源管理器右键 ZIP → **全部解压缩**，打开解压后的文件夹。保留完整目录，不要在 ZIP 内直接运行，也不要复制 Mac 的 `.venv` 文件夹。
+2. 双击 **Start-Windows.cmd**。已有 x64 Python 3.10–3.14 时会直接使用，否则通过 Windows 包管理器安装 Python 3.14。如果包管理器不可用，会打开 [Python 官网](https://www.python.org/downloads/windows/)：选择 Python 3.14 的 **Windows installer (64-bit)** 完成安装，再回到启动窗口按 Enter。程序依赖会自动安装。
+3. 如果尚未安装 Npcap，会打开 [Npcap 官网](https://npcap.com/#download)。下载并运行安装程序，允许 Windows 的权限请求。**不要勾选 WinPcap 兼容模式**，也不需要 Wi-Fi 监听模式或 raw 802.11 支持。“仅管理员访问”可以保留。安装结束后，回到启动窗口按 **Enter** 继续。如果安装程序要求重启，请重启电脑后重新打开 Start-Windows.cmd。
+4. 依赖准备完成后，TUI 向导会自动打开。允许 Windows 的权限请求，再按下方步骤操作。无需单独运行 Setup。
 
-不需要安装 Git 或 Wireshark。首次安装需要联网下载 Python 依赖，Npcap 需要单独安装。
+不需要安装 Git 或 Wireshark。首次安装需要联网，已安装的依赖会复用。Npcap 从官方网站安装，不随本项目打包；其免费版需要[通过安装窗口操作](https://npcap.com/guide/npcap-users-guide.html)。**Setup-Windows.cmd** 仍可使用，用于只准备依赖、不打开向导。
 
 ## 以后每次使用
 
@@ -40,13 +40,13 @@ Windows 与 Mac 使用**同一个 TUI 向导**：选择语言、检查前提、�
 
 不需要。Better Portal 不要求 PSN 用户名或密码，只需两个设备的局域网地址及电脑网卡。Windows 的管理员权限请求与 PSN 账号无关。
 
-**找不到 Python 或 `py`。**
+**Python 安装失败。**
 
-修复或重新安装带启动器的 Python，再打开 **Setup-Windows.cmd**。新终端中运行 `py -3 --version` 应能显示版本。
+查看启动窗口中的错误，检查网络，再次打开 **Start-Windows.cmd** 重试。也可以从上方官网手动安装 x64 Python 3.14。启动器会直接查找已安装的解释器，无需修改 PATH 或自行运行 `py`。
 
 **提示缺少 curses，或启动时关闭了。**
 
-重新运行 **Setup-Windows.cmd** 安装 Windows 终端依赖。使用上面指定的 x86-64 Python。必要时在 Windows Terminal 中进入项目文件夹运行 `Start-Windows.cmd`，保留完整报错。实际连接不能通过 WSL 或 Notebook 运行。
+重新打开 **Start-Windows.cmd**。它会检查依赖版本和模块能否加载，缺失或损坏时会重新安装。启动错误会保留在窗口中，直到你按 Enter。确保解压目录可写，并关闭其他安装窗口。实际连接不能通过 WSL 或 Notebook 运行。
 
 **找不到网卡，或提示缺少 Npcap。**
 

@@ -29,10 +29,12 @@ brew install --HEAD wchwawa/better-portal/better-portal
 
 **Windows 11 和 Windows 10** 可以使用同一套 TUI 向导。Windows 实机验证仍在进行；详细步骤和排错请看 [Windows 中文指南](WINDOWS.zh-CN.md)。
 
-1. 安装 [Python](https://www.python.org/downloads/windows/)（3.10 或更高，包含 `py` 启动器）和 [Npcap](https://npcap.com/#download)。安装 Npcap 时不要勾选 WinPcap 兼容模式。
-2. 下载并完整解压 [Better Portal ZIP](https://github.com/wchwawa/better-portal/archive/refs/heads/main.zip)。首次双击 **Setup-Windows.cmd**，等待 **Setup complete**。
-3. **以后每次使用：**双击 **Start-Windows.cmd**，允许 Windows 的权限请求。无需输入命令，也无需单独运行配置工具。
-4. 选择语言、输入两个设备的 IPv4 地址，用 **← / →** 选择电脑的 Wi-Fi 或以太网网卡及码率。Portal 保持断开，看到 **现在连接 / CONNECT NOW** 后，在 **120 秒**内连接 PS5。
+1. 下载 [Better Portal ZIP](https://github.com/wchwawa/better-portal/archive/refs/heads/main.zip)，右键 → **全部解压缩**，打开解压后的文件夹。
+2. 双击 **Start-Windows.cmd**。它会检查 Python 并安装缺少的程序依赖。若未安装 Python，会通过 Windows 包管理器安装；包管理器不可用时，会打开 Python 官方安装页面。
+3. 如果提示安装 **Npcap**，按自动打开的官方网站完成安装。**不要勾选 WinPcap 兼容模式**。安装结束后，回到启动窗口按 **Enter** 继续。已经安装 Npcap 时会跳过这一步。
+4. 允许 Windows 的权限请求。选择语言、输入两个设备的 IPv4 地址，用 **← / →** 选择电脑的 Wi-Fi 或以太网网卡及码率。Portal 保持断开，看到 **现在连接 / CONNECT NOW** 后，在 **120 秒**内连接 PS5。
+
+**以后只需双击 Start-Windows.cmd。**无需单独运行 Setup，也无需输入命令。此快速启动支持 x64 Windows 电脑。
 
 语言、**S** 设置快捷键、动画、连接阶段和结果判断与下方 Mac 演示共用代码。Windows 的设备页显示 **PC 局域网网卡**。语言、地址和码率都会保存。目标码率确认后，仍请在 Portal 上检查画面、声音和操作。
 

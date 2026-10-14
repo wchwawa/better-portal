@@ -8,14 +8,14 @@ This is a **Windows preview**. Automated checks cover the native Windows termina
 
 ## Install once
 
-You need a Windows 11 or Windows 10 PC, a PS5 and a PlayStation Portal. Ordinary Remote Play must already work. Connect all three to the same home router; PS5 can use Ethernet. Keep Portal on Wi-Fi but disconnected from its PS5 session, and keep the PC awake.
+You need an x64 Windows 11 or Windows 10 PC, a PS5 and a PlayStation Portal. Ordinary Remote Play must already work. Connect all three to the same home router; PS5 can use Ethernet. Keep Portal on Wi-Fi but disconnected from its PS5 session, and keep the PC awake. Native ARM64 PCs are not supported by this quick start yet.
 
-1. Install **64-bit Python 3.14** from [Python’s Windows downloads](https://www.python.org/downloads/windows/), including the `py` launcher. Python 3.10–3.14 is covered by the supported dependency range; CI checks 3.10, 3.12 and 3.14. Use the x86-64 Python installer; native ARM64 Python does not have the pinned terminal package wheel.
-2. Install **Npcap** from its [official download page](https://npcap.com/#download). Leave **WinPcap compatibility mode unchecked**. Wi-Fi monitor mode / raw 802.11 support is not needed. Administrator-only access is fine because the launcher requests administrator permission. These options follow [Scapy’s Windows instructions](https://scapy.readthedocs.io/en/stable/installation.html#windows).
-3. Download the [Better Portal ZIP](https://github.com/wchwawa/better-portal/archive/refs/heads/main.zip). In File Explorer, right-click it → **Extract All**. Open the extracted folder. Keep all its files together; do not run files inside the ZIP or copy a Mac `.venv` folder.
-4. Double-click **Setup-Windows.cmd**. It installs the dependencies and runs the offline checks. Wait for **Setup complete**, then press a key to close the window. If you see an error, fix it before starting a session.
+1. Download the [Better Portal ZIP](https://github.com/wchwawa/better-portal/archive/refs/heads/main.zip). In File Explorer, right-click it → **Extract All**. Open the extracted folder. Keep all its files together; do not run files inside the ZIP or copy a Mac `.venv` folder.
+2. Double-click **Start-Windows.cmd**. It reuses a supported x64 Python 3.10–3.14 installation, or installs Python 3.14 with Windows Package Manager. If the package manager is unavailable, it opens [Python's official page](https://www.python.org/downloads/windows/): install Python 3.14 using **Windows installer (64-bit)**, then return to the setup window and press Enter. Application dependencies are installed automatically.
+3. If Npcap is missing, its [official download page](https://npcap.com/#download) opens. Download and run the installer, accepting the Windows permission prompt. Leave **WinPcap compatibility mode unchecked**. Wi-Fi monitor mode / raw 802.11 support is not needed. Administrator-only access is fine. These options follow [Scapy's Windows instructions](https://scapy.readthedocs.io/en/stable/installation.html#windows). Finish the installer, return to the setup window, then press **Enter**. If it requests a restart, restart and open Start-Windows.cmd again.
+4. Once dependencies are ready, the wizard opens automatically. Accept its Windows permission prompt and follow the steps below. There is no separate Setup step to remember.
 
-You do not need Git or Wireshark. Installation downloads Scapy and [windows-curses](https://github.com/zephyrproject-rtos/windows-curses), which runs the same curses interface used on Mac. Npcap is installed separately and is not bundled.
+You do not need Git or Wireshark. Installation downloads Scapy and [windows-curses](https://github.com/zephyrproject-rtos/windows-curses). Npcap is installed from its own website and is not bundled; its free installer requires [interactive installation](https://npcap.com/guide/npcap-users-guide.html). Already installed dependencies are reused. **Setup-Windows.cmd** remains available if you want to prepare dependencies without opening the wizard.
 
 ## Every time you play
 
@@ -40,13 +40,13 @@ To make a desktop shortcut, right-click **Start-Windows.cmd** → **Show more op
 
 No. Better Portal does not ask for your PSN username or password. Enter the two local device addresses and choose your PC’s network adapter.
 
-**Python or `py` cannot be found.**
+**Python installation failed.**
 
-Repair or reinstall Python with its launcher, then open **Setup-Windows.cmd** again. In a new terminal, `py -3 --version` should show the installed Python version.
+Read the error in the setup window, check your Internet connection, and reopen **Start-Windows.cmd** to retry. You can also install x64 Python 3.14 from the official page above. The launcher looks for the installed interpreter directly; you do not need to edit PATH or run `py` yourself.
 
 **The wizard cannot import curses, or closes during startup.**
 
-Run **Setup-Windows.cmd** again to install the Windows terminal dependency. Use the supported x86-64 Python version. If necessary, open **Windows Terminal**, change to the project folder, and run `Start-Windows.cmd` so the error remains visible. Do not run the live wizard through WSL or a notebook.
+Reopen **Start-Windows.cmd**. It checks package versions and imports, and retries preparation when a dependency is missing or broken. The setup error stays visible until you press Enter. Keep the extracted folder writable and close any other setup window. Do not run the live wizard through WSL or a notebook.
 
 **No LAN adapter is available, or the check reports Npcap missing.**
 

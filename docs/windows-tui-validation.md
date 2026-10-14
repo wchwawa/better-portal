@@ -43,13 +43,39 @@ Windows 11 physical-device test.
 The existing isolated Linux-kernel recovery test and deployment checks also remain
 required because recovery code and installation file lists are shared.
 
+## Quick-start installation checks
+
+The quick-start workflow also runs the shipped CMD and Windows PowerShell 5.1
+entry points in a new extracted-folder model. Its path contains spaces, an
+apostrophe, an ampersand, and a non-ASCII character. Checks cover a first package
+download failure and retry, a healthy repeat without a package index, changed
+requirements that cannot be installed, repair of a deleted native curses module,
+and preservation of saved language, bitrate, and device addresses.
+
+The freshly prepared interpreter runs the native six-language TUI smoke test.
+A separate console probe follows the CMD → PowerShell → Python launch chain and
+checks interactive standard handles, arguments, working directory, and exit
+codes. The final Python target is replaced only in that temporary console probe;
+the TUI smoke test uses the production wizard. Driver installation is simulated
+to check that missing Npcap blocks completion and that setup rechecks it after
+the user returns from the official download page. Concurrent setup is rejected.
+
+CI supplies a supported Python interpreter. Downloading/installing Python with
+WinGet, the fallback browser instructions, the actual Npcap installer, and human
+UAC consent still need a physical Windows check. No driver, real PS5, or Portal
+is involved in these automated quick-start checks.
+
 ## Physical Windows 11 acceptance
 
 Use the [Windows guide](../WINDOWS.md) or [Chinese guide](../WINDOWS.zh-CN.md).
 Record the exact commit, Windows build, Python/Npcap version, adapter and Portal
 firmware. Check the following with your own devices:
 
-- Double-click Setup, then Start; UAC appears once per wizard launch.
+- On a PC without Python/Npcap, extract the ZIP and double-click Start. Check the
+  WinGet installation or official Python fallback, complete the official Npcap
+  installer, and confirm the wizard opens after its UAC prompt.
+- Open Start again with the Internet unavailable. Healthy dependencies are reused;
+  saved settings remain. UAC appears once per wizard launch.
 - First-launch language, live S switching, saved addresses/profile and adapter.
 - Full countdown after CONNECT NOW, including connecting near its end.
 - Actual picture, sound and controls after a confirmed target and restoration.

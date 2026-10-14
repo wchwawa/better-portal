@@ -29,10 +29,12 @@ brew install --HEAD wchwawa/better-portal/better-portal
 
 **Windows 11 / Windows 10** でも同じ設定ガイドを使えます。Windows の実機検証は継続中です。詳しくは [Windows ガイド（英語）](WINDOWS.md)をご覧ください。
 
-1. [Python](https://www.python.org/downloads/windows/)（3.10 以降、`py` ランチャー付き）と [Npcap](https://npcap.com/#download) をインストールします。Npcap の WinPcap 互換モードはオフにします。
-2. [Better Portal ZIP](https://github.com/wchwawa/better-portal/archive/refs/heads/main.zip) をダウンロードしてすべて展開します。初回だけ **Setup-Windows.cmd** を開き、**Setup complete** を待ちます。
-3. **次回から：Start-Windows.cmd** をダブルクリックし、Windows の許可画面で承認します。コマンド入力や別の設定ツールは不要です。
-4. 言語と 2 台の IPv4 アドレスを設定し、**← / →** で PC の Wi-Fi / Ethernet アダプターとビットレートを選びます。Portal は切断したまま待ち、**CONNECT NOW** が出たら **120 秒以内**に PS5 へ接続します。
+1. [Better Portal ZIP](https://github.com/wchwawa/better-portal/archive/refs/heads/main.zip) をダウンロードし、右クリック → **すべて展開**で展開したフォルダーを開きます。
+2. **Start-Windows.cmd** をダブルクリックします。Python を確認し、不足する依存パッケージをインストールします。Python がなければ Windows パッケージ マネージャーを使い、利用できない場合は Python の公式インストールページを開きます。
+3. **Npcap** のインストールを求められたら、開いた公式ページに従ってインストールします。**WinPcap 互換モードはオフ**にしてください。完了後、起動ウィンドウに戻って **Enter** を押します。Npcap がすでにあれば、この手順は省略されます。
+4. Windows の許可画面で承認します。言語と 2 台の IPv4 アドレスを設定し、**← / →** で PC の Wi-Fi / Ethernet アダプターとビットレートを選びます。Portal は切断したまま待ち、**CONNECT NOW** が出たら **120 秒以内**に PS5 へ接続します。
+
+**次回からは Start-Windows.cmd をダブルクリックするだけです。**別の Setup 手順やコマンド入力は不要です。このクイックスタートは x64 Windows PC に対応しています。
 
 言語、**S** キーの設定、アニメーション、接続段階、結果判定は下の Mac 版と共通です。Windows では **PC LAN アダプター** を選びます。言語・アドレス・ビットレートは保存されます。目標ビットレートの確認後も、Portal の映像・音声・操作を確認してください。
 

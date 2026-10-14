@@ -29,10 +29,12 @@ Después de cada actualización, Terminal muestra la versión instalada y sus ca
 
 La misma interfaz guiada está disponible en **Windows 11 y Windows 10**. Las pruebas con dispositivos reales en Windows siguen en curso; consulta la [guía para Windows (en inglés)](WINDOWS.md).
 
-1. Instala [Python](https://www.python.org/downloads/windows/) (3.10 o posterior, con el lanzador `py`) y [Npcap](https://npcap.com/#download). Deja desmarcado el modo de compatibilidad con WinPcap.
-2. Descarga y extrae todo el [ZIP de Better Portal](https://github.com/wchwawa/better-portal/archive/refs/heads/main.zip). Abre **Setup-Windows.cmd** una vez y espera a **Setup complete**.
-3. **Cada vez que juegues:** haz doble clic en **Start-Windows.cmd** y acepta el permiso de Windows. No necesitas escribir comandos ni usar otra herramienta de configuración.
-4. Elige el idioma, escribe las dos direcciones IPv4 y usa **← / →** para elegir el adaptador Wi-Fi o Ethernet del PC y el bitrate. Mantén Portal desconectado hasta **CONNECT NOW** y conecta con PS5 antes de que pasen **120 segundos**.
+1. Descarga el [ZIP de Better Portal](https://github.com/wchwawa/better-portal/archive/refs/heads/main.zip). Haz clic derecho → **Extraer todo** y abre la carpeta extraída.
+2. Haz doble clic en **Start-Windows.cmd**. Comprueba Python e instala las dependencias que faltan. Si falta Python, usa el Administrador de paquetes de Windows; si no está disponible, abre la página oficial de instalación de Python.
+3. Si se solicita instalar **Npcap**, sigue la página oficial que se abre. Deja **desmarcado el modo de compatibilidad con WinPcap**. Termina la instalación y pulsa **Enter** en la ventana de inicio. Este paso se omite si Npcap ya está instalado.
+4. Acepta el permiso de Windows. Elige el idioma, escribe las dos direcciones IPv4 y usa **← / →** para elegir el adaptador Wi-Fi o Ethernet del PC y el bitrate. Mantén Portal desconectado hasta **CONNECT NOW** y conecta con PS5 antes de que pasen **120 segundos**.
+
+**La próxima vez, solo haz doble clic en Start-Windows.cmd.** No necesitas ejecutar Setup por separado ni escribir comandos. Este inicio rápido admite PC Windows x64.
 
 Los idiomas, los ajustes con **S**, las animaciones, las fases y los resultados se comparten con la versión Mac que aparece abajo. En Windows se elige **Adaptador LAN del PC**. El idioma, las direcciones y el bitrate se guardan. Aunque se confirme el bitrate objetivo, comprueba la imagen, el sonido y los controles en Portal.
 
