@@ -34,7 +34,7 @@ brew install --HEAD wchwawa/better-portal/better-portal
 
 语言、**S** 设置快捷键、动画、连接阶段和结果判断与下方 Mac 演示共用代码。Windows 的设备页显示 **PC 局域网网卡**。语言、地址和码率都会保存。目标码率确认后，仍请在 Portal 上检查画面、声音和操作。
 
-**使用 Mac？** 按下方步骤首次打开 **Setup.command**，以后双击 **Start.command**。
+**使用 Mac？** 可以选择上方的 Homebrew 方式，或按下方的 ZIP 步骤安装。
 
 
 ## 开始前需要什么
@@ -48,6 +48,8 @@ brew install --HEAD wchwawa/better-portal/better-portal
 这是一个实验性社区工具，建议先用 **65 Mbps**。码率表示每秒可以传送多少画面数据；调高后可能保留更多细节，但网络不稳定时也可能更卡。
 
 ## 安装与打开
+
+下面是 ZIP 安装步骤。如果已经通过 Homebrew 安装，运行 **`better-portal`**，直接看后面的**第一次使用**即可。指南中提到打开 Start.command 时，Brew 用户运行这个命令。
 
 只需要安装一次。请保留下载的整个文件夹，以后每次使用都从这里打开。
 

@@ -34,7 +34,7 @@ Le même assistant est disponible sous **Windows 11 et Windows 10**. Les essais 
 
 Les langues, les réglages avec **S**, les animations, les étapes et les résultats sont communs à la version Mac illustrée ci-dessous. Sous Windows, choisissez **Adaptateur LAN du PC**. La langue, les adresses et le débit sont enregistrés. Même si le débit cible est confirmé, vérifiez l’image, le son et les commandes sur Portal.
 
-**Sur Mac ?** Suivez les instructions ci-dessous : **Setup.command** une fois, puis **Start.command** à chaque utilisation.
+**Sur Mac ?** Choisissez Homebrew ci-dessus ou l’installation ZIP ci-dessous.
 
 
 ## Avant de commencer
@@ -50,6 +50,8 @@ Il s’agit d’un outil communautaire expérimental. Commencez avec **65 Mbps**
 <a id="get-started"></a>
 
 ## Installer et ouvrir
+
+Ces étapes concernent l’installation ZIP. Si vous avez installé avec Homebrew, lancez **`better-portal`** et passez à **Votre première session**. Utilisez cette commande partout où le guide indique d’ouvrir Start.command.
 
 L’installation ne se fait qu’une fois. Conservez tout le dossier téléchargé : il contient le fichier à ouvrir chaque fois que vous souhaitez jouer.
 

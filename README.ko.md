@@ -34,7 +34,7 @@ brew install --HEAD wchwawa/better-portal/better-portal
 
 언어, **S** 설정 단축키, 애니메이션, 연결 단계와 결과 판단은 아래 Mac 버전과 같습니다. Windows에서는 **PC LAN 어댑터**를 선택합니다. 언어, 주소와 비트레이트가 저장됩니다. 목표 비트레이트가 확인되어도 Portal의 화면, 소리와 조작을 확인하세요.
 
-**Mac 사용자:** 아래 안내에 따라 처음에는 **Setup.command**, 다음부터는 **Start.command**를 여세요.
+**Mac을 사용하나요?** 위의 Homebrew 방법이나 아래 ZIP 설치 방법을 선택하세요.
 
 
 ## 시작하기 전에
@@ -50,6 +50,8 @@ brew install --HEAD wchwawa/better-portal/better-portal
 <a id="get-started"></a>
 
 ## 설치 및 실행
+
+아래는 ZIP 설치 단계입니다. Homebrew로 설치했다면 **`better-portal`**을 실행하고 아래의 첫 사용 안내로 이동하세요. 안내에서 Start.command를 열라고 하면 대신 이 명령을 실행하세요.
 
 설치는 처음 한 번만 하면 됩니다. 내려받은 폴더 전체를 보관하세요. 다음에도 그 안의 파일로 실행합니다.
 

@@ -34,7 +34,7 @@ La misma interfaz guiada está disponible en **Windows 11 y Windows 10**. Las pr
 
 Los idiomas, los ajustes con **S**, las animaciones, las fases y los resultados se comparten con la versión Mac que aparece abajo. En Windows se elige **Adaptador LAN del PC**. El idioma, las direcciones y el bitrate se guardan. Aunque se confirme el bitrate objetivo, comprueba la imagen, el sonido y los controles en Portal.
 
-**¿Usas Mac?** Sigue las instrucciones de abajo: **Setup.command** una vez y **Start.command** en cada sesión.
+**¿Usas Mac?** Elige Homebrew arriba o la instalación ZIP de abajo.
 
 
 ## Antes de empezar
@@ -50,6 +50,8 @@ Esta es una herramienta experimental de la comunidad. Empieza con **65 Mbps**. E
 <a id="get-started"></a>
 
 ## Instalar y abrir
+
+Estos pasos son para la instalación ZIP. Si instalaste con Homebrew, ejecuta **`better-portal`** y sigue con **Tu primera sesión**. Usa ese comando donde la guía indique abrir Start.command.
 
 Solo necesitas instalar una vez. Conserva toda la carpeta descargada: contiene el archivo que abrirás cada vez que quieras jugar.
 

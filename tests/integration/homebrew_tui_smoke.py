@@ -34,7 +34,7 @@ def main():
                         raise
                     chunk = b''
                 output.extend(chunk)
-            if not quit_sent and b'Better Portal' in output:
+            if not quit_sent and b'BETTER PORTAL' in output.upper():
                 os.write(master, b'q')
                 quit_sent = True
             if child.poll() is not None:

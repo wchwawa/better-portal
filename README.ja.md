@@ -34,7 +34,7 @@ brew install --HEAD wchwawa/better-portal/better-portal
 
 言語、**S** キーの設定、アニメーション、接続段階、結果判定は下の Mac 版と共通です。Windows では **PC LAN アダプター** を選びます。言語・アドレス・ビットレートは保存されます。目標ビットレートの確認後も、Portal の映像・音声・操作を確認してください。
 
-**Mac の場合：**以下の手順で最初に **Setup.command**、次回から **Start.command** を開きます。
+**Mac の場合：**上記の Homebrew、または以下の ZIP 手順を選べます。
 
 
 ## 始める前に
@@ -50,6 +50,8 @@ brew install --HEAD wchwawa/better-portal/better-portal
 <a id="get-started"></a>
 
 ## インストールと起動
+
+以下は ZIP 版のインストール手順です。Homebrew でインストール済みなら **`better-portal`** を実行し、下の「初めて使うとき」へ進んでください。ガイドで Start.command を開くと書かれている箇所では、このコマンドを使います。
 
 インストールは最初の 1 回だけです。ダウンロードしたフォルダーは丸ごと残してください。次回もその中のファイルから起動します。
 
