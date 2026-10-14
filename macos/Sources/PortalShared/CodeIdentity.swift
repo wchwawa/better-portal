@@ -1,5 +1,6 @@
 import Foundation
 import Security
+import Darwin
 
 public enum CodeIdentity {
     public static func team() throws -> String {
@@ -31,6 +32,30 @@ public enum CodeIdentity {
                   SecCSFlags(rawValue: kSecCSCheckAllArchitectures | kSecCSCheckNestedCode | kSecCSStrictValidate),
                   requirement) == errSecSuccess else {
             throw PortalError("Installed code failed signature verification. Reinstall Better Portal.")
+        }
+    }
+
+    /// A root worker may only load code beneath directories that another user
+    /// cannot rename. /Applications is admin-writable on ordinary macOS hosts.
+    public static func trustedDirectoryChain(_ directory: URL,
+                                             from anchor: URL = URL(fileURLWithPath: "/"),
+                                             owner: uid_t = 0) throws {
+        let base = anchor.standardizedFileURL.path
+        let target = directory.standardizedFileURL.path
+        guard target == base || target.hasPrefix(base == "/" ? "/" : base + "/") else {
+            throw PortalError("Worker path is outside its trusted directory")
+        }
+        let suffix = target == base ? "" : String(target.dropFirst(base == "/" ? 1 : base.count + 1))
+        var current = base
+        for component in [""] + suffix.split(separator: "/").map(String.init) {
+            if !component.isEmpty { current = URL(fileURLWithPath: current).appendingPathComponent(component).path }
+            var attributes = stat()
+            guard lstat(current, &attributes) == 0,
+                  attributes.st_mode & mode_t(S_IFMT) == mode_t(S_IFDIR),
+                  attributes.st_uid == owner,
+                  attributes.st_mode & 0o022 == 0 else {
+                throw PortalError("Worker directory is not protected from local replacement")
+            }
         }
     }
 

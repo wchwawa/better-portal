@@ -12,9 +12,20 @@ import struct
 import termios
 import time
 
-APP = Path(__file__).resolve().parents[1] / 'build/installer-root/Better Portal.app'
+STAGE = Path(__file__).resolve().parents[1] / 'build/installer-root'
+BASE = STAGE / 'Library/Application Support/Better Portal'
+APP = BASE / 'Better Portal.app'
+PROTECTED = BASE / 'Private'
+LAUNCHER = STAGE / 'Applications/Better Portal.app'
 runtime = APP / 'Contents/Resources/PortalRuntime/PortalRuntime'
 subprocess.run(['/usr/bin/codesign', '--verify', '--deep', '--strict', str(APP)], check=True)
+subprocess.run(['/usr/bin/codesign', '--verify', '--deep', '--strict', str(LAUNCHER)], check=True)
+subprocess.run(['/usr/bin/codesign', '--verify', '--strict',
+                str(PROTECTED / 'PortalRuntime/PortalRuntime')], check=True)
+assert PROTECTED.stat().st_mode & 0o077 == 0
+assert BASE.stat().st_mode & 0o022 == 0
+assert not (LAUNCHER / 'Contents/Library/LaunchDaemons').exists()
+assert (PROTECTED / 'PortalRuntime/PortalRuntime').read_bytes() == runtime.read_bytes()
 info = plistlib.loads((APP / 'Contents/Info.plist').read_bytes())
 assert info['CFBundleIdentifier'] == 'com.wchwawa.betterportal'
 job = plistlib.loads((APP / 'Contents/Library/LaunchDaemons/com.wchwawa.betterportal.helper.plist').read_bytes())
@@ -48,9 +59,9 @@ try:
     while time.monotonic() < deadline:
         if select.select([master], [], [], .1)[0]:
             screen.extend(os.read(master, 65536))
-        if b'better portal' in screen.lower():
+        if b'guided setup' in screen.lower():
             break
-    assert b'better portal' in screen.lower(), screen.decode(errors='replace')
+    assert b'guided setup' in screen.lower(), screen.decode(errors='replace')
     os.write(master, b'q')
     deadline = time.monotonic() + 10
     while process.poll() is None and time.monotonic() < deadline:

@@ -15,9 +15,8 @@ import sys
 import time
 import uuid
 
-APP = Path('/Applications/Better Portal.app')
-RUNTIME = APP / 'Contents/Resources/PortalRuntime/PortalRuntime'
-STORAGE = Path('/Library/Application Support/Better Portal')
+STORAGE = Path('/Library/Application Support/Better Portal/Private')
+RUNTIME = STORAGE / 'PortalRuntime/PortalRuntime'
 LOCK = Path('/var/run/portal-lab-capture.lock')
 
 

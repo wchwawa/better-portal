@@ -186,7 +186,6 @@
   "Update complete. Run better-portal to open the wizard.": "Mise à jour terminée. Lancez better-portal pour ouvrir l’assistant.",
   "Homebrew could not finish. Read the error above, then retry better-portal update.": "Homebrew n’a pas pu terminer. Consultez l’erreur ci-dessus, puis relancez better-portal update.",
   "Imported {count} settings files. Existing settings were kept.": "{count} fichiers de réglages importés. Les réglages existants ont été conservés.",
-  "Opening Better Portal. Enter your Mac login password if requested.": "Ouverture de Better Portal. Saisissez le mot de passe de votre Mac si demandé.",
   "Manual recovery in Terminal: {command}": "Restauration manuelle dans Terminal : {command}",
   "Changes in {version}:": "Changements de {version} :",
   "Since {version}:": "Depuis {version} :",
@@ -198,7 +197,7 @@
   "Homebrew finished, but the installed version could not be verified. Run better-portal --version.": "Homebrew a terminé, mais la version installée n’a pas pu être vérifiée. Lancez better-portal --version.",
   "Update with Homebrew, read change notes, or import settings from an old folder.": "Mettre à jour avec Homebrew, lire les changements ou importer les réglages d’un ancien dossier.",
   "Open wizard": "Ouvrir le guide",
-  "Install Better Portal in Applications using its installer first.": "Installez d’abord Better Portal dans Applications avec son programme d’installation.",
+  "Install Better Portal using its installer first.": "Installez d’abord Better Portal avec son programme d’installation.",
   "System Settings": "Réglages Système",
   "Helper disabled": "Assistant désactivé",
   "Enable connection helper": "Activer l’assistant de connexion",
@@ -212,5 +211,6 @@
   "Open the wizard normally. macOS manages authorization; Better Portal never stores your password.": "Ouvrez le guide normalement. macOS gère l’autorisation ; Better Portal ne conserve jamais votre mot de passe.",
   "Open Better Portal as your normal Mac user.": "Ouvrez Better Portal avec votre compte Mac habituel.",
   "Approve Better Portal in System Settings, then return here.": "Autorisez Better Portal dans Réglages Système, puis revenez ici.",
-  "Use the installed macOS connection helper without sudo": "Utiliser l’assistant macOS installé sans sudo"
+  "Use the installed macOS connection helper without sudo": "Utiliser l’assistant macOS installé sans sudo",
+  "Opening Better Portal through the installed macOS connection helper.": "Ouverture de Better Portal avec l’assistant de connexion macOS installé."
 }

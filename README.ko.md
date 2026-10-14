@@ -6,7 +6,7 @@
 
 # Better Portal
 
-**macOS 권한 미리보기:** 패키지 앱은 macOS 승인 후 sudo 없이 마법사를 여는 흐름을 구현했습니다. 서명된 설치 프로그램과 실기 검증은 아직 완료되지 않았습니다. 아래 소스 실행 방법은 계속 sudo를 사용합니다. [설정, 제거 및 배포 상태](docs/macos-authorization.md)를 확인하세요.
+**macOS 보안 미리보기:** ZIP 및 Homebrew 실행기는 sudo 없이 서명된 macOS 연결 도우미를 사용합니다. 서명된 설치 프로그램과 실기 검증은 아직 완료되지 않아 현재는 데모만 사용할 수 있습니다. [설정, 제거 및 배포 상태](docs/macos-authorization.md)를 확인하세요.
 
 [English](README.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja.md) · **한국어** · [Español](README.es.md) · [Français](README.fr.md)
 
@@ -23,7 +23,7 @@ brew tap wchwawa/better-portal https://github.com/wchwawa/better-portal
 brew install --HEAD wchwawa/better-portal/better-portal
 ```
 
-**`better-portal`**로 실행합니다. 업데이트 전 마법사를 닫고 **`better-portal update`**를 실행하세요. 주소, 언어, 비트레이트와 보고서는 사용자 폴더에 유지됩니다. 최신 `main` 브랜치를 사용하며 실제 연결 시에는 여전히 Mac 암호를 요청합니다. [자세한 안내 및 이전 설정 가져오기](docs/homebrew.md). 아래 ZIP 설치 방법도 계속 사용할 수 있습니다.
+**`better-portal`**로 실행합니다. 업데이트 전 마법사를 닫고 **`better-portal update`**를 실행하세요. 주소, 언어, 비트레이트와 보고서는 사용자 폴더에 유지됩니다. 최신 `main` 브랜치를 사용하지만 Python을 sudo로 실행하지 않습니다. 실제 연결에는 서명된 도우미 설치와 승인이 필요합니다. 그전에는 `better-portal --demo`로 미리 볼 수 있습니다. [자세한 안내 및 이전 설정 가져오기](docs/homebrew.md). 아래 ZIP 설치 방법도 계속 사용할 수 있습니다.
 
 업데이트가 끝나면 터미널에 실제 설치된 버전과 변경 내용이 표시됩니다. **`better-portal changes`**로 오프라인에서도 다시 확인할 수 있습니다. 제목은 저장한 언어로 표시되며 변경 설명은 원래 영어 커밋 문구를 유지합니다.
 
@@ -85,7 +85,7 @@ Python은 Better Portal을 실행하는 프로그램입니다. 코드를 작성�
 
 ### C. 설정 도우미 열기
 
-같은 폴더에서 **Start.command**를 더블 클릭하세요. `Password:`가 표시되면 **Mac 로그인 암호**를 입력하고 **Return**을 누릅니다. **입력할 때 글자나 점이 나타나지 않는 것이 정상입니다.** `Sorry, try again`이 나오면 암호를 다시 입력하세요.
+서명된 도우미를 설치하고 승인한 후 같은 폴더의 **Start.command**를 더블 클릭하세요. 일반 Mac 사용자 권한으로 실행됩니다. 서명된 설치 프로그램이 공개되기 전에는 아래 데모 명령으로 미리 보세요.
 
 macOS가 실행을 차단하면 [“macOS가 파일을 열지 않습니다”](#macos-blocked)를 참고하세요. 창을 넓히라는 안내가 나오면 터미널 창 모서리를 끌어 크게 만드세요.
 
@@ -252,9 +252,9 @@ Portal이 연결되면 연결을 유지하세요. Mac에 **결과 화면**이 �
 
 **Install Certificates.command**를 포함해 [A. Python 설치](#install-python)를 마치세요. 실패한 창을 닫은 뒤 **Setup.command**를 다시 엽니다. 계속 실패한다면 도움을 요청할 때 오류 문구를 첨부하세요.
 
-**암호가 통하지 않거나 계정에서 sudo를 사용할 수 없다고 합니다.**
+**연결 도우미를 사용할 수 없거나 승인되지 않았습니다.**
 
-Mac 로그인 암호를 입력하세요. 관리자 계정이 아니라면 Mac 관리자에게 실행 승인을 도와 달라고 요청하세요.
+서명된 패키지가 공개되면 Better Portal을 설치하고 앱에서 도우미를 활성화한 뒤 시스템 설정에서 승인하세요. 그전에는 데모 모드를 사용할 수 있습니다. 마법사는 sudo를 요구하지 않습니다.
 
 **글자가 잘리거나 창을 넓히라는 안내가 나옵니다.**
 

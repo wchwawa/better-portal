@@ -186,7 +186,6 @@
   "Update complete. Run better-portal to open the wizard.": "更新が完了しました。better-portal でウィザードを開けます。",
   "Homebrew could not finish. Read the error above, then retry better-portal update.": "Homebrew の更新が完了しませんでした。上のエラーを確認し、better-portal update を再実行してください。",
   "Imported {count} settings files. Existing settings were kept.": "設定ファイルを {count} 個読み込みました。既存の設定は保持されました。",
-  "Opening Better Portal. Enter your Mac login password if requested.": "Better Portal を開いています。求められたら Mac のログインパスワードを入力してください。",
   "Manual recovery in Terminal: {command}": "ターミナルで手動復旧：{command}",
   "Changes in {version}:": "{version} の更新内容：",
   "Since {version}:": "{version} 以降：",
@@ -198,7 +197,7 @@
   "Homebrew finished, but the installed version could not be verified. Run better-portal --version.": "Homebrew は終了しましたが、インストール済みのバージョンを確認できませんでした。better-portal --version を実行してください。",
   "Update with Homebrew, read change notes, or import settings from an old folder.": "Homebrew で更新する、更新内容を読む、または以前のフォルダから設定を読み込みます。",
   "Open wizard": "ウィザードを開く",
-  "Install Better Portal in Applications using its installer first.": "まずインストーラで Better Portal を「アプリケーション」にインストールしてください。",
+  "Install Better Portal using its installer first.": "まずインストーラで Better Portal をインストールしてください。",
   "System Settings": "システム設定",
   "Helper disabled": "ヘルパーは無効です",
   "Enable connection helper": "接続ヘルパーを有効にする",
@@ -212,5 +211,6 @@
   "Open the wizard normally. macOS manages authorization; Better Portal never stores your password.": "通常どおりウィザードを開いてください。認証は macOS が管理し、Better Portal はパスワードを保存しません。",
   "Open Better Portal as your normal Mac user.": "通常の Mac ユーザとして Better Portal を開いてください。",
   "Approve Better Portal in System Settings, then return here.": "システム設定で Better Portal を許可してから、ここに戻ってください。",
-  "Use the installed macOS connection helper without sudo": "インストール済みの macOS 接続ヘルパーを sudo なしで使う"
+  "Use the installed macOS connection helper without sudo": "インストール済みの macOS 接続ヘルパーを sudo なしで使う",
+  "Opening Better Portal through the installed macOS connection helper.": "インストール済みの macOS 接続ヘルパーを使って Better Portal を開いています。"
 }

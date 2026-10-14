@@ -41,7 +41,10 @@ def main():
     build = MAC / 'build'
     dist = MAC / 'dist'
     stage = build / 'installer-root'
-    app = stage / 'Better Portal.app'
+    base = stage / 'Library/Application Support/Better Portal'
+    app = base / 'Better Portal.app'
+    protected = base / 'Private'
+    launcher = stage / 'Applications/Better Portal.app'
     # Remove only generated staging, never a user's installed app.
     if stage.exists():
         shutil.rmtree(stage)
@@ -52,11 +55,14 @@ def main():
     daemons = contents / 'Library/LaunchDaemons'
     for directory in (executables, resources, daemons):
         directory.mkdir(parents=True, exist_ok=True)
+    launcher_executables = launcher / 'Contents/MacOS'
+    launcher_executables.mkdir(parents=True, exist_ok=True)
     run('swift', 'build', '--package-path', MAC, '-c', 'release')
     binary_dir = Path(subprocess.check_output(
         ['swift', 'build', '--package-path', str(MAC), '-c', 'release', '--show-bin-path'], text=True).strip())
     for name in ('BetterPortal', 'PortalHelper', 'PortalBridge'):
         shutil.copy2(binary_dir / name, executables / name)
+    shutil.copy2(binary_dir / 'PortalLauncher', launcher_executables / 'PortalLauncher')
     command = [sys.executable, '-m', 'PyInstaller', '--noconfirm', '--clean', '--onedir',
                '--name', 'PortalRuntime', '--distpath', str(build / 'frozen'),
                '--workpath', str(build / 'pyinstaller'), '--specpath', str(build),
@@ -82,6 +88,13 @@ def main():
             'CFBundleVersion': args.version, 'LSMinimumSystemVersion': '13.0',
             'NSHighResolutionCapable': True,
         }, stream)
+    with (launcher / 'Contents/Info.plist').open('wb') as stream:
+        plistlib.dump({
+            'CFBundleIdentifier': APP_ID + '.launcher', 'CFBundleName': 'Better Portal',
+            'CFBundleDisplayName': 'Better Portal', 'CFBundleExecutable': 'PortalLauncher',
+            'CFBundlePackageType': 'APPL', 'CFBundleShortVersionString': args.version,
+            'CFBundleVersion': args.version, 'LSMinimumSystemVersion': '13.0',
+        }, stream)
     # The package installs every payload as root:wheel. No group/world writes.
     for path in stage.rglob('*'):
         if not path.is_symlink():
@@ -93,11 +106,22 @@ def main():
                              ('PortalBridge', APP_ID + '.bridge'),
                              ('BetterPortal', APP_ID)):
         run('/usr/bin/codesign', *flags, '--identifier', identifier, executables / name)
+    run('/usr/bin/codesign', *flags, '--identifier', APP_ID + '.launcher',
+        launcher_executables / 'PortalLauncher')
     run('/usr/bin/codesign', *flags, '--identifier', APP_ID + '.runtime',
         resources / 'PortalRuntime/PortalRuntime')
     # Dependencies were signed by PyInstaller; sign the outer bundle last.
     run('/usr/bin/codesign', *flags, app)
+    run('/usr/bin/codesign', *flags, launcher)
+    # /Applications is admin-writable on ordinary Macs. The launcher there has
+    # no privilege; the daemon and its worker stay beneath a protected parent.
+    shutil.copytree(resources / 'PortalRuntime', protected / 'PortalRuntime', symlinks=True)
+    base.chmod(0o755)
+    protected.chmod(0o700)
     run('/usr/bin/codesign', '--verify', '--deep', '--strict', '--verbose=2', app)
+    run('/usr/bin/codesign', '--verify', '--deep', '--strict', '--verbose=2', launcher)
+    run('/usr/bin/codesign', '--verify', '--strict', '--verbose=2',
+        protected / 'PortalRuntime/PortalRuntime')
     if args.development:
         print(f'Development app: {app}\nHelper registration is deliberately unavailable without an Apple signature.')
         return 0
@@ -107,7 +131,7 @@ def main():
     shutil.copy2(MAC / 'Resources/preinstall', scripts / 'preinstall')
     (scripts / 'preinstall').chmod(0o755)
     run('/usr/bin/pkgbuild', '--root', stage, '--identifier', APP_ID + '.installer',
-        '--version', args.version, '--install-location', '/Applications',
+        '--version', args.version, '--install-location', '/',
         '--ownership', 'recommended', '--scripts', scripts,
         '--sign', args.installer_identity, package)
     if args.notary_profile:

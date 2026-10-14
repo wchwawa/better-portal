@@ -143,6 +143,25 @@ final class SessionTests {
         try FileManager.default.createSymbolicLink(at: file, withDestinationURL: URL(fileURLWithPath: "/etc/passwd"))
         XCTAssertThrowsError(try CodeIdentity.protectedTree(root, owner: getuid()))
     }
+    @Test func testRootWorkerRejectsAReplaceableApplicationParent() throws {
+        let sandbox = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        let applications = sandbox.appendingPathComponent("Applications")
+        let app = applications.appendingPathComponent("Better Portal.app")
+        try FileManager.default.createDirectory(at: app, withIntermediateDirectories: true,
+                                               attributes: [.posixPermissions: 0o700])
+        defer { try? FileManager.default.removeItem(at: sandbox) }
+        try FileManager.default.setAttributes([.posixPermissions: 0o700], ofItemAtPath: sandbox.path)
+        try FileManager.default.setAttributes([.posixPermissions: 0o770], ofItemAtPath: applications.path)
+        // A signature and sealed bundle do not make the parent immutable: an
+        // admin-group process can rename the checked app before root executes it.
+        XCTAssertNoThrow(try CodeIdentity.protectedTree(app, owner: getuid()))
+        XCTAssertThrowsError(try CodeIdentity.trustedDirectoryChain(app, from: sandbox, owner: getuid()))
+        try FileManager.default.setAttributes([.posixPermissions: 0o700], ofItemAtPath: applications.path)
+        XCTAssertNoThrow(try CodeIdentity.trustedDirectoryChain(app, from: sandbox, owner: getuid()))
+        let link = sandbox.appendingPathComponent("runtime-link")
+        try FileManager.default.createSymbolicLink(at: link, withDestinationURL: app)
+        XCTAssertThrowsError(try CodeIdentity.trustedDirectoryChain(link, from: sandbox, owner: getuid()))
+    }
 }
 
 @Suite(.serialized)

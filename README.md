@@ -6,7 +6,7 @@ Licensed under [MIT](LICENSE). Independent community software; not affiliated wi
 
 # Better Portal
 
-**macOS authorization preview:** A packaged app now implements approval through macOS, followed by normal wizard launches without sudo. A signed installer and device acceptance are still pending; the source launch instructions below continue to use sudo. See [setup, removal and release status](docs/macos-authorization.md).
+**macOS security preview:** The source and Homebrew launchers now use a signed macOS connection helper without sudo. A signed installer and device acceptance are still pending, so these launchers currently support demo mode only. See [setup, removal and release status](docs/macos-authorization.md).
 
 **English** · [简体中文](README.zh-CN.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · [Español](README.es.md) · [Français](README.fr.md)
 
@@ -23,7 +23,7 @@ brew tap wchwawa/better-portal https://github.com/wchwawa/better-portal
 brew install --HEAD wchwawa/better-portal/better-portal
 ```
 
-Open with **`better-portal`**. Close the wizard before updating, then run **`better-portal update`**. Addresses, language, bitrate and reports stay in your user folder. This follows the latest `main` branch and still uses the Mac password prompt for live sessions. [Full guide and importing your old settings](docs/homebrew.md). The ZIP instructions below remain available.
+Open with **`better-portal`** after the signed helper is installed and approved. Until then, preview with **`better-portal --demo`**. Close the wizard before updating, then run **`better-portal update`**. Addresses, language, bitrate and reports stay in your user folder. This channel follows the latest `main` branch but does not run its Python code with sudo. [Full guide and importing your old settings](docs/homebrew.md). The ZIP instructions below remain available for previews.
 
 After each update, Terminal shows the installed version and its changes. Run **`better-portal changes`** to read them again, even offline. The headings follow your saved language; change descriptions keep the original English commit text.
 
@@ -81,7 +81,7 @@ Leave the other files in the folder. You do not need to open or edit them.
 
 ### C. Open the app
 
-Double-click **Start.command** in the same folder. If you see **`Password:`**, type your **Mac login password**, then press **Return**. **No letters or dots appear while you type**; this is normal. If it says `Sorry, try again`, retype the password.
+After installing and approving the signed connection helper, double-click **Start.command** in the same folder. It runs as your normal Mac user. Until a signed installer is available, use the demo command below to preview the wizard.
 
 If macOS blocks either launcher, follow [“macOS won't open the file”](#macos-blocked). If the app asks for more room, drag a corner of the Terminal window to make it larger.
 
@@ -244,9 +244,9 @@ After trying to open the file downloaded from this repository, go to **Apple men
 
 Complete [step A](#a-install-python), including **Install Certificates.command**. Close the failed setup window, then reopen **Setup.command**. If it still fails, copy the error text when asking for help.
 
-**The password doesn't work, or says the account cannot use sudo.**
+**The connection helper is unavailable or not approved.**
 
-Use your Mac login password. If your Mac account is not an administrator, ask the person who manages the Mac to help authorize the launch.
+Install the signed Better Portal package when it is released, then enable the helper in the app and approve it in System Settings. Until then, use demo mode. The wizard does not ask for sudo.
 
 **The text is cut off or the app asks for a larger window.**
 

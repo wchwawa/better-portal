@@ -7,7 +7,7 @@ import select
 import subprocess
 import time
 
-BRIDGE = Path('/Applications/Better Portal.app/Contents/MacOS/PortalBridge')
+BRIDGE = Path('/Library/Application Support/Better Portal/Better Portal.app/Contents/MacOS/PortalBridge')
 MAX_REPLY = 1_048_576
 
 

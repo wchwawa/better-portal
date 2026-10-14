@@ -7,8 +7,11 @@ public enum Portal {
     public static let bridgeID = appID + ".bridge"
     public static let runtimeID = appID + ".runtime"
     public static let plist = helperID + ".plist"
-    public static let app = URL(fileURLWithPath: "/Applications/Better Portal.app")
-    public static let storage = URL(fileURLWithPath: "/Library/Application Support/Better Portal")
+    public static let base = URL(fileURLWithPath: "/Library/Application Support/Better Portal")
+    public static let app = base.appendingPathComponent("Better Portal.app")
+    public static let storage = base.appendingPathComponent("Private")
+    public static let runtimeDirectory = storage.appendingPathComponent("PortalRuntime")
+    public static let runtime = runtimeDirectory.appendingPathComponent("PortalRuntime")
     public static let lock = "/var/run/portal-lab-capture.lock"
     public static let maxRequest = 4096
     public static let maxReply = 1_048_576

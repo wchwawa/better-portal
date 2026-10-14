@@ -2,7 +2,7 @@
 
 Homebrew installs Better Portal and its Python dependencies. After installing, you can open the wizard from any folder with **`better-portal`**, and update with **`better-portal update`**. No Git commands or repeated ZIP downloads are needed.
 
-This channel follows the project's **main branch**, not a numbered stable release. It does not install the proposed macOS background helper. Live sessions still use the normal Mac password prompt.
+This channel follows the project's **main branch**, not a numbered stable release. It does not install the macOS connection helper. A live session requires the separate signed installer and macOS approval; until that installer is released, this channel supports previews only. Homebrew never launches its Python code with sudo.
 
 ## Install once
 
@@ -21,7 +21,7 @@ This channel follows the project's **main branch**, not a numbered stable releas
    better-portal
    ```
 
-   Enter your Mac login password only if the system asks. No characters appear as you type. You do **not** need to put `sudo` before this command. Follow the existing [four-step illustrated guide](../README.md#your-first-session).
+   Once the signed helper is installed and approved, follow the [four-step illustrated guide](../README.md#your-first-session). Without it, use `better-portal --demo` to preview the screens. Do **not** put `sudo` before this command.
 
 Preview the screens without a password or devices with `better-portal --demo`. Check the installed revision with `better-portal --version`.
 

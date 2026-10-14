@@ -186,7 +186,6 @@
   "Update complete. Run better-portal to open the wizard.": "업데이트가 완료되었습니다. better-portal로 마법사를 여세요.",
   "Homebrew could not finish. Read the error above, then retry better-portal update.": "Homebrew 업데이트를 완료하지 못했습니다. 위 오류를 확인한 후 better-portal update를 다시 실행하세요.",
   "Imported {count} settings files. Existing settings were kept.": "설정 파일 {count}개를 가져왔습니다. 기존 설정은 유지되었습니다.",
-  "Opening Better Portal. Enter your Mac login password if requested.": "Better Portal을 엽니다. 요청하면 Mac 로그인 암호를 입력하세요.",
   "Manual recovery in Terminal: {command}": "터미널에서 수동 복구: {command}",
   "Changes in {version}:": "{version}의 변경 내용:",
   "Since {version}:": "{version} 이후:",
@@ -198,7 +197,7 @@
   "Homebrew finished, but the installed version could not be verified. Run better-portal --version.": "Homebrew 작업이 끝났지만 설치된 버전을 확인하지 못했습니다. better-portal --version을 실행하세요.",
   "Update with Homebrew, read change notes, or import settings from an old folder.": "Homebrew로 업데이트하거나 변경 내역을 읽거나 이전 폴더에서 설정을 가져옵니다.",
   "Open wizard": "마법사 열기",
-  "Install Better Portal in Applications using its installer first.": "먼저 설치 프로그램으로 Better Portal을 응용 프로그램 폴더에 설치하세요.",
+  "Install Better Portal using its installer first.": "먼저 설치 프로그램으로 Better Portal을 설치하세요.",
   "System Settings": "시스템 설정",
   "Helper disabled": "도우미가 비활성화되었습니다",
   "Enable connection helper": "연결 도우미 활성화",
@@ -212,5 +211,6 @@
   "Open the wizard normally. macOS manages authorization; Better Portal never stores your password.": "평소처럼 마법사를 여세요. macOS가 권한을 관리하며 Better Portal은 비밀번호를 저장하지 않습니다.",
   "Open Better Portal as your normal Mac user.": "일반 Mac 사용자로 Better Portal을 여세요.",
   "Approve Better Portal in System Settings, then return here.": "시스템 설정에서 Better Portal을 허용한 뒤 돌아오세요.",
-  "Use the installed macOS connection helper without sudo": "설치된 macOS 연결 도우미를 sudo 없이 사용"
+  "Use the installed macOS connection helper without sudo": "설치된 macOS 연결 도우미를 sudo 없이 사용",
+  "Opening Better Portal through the installed macOS connection helper.": "설치된 macOS 연결 도우미로 Better Portal을 여는 중입니다."
 }

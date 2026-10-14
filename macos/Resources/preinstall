@@ -9,4 +9,28 @@ if /bin/launchctl print system/com.wchwawa.betterportal.helper >/dev/null 2>&1; 
     echo 'Open Better Portal and choose Remove connection helper before installing this update.' >&2
     exit 1
 fi
+for path in '/Applications/Better Portal.app' \
+            '/Library/Application Support/Better Portal' \
+            '/Library/Application Support/Better Portal/Better Portal.app' \
+            '/Library/Application Support/Better Portal/Private'; do
+    if [ -L "$path" ]; then
+        echo "Refusing to install through a symbolic link: $path" >&2
+        exit 1
+    fi
+done
+for path in '/Library' '/Library/Application Support' \
+            '/Library/Application Support/Better Portal' \
+            '/Library/Application Support/Better Portal/Private'; do
+    if [ -L "$path" ]; then
+        echo "The protected installation cannot use a symbolic-link parent: $path" >&2
+        exit 1
+    fi
+    if [ -e "$path" ]; then
+        mode=$(/usr/bin/stat -f %Lp "$path")
+        if [ "$(/usr/bin/stat -f %u "$path")" != 0 ] || [ $((0$mode & 022)) -ne 0 ]; then
+            echo "The protected installation needs a root-owned, non-writable parent: $path" >&2
+            exit 1
+        fi
+    fi
+done
 exit 0

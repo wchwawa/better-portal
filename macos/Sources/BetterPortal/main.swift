@@ -81,10 +81,11 @@ final class Application: NSObject, NSApplicationDelegate {
 
     @objc private func enableHelper() {
         do {
-            guard Bundle.main.bundleURL.standardizedFileURL == Portal.app else {
-                throw PortalError(text("Install Better Portal in Applications using its installer first."))
+            guard Bundle.main.bundleURL.resolvingSymlinksInPath() == Portal.app else {
+                throw PortalError(text("Install Better Portal using its installer first."))
             }
             let team = try CodeIdentity.team()
+            try CodeIdentity.trustedDirectoryChain(Portal.base)
             try CodeIdentity.protectedTree(Portal.app)
             try CodeIdentity.validate(Portal.app, team: team, identifier: Portal.appID)
             try service.register()

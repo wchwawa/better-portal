@@ -8,13 +8,12 @@ final class Worker: SessionWorker {
     func start(_ request: SessionRequest, uid: uid_t, event: @escaping ([String: Any]) -> Void,
                finished: @escaping ([String: Any]) -> Void) throws {
         let team = try CodeIdentity.team()
-        try CodeIdentity.protectedTree(Portal.app)
-        try CodeIdentity.validate(Portal.app, team: team, identifier: Portal.appID)
-        let runtime = Portal.app.appendingPathComponent("Contents/Resources/PortalRuntime/PortalRuntime")
-        try CodeIdentity.validate(runtime, team: team, identifier: Portal.runtimeID)
+        try CodeIdentity.trustedDirectoryChain(Portal.runtimeDirectory)
+        try CodeIdentity.protectedTree(Portal.runtimeDirectory)
+        try CodeIdentity.validate(Portal.runtime, team: team, identifier: Portal.runtimeID)
         let input = Pipe(), output = Pipe()
         self.input = input
-        process.executableURL = runtime
+        process.executableURL = Portal.runtime
         process.arguments = ["worker", "--caller-uid", String(uid)]
         // Never inherit Python, loader, sudo, HOME or search-path overrides.
         process.environment = ["PATH": "/usr/bin:/bin:/usr/sbin:/sbin", "HOME": "/var/root",
@@ -62,6 +61,7 @@ final class Worker: SessionWorker {
 do {
     guard geteuid() == 0 else { throw PortalError("The connection helper must be started by macOS") }
     let team = try CodeIdentity.team()
+    try CodeIdentity.trustedDirectoryChain(Portal.base)
     try CodeIdentity.protectedTree(Portal.app)
     try CodeIdentity.validate(Portal.app, team: team, identifier: Portal.appID)
     let manager = SessionManager(factory: { Worker() }, recoveryPending: {

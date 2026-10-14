@@ -6,9 +6,9 @@ if [[ ! -x .venv/bin/python ]]; then
   read 'reply?Press Enter to close. '
   exit 1
 fi
-printf 'Opening the guided Portal setup.\nEnter your Mac login password at the sudo prompt if requested.\n'
+printf 'Opening the guided Portal setup through the installed macOS connection helper.\n'
 set +e
-sudo .venv/bin/python portal_tui.py
+.venv/bin/python portal_tui.py --helper
 result=$?
 printf '\nWizard closed (status %s).\n' "$result"
 read 'reply?Press Enter to close. '

@@ -6,7 +6,7 @@ Sous licence [MIT](LICENSE). Logiciel communautaire indépendant ; sans affiliat
 
 # Better Portal
 
-**Aperçu de l’autorisation macOS :** L’app empaquetée permet une autorisation via macOS, puis l’ouverture du guide sans sudo. L’installateur signé et la validation sur appareils restent à faire ; le lancement depuis les sources ci-dessous utilise encore sudo. Voir [configuration, suppression et état de publication](docs/macos-authorization.md).
+**Aperçu de sécurité macOS :** Les lanceurs ZIP et Homebrew utilisent l’assistant macOS signé sans sudo. L’installateur signé et la validation sur appareils restent à faire ; seule la démonstration est disponible pour le moment. Voir [configuration, suppression et état de publication](docs/macos-authorization.md).
 
 [English](README.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · [Español](README.es.md) · **Français**
 
@@ -23,7 +23,7 @@ brew tap wchwawa/better-portal https://github.com/wchwawa/better-portal
 brew install --HEAD wchwawa/better-portal/better-portal
 ```
 
-Lancez l’assistant avec **`better-portal`**. Fermez-le avant une mise à jour, puis lancez **`better-portal update`**. Les adresses, la langue, le débit et les rapports restent dans votre dossier utilisateur. Cette option suit la dernière version de la branche `main` ; les connexions réelles demandent toujours le mot de passe du Mac si nécessaire. [Guide complet et importation des anciens réglages](docs/homebrew.md). L’installation ZIP ci-dessous reste disponible.
+Lancez l’assistant avec **`better-portal`**. Fermez-le avant une mise à jour, puis lancez **`better-portal update`**. Les adresses, la langue, le débit et les rapports restent dans votre dossier utilisateur. Cette option suit la dernière version de `main`, mais n’exécute pas Python avec sudo. Les connexions réelles exigent l’installation et l’approbation de l’assistant signé ; d’ici là, utilisez `better-portal --demo`. [Guide complet et importation des anciens réglages](docs/homebrew.md). L’installation ZIP ci-dessous reste disponible.
 
 Après chaque mise à jour, le Terminal affiche la version installée et ses changements. Lancez **`better-portal changes`** pour les relire, même hors ligne. Les titres suivent la langue enregistrée ; les descriptions conservent le texte anglais des commits d’origine.
 
@@ -85,7 +85,7 @@ Laissez les autres fichiers dans le dossier. Vous n’avez pas besoin de les ouv
 
 ### C. Ouvrir l’assistant
 
-Double-cliquez sur **Start.command** dans le même dossier. Si **`Password:`** apparaît, saisissez le **mot de passe de votre session Mac**, puis appuyez sur **Return**. **Aucune lettre ni aucun point ne s’affiche pendant la saisie : c’est normal.** Si `Sorry, try again` apparaît, saisissez de nouveau le mot de passe.
+Après l’installation et l’approbation de l’assistant signé, double-cliquez sur **Start.command** dans le même dossier. Il s’exécute sous votre compte Mac habituel. Avant la publication de l’installateur signé, utilisez la commande de démonstration ci-dessous.
 
 Si macOS bloque un fichier de lancement, consultez [« macOS refuse d’ouvrir le fichier »](#macos-blocked). Si l’assistant demande plus de place, agrandissez Terminal en faisant glisser un coin de sa fenêtre.
 
@@ -252,9 +252,9 @@ Après avoir essayé d’ouvrir le fichier téléchargé depuis ce dépôt, alle
 
 Terminez l’[étape A](#install-python), y compris **Install Certificates.command**. Fermez la fenêtre de l’installation échouée, puis ouvrez de nouveau **Setup.command**. Si l’erreur persiste, copiez son texte lorsque vous demandez de l’aide.
 
-**Le mot de passe ne fonctionne pas ou le compte ne peut pas utiliser sudo.**
+**L’assistant de connexion est indisponible ou non approuvé.**
 
-Utilisez le mot de passe de votre session Mac. Si votre compte n’est pas administrateur, demandez à la personne qui gère le Mac de vous aider à autoriser le lancement.
+Après sa publication, installez le paquet Better Portal signé, activez l’assistant dans l’app et approuvez-le dans Réglages Système. D’ici là, utilisez la démonstration. Le guide ne demande pas sudo.
 
 **Le texte est coupé ou l’application demande une fenêtre plus grande.**
 
