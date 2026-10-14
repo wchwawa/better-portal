@@ -12,6 +12,20 @@ Choisissez un débit vidéo cible plus élevé lorsque vous jouez à votre PS5 a
 
 [Installer et ouvrir](#get-started) · [Première session](#first-session) · [Trouver les adresses](#find-device-addresses) · [Résoudre un problème](#questions-and-fixes)
 
+## Démarrage rapide sous Windows
+
+Le même assistant est disponible sous **Windows 11 et Windows 10**. Les essais sur appareils réels sous Windows sont encore en cours ; consultez le [guide Windows (en anglais)](WINDOWS.md).
+
+1. Installez [Python](https://www.python.org/downloads/windows/) (3.10 ou plus récent, avec le lanceur `py`) et [Npcap](https://npcap.com/#download). Laissez le mode de compatibilité WinPcap décoché.
+2. Téléchargez et extrayez tout le [ZIP Better Portal](https://github.com/wchwawa/better-portal/archive/refs/heads/main.zip). Ouvrez **Setup-Windows.cmd** une fois et attendez **Setup complete**.
+3. **À chaque utilisation :** double-cliquez sur **Start-Windows.cmd** et acceptez l’autorisation Windows. Aucune commande ni autre outil de configuration n’est nécessaire.
+4. Choisissez la langue, saisissez les deux adresses IPv4, puis utilisez **← / →** pour choisir l’adaptateur Wi-Fi ou Ethernet du PC et le débit. Gardez Portal déconnecté jusqu’à **CONNECT NOW**, puis connectez-le à la PS5 dans les **120 secondes**.
+
+Les langues, les réglages avec **S**, les animations, les étapes et les résultats sont communs à la version Mac illustrée ci-dessous. Sous Windows, choisissez **Adaptateur LAN du PC**. La langue, les adresses et le débit sont enregistrés. Même si le débit cible est confirmé, vérifiez l’image, le son et les commandes sur Portal.
+
+**Sur Mac ?** Suivez les instructions ci-dessous : **Setup.command** une fois, puis **Start.command** à chaque utilisation.
+
+
 ## Avant de commencer
 
 Préparez les éléments suivants :
@@ -307,4 +321,4 @@ cd better-portal
 
 </details>
 
-**Windows ou Linux ?** Cet assistant est destiné à **macOS**. Le projet d’origine propose des guides distincts pour [Windows](https://github.com/atameric/ps5-portal-high-bitrate/blob/main/WINDOWS.md) et [Linux / la configuration automatique](https://github.com/atameric/ps5-portal-high-bitrate/blob/main/AUTOMATION.md), en anglais.
+**Sur Linux ?** Consultez le [guide Linux / configuration automatique du projet d’origine](https://github.com/atameric/ps5-portal-high-bitrate/blob/main/AUTOMATION.md).

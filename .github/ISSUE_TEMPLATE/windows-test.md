@@ -1,6 +1,6 @@
 ---
 name: Windows preview test result
-about: Report a Windows preflight, baseline or bitrate experiment
+about: Report a Windows guided session, preflight or legacy baseline experiment
 title: 'Windows preview test: '
 ---
 
@@ -17,8 +17,12 @@ title: 'Windows preview test: '
 
 ## Steps reached
 - [ ] Setup offline tests passed
-- [ ] CHECK PASSED
-- [ ] Baseline passed, picture/control and reconnection normal
+- [ ] Start-Windows.cmd opened the guided TUI after the Windows permission prompt
+- [ ] Language, addresses, adapter and bitrate saved correctly
+- [ ] CONNECT NOW started a 120-second countdown
+- [ ] Picture, sound and controls worked after the result
+- [ ] Cancellation restored normal play; a second attempt worked
+- [ ] Optional legacy CHECK / Baseline passed
 - [ ] 65 tested
 - [ ] 100 tested (only after 65)
 - [ ] 200 tested (only after 100)

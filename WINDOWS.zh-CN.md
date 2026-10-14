@@ -1,0 +1,95 @@
+# Windows 设置向导
+
+[English](WINDOWS.md) · [返回 Better Portal](README.zh-CN.md)
+
+Windows 与 Mac 使用**同一个 TUI 向导**：选择语言、检查前提、填写地址、选择码率、等待“现在连接”、查看结果。Windows 的网络功能使用 Npcap，管理员权限由 Windows 系统弹窗授权。
+
+当前是 **Windows 预览版**。自动测试验证原生 Windows 终端与连接逻辑；Windows 上的真实 PS5 / Portal 播放仍需实机测试。目标码率确认不等于已验证画面、声音、输入延迟或持续视频吞吐量。
+
+## 首次安装
+
+准备 Windows 11 或 Windows 10 电脑、PS5 和 PlayStation Portal。普通 Remote Play 应已能正常使用。三台设备接入同一个家庭路由器，PS5 可以用网线。Portal 保持开机并连接 Wi-Fi，但断开当前 PS5 会话；电脑保持唤醒。
+
+1. 从 [Python 官网](https://www.python.org/downloads/windows/)安装 **64 位 Python 3.14**，包含 `py` 启动器。使用 **x86-64** 安装包；当前固定版本的终端依赖没有原生 ARM64 Python 安装包。
+2. 从 [Npcap 官网](https://npcap.com/#download)安装 **Npcap**。**不要勾选 WinPcap 兼容模式**，也不需要 Wi-Fi 监听模式或 raw 802.11 支持。“仅管理员访问”可以保留，因为启动器会申请管理员权限。
+3. 下载 [Better Portal ZIP](https://github.com/wchwawa/better-portal/archive/refs/heads/main.zip)。在文件资源管理器右键 ZIP → **全部解压缩**，打开解压后的文件夹。保留完整目录，不要在 ZIP 内直接运行，也不要复制 Mac 的 `.venv` 文件夹。
+4. 双击 **Setup-Windows.cmd**。它会安装依赖并运行离线测试。看到 **Setup complete** 后按任意键关闭窗口。若出现错误，请先处理错误再继续。
+
+不需要安装 Git 或 Wireshark。首次安装需要联网下载 Python 依赖，Npcap 需要单独安装。
+
+## 以后每次使用
+
+**双击 Start-Windows.cmd，然后允许 Windows 的用户账户控制（UAC）请求。**如果账户需要管理员凭据，由 Windows 提示输入。Better Portal 不收集或保存密码；在同一个向导窗口内重试，无需再次授权。
+
+首次打开会让你选择英语、简体中文、日语、韩语、西班牙语或法语。选择会保存，以后按 **S** 可随时切换语言。
+
+1. **准备：**Portal 断开与 PS5 的连接，PS5 保持开机，确认三台设备在同一个家庭局域网内。
+2. **设备：**输入路由器设备列表里的 PS5 和 Portal **IPv4 地址**。在 **PC 局域网网卡**一行用 **← / →** 选择连接该网络的 Wi-Fi 或以太网网卡。首次保留 **65 Mbps**，再选择“保存并准备连接”。Tab 或 ↑ / ↓ 切换行，Enter 继续。
+3. **连接：**“等待 / WAIT”时保持 Portal 断开。看到 **现在连接 / CONNECT NOW** 后，再在 Portal 上正常连接 PS5。此时才开始 **120 秒倒计时**；临近结束才收到连接请求，也会留出独立的确认时间。终端图案会跟随请求、PS5 接受和目标码率报告变化。
+4. **结果：**“目标码率已确认”表示程序观察到高目标、验证了本机发包，并完成恢复步骤。**仍需在 Portal 检查画面、声音和操作。**若黑屏，请断开后正常重连，不运行 Better Portal。**D** 查看报告或恢复详情，允许重试时按 **Enter**，按 **Q** 退出。
+
+[图文 README](README.zh-CN.md)展示同一个向导；图片来自 Mac 的演示模式。Windows 使用上面说明的 PC 网卡选择和 Windows 启动器。
+
+地址保存到 `config.windows.json`，语言和码率保存到 `tui-settings.json`，与 Mac 的 `config.json` 分开。Portal 断开或关机后，本次会话结束；下次重新打开 **Start-Windows.cmd**。
+
+想放到桌面：右键 **Start-Windows.cmd** → **显示更多选项** → **发送到 → 桌面快捷方式**。保留原项目文件夹，不要只把启动文件移走。
+
+## 常见问题
+
+**需要我的 PlayStation 账号密码吗？**
+
+不需要。Better Portal 不要求 PSN 用户名或密码，只需两个设备的局域网地址及电脑网卡。Windows 的管理员权限请求与 PSN 账号无关。
+
+**找不到 Python 或 `py`。**
+
+修复或重新安装带启动器的 Python，再打开 **Setup-Windows.cmd**。新终端中运行 `py -3 --version` 应能显示版本。
+
+**提示缺少 curses，或启动时关闭了。**
+
+重新运行 **Setup-Windows.cmd** 安装 Windows 终端依赖。使用上面指定的 x86-64 Python。必要时在 Windows Terminal 中进入项目文件夹运行 `Start-Windows.cmd`，保留完整报错。实际连接不能通过 WSL 或 Notebook 运行。
+
+**找不到网卡，或提示缺少 Npcap。**
+
+安装 Npcap 后关闭向导，重新打开 **Start-Windows.cmd**。确保 Wi-Fi 或以太网网卡已连接，不要选 VPN 或回环网卡。若取消了权限弹窗，重新启动并允许授权。
+
+**设备无法访问，或路由／转发检查失败。**
+
+保持两个设备唤醒，核对当前 IPv4 地址，选择同一家庭局域网的网卡。避免访客 Wi-Fi、设备隔离、VPN 路由或该网卡的 Internet 连接共享。程序只检查路由和转发状态，不修改防火墙、注册表或系统转发配置。无需通过关闭防火墙解决报错。
+
+**没检测到新连接，或倒计时结束。**
+
+断开 Portal 与 PS5 的连接，在向导里重试，等下一次“现在连接”后再连接。保存的设置会继续使用。连接阶段按 Q、Esc 或 Ctrl+C 会停止尝试，先恢复网络，再显示结果。
+
+**“网络恢复需要处理”。**
+
+保持电脑唤醒，按 **D** 查看报告位置和自动恢复期限。独立恢复进程运行期间会持有整台电脑共用的锁，阻止另一场尝试覆盖恢复；结果页也会禁用直接重试。
+
+期限过后仍有问题时，确认尝试及恢复进程已经停止，再在**管理员终端**执行 D 页面给出的恢复命令。只使用本工具生成的状态文件，不要删锁强行重试。也可重新连接设备的网络以刷新映射。电脑关机后无法自动恢复。
+
+## 可选的排错命令
+
+普通用户直接使用向导，**无需分别运行 Configure、Check 或 Baseline 启动器**。旧的命令行探测仍保留，修改码率前要求同一配置已有成功的基线记录。
+
+在项目文件夹中的管理员终端运行：
+
+```bat
+.venv\Scripts\python.exe portal_windows.py --check
+.venv\Scripts\python.exe portal_windows.py --baseline
+.venv\Scripts\python.exe portal_windows.py --profile 65
+```
+
+每次都需要 READY 后重新建立 Portal 连接。旧命令行保留 35 秒连接窗口，TUI 为 120 秒。
+
+只预览界面，无需管理员权限、Npcap 或设备：
+
+```bat
+.venv\Scripts\python.exe portal_tui.py --demo
+```
+
+加 `--no-animations` 可关闭动画。演示模式不会保存设置或修改网络。常驻自动服务请看 [AUTOMATION.md](AUTOMATION.md)，不要与手动向导同时运行。
+
+## 反馈 Windows 11 实测
+
+通过 [Windows 测试反馈模板](https://github.com/wchwawa/better-portal/issues/new?template=windows-test.md)提供程序版本、Windows 版本、Python / Npcap 版本、网卡、Portal 固件、最后显示的阶段，以及恢复后画面、声音和操作是否正常。也请测试取消后再次尝试。
+
+[验证说明](docs/windows-tui-validation.md)区分了自动测试与实机验收。不要上传完整配置、恢复文件或抓包；只分享隐去私人信息的报告字段。报告中的目标码率不是实测吞吐量。

@@ -1,47 +1,97 @@
-# Windows community preview - physical-device validation pending
+# Windows guided setup
 
-For the new always-on preview, use [AUTOMATION.md](AUTOMATION.md). This guide covers bounded manual sessions only.
+[简体中文](WINDOWS.zh-CN.md) · [Back to Better Portal](README.md)
 
-See [Turkish test instructions](WINDOWS.tr.md). This preview shares the macOS packet transform but uses Npcap on native Windows 10/11. It has not been run on Windows hardware yet. Do not describe local offline tests as Windows runtime validation.
+Better Portal uses the **same terminal wizard on Windows and Mac**: choose a language, check the prerequisites, enter your device addresses, choose a bitrate, wait for **CONNECT NOW**, and check the result. Windows uses Npcap for the network connection and the normal Windows permission prompt for administrator access.
 
-Install [Python 3.10+](https://www.python.org/downloads/windows/) with the `py` launcher (verify with `py -3 --version`) and [Npcap](https://npcap.com/#download), then extract the entire ZIP and run `Setup-Windows.cmd`. Following Scapy’s installation guidance, leave WinPcap compatibility mode unchecked; monitor/raw 802.11 support is not needed. Administrator-only Npcap access is compatible with the elevated launchers. Use only your own two devices on one directly connected LAN; the selected adapter must have IPv4 forwarding disabled. No firewall, registry or IP forwarding settings are changed.
+This is a **Windows preview**. Automated checks cover the native Windows terminal and session logic; real PS5/Portal playback on Windows still needs device testing. A confirmed target is not proof of working picture, sound, lower latency or sustained video bitrate.
 
-Run these files as administrator in order:
+## Install once
 
-1. `Configure-Windows.cmd`: select the LAN adapter and enter current PS5/Portal IPv4 addresses.
-2. `Check-Windows.cmd`: read-only checks and two-peer ARP resolution.
-3. `Baseline-Windows.cmd`: disconnect Portal, press Enter, reconnect only after READY. A bounded relay without payload mutation checks acceptance and cleanup. Visually confirm normal play.
-4. `Start-Windows.cmd`: start with 65, then separately test 100/200 only after successful baseline and normal play. Each test needs a fresh Portal session after READY.
+You need a Windows 11 or Windows 10 PC, a PS5 and a PlayStation Portal. Ordinary Remote Play must already work. Connect all three to the same home router; PS5 can use Ethernet. Keep Portal on Wi-Fi but disconnected from its PS5 session, and keep the PC awake.
 
-The relay window is 40 seconds including warm-up; setup and cleanup add time. A detached 50-second watchdog must signal readiness before ARP changes. A machine-wide named kernel object blocks overlapping experiments on that Windows machine. Do not run a Mac relay simultaneously. Ctrl+C triggers cleanup; power loss cannot be recovered by a watchdog on the same computer.
+1. Install **64-bit Python 3.14** from [Python’s Windows downloads](https://www.python.org/downloads/windows/), including the `py` launcher. Python 3.10–3.14 is covered by the supported dependency range; CI checks 3.10, 3.12 and 3.14. Use the x86-64 Python installer; native ARM64 Python does not have the pinned terminal package wheel.
+2. Install **Npcap** from its [official download page](https://npcap.com/#download). Leave **WinPcap compatibility mode unchecked**. Wi-Fi monitor mode / raw 802.11 support is not needed. Administrator-only access is fine because the launcher requests administrator permission. These options follow [Scapy’s Windows instructions](https://scapy.readthedocs.io/en/stable/installation.html#windows).
+3. Download the [Better Portal ZIP](https://github.com/wchwawa/better-portal/archive/refs/heads/main.zip). In File Explorer, right-click it → **Extract All**. Open the extracted folder. Keep all its files together; do not run files inside the ZIP or copy a Mac `.venv` folder.
+4. Double-click **Setup-Windows.cmd**. It installs the dependencies and runs the offline checks. Wait for **Setup complete**, then press a key to close the window. If you see an error, fix it before starting a session.
 
-Independent local egress verification uses a separate Npcap handle and stores only hashes, not raw packets. It is not proof of remote delivery. A successful call sending restoration packets does not independently prove the peers updated their ARP caches. No resolution fields are changed. Input latency and sustained bitrate are not benchmarked.
+You do not need Git or Wireshark. Installation downloads Scapy and [windows-curses](https://github.com/zephyrproject-rtos/windows-curses), which runs the same curses interface used on Mac. Npcap is installed separately and is not bundled.
 
-On restoration error, keep the PC on for at least 60 seconds and inspect `experiments/<run>/recovery-state.recovery.json` and `watchdog.log`. Once no experiment/watchdog is running, an elevated terminal can retry `".venv\Scripts\python.exe" portal_windows.py --restore "experiments\<run>\recovery-state.json"`. Use only a state file created by this tool. Reconnect the peers' network interfaces if necessary. Disconnect/reconnect Portal normally to undo the bitrate request.
+## Every time you play
 
-Do not publish configuration, recovery state or baseline receipts; they contain local network identifiers. Share redacted `report.json` plus Portal FPS/resolution/bitrate and subjective responsiveness. Raw secrets/firmware/session data are not bundled. No telemetry.
+**Double-click Start-Windows.cmd.** Accept the Windows **User Account Control** prompt. If your account needs an administrator’s credentials, Windows asks for them. Better Portal does not collect or save passwords. Repeated attempts in the same open wizard reuse that authorization. The launcher uses Windows’ [standard `runas` operation](https://learn.microsoft.com/en-us/windows/win32/api/shellapi/nf-shellapi-shellexecutew).
 
-## Download and install, step by step
+On first launch, choose **English, 简体中文, 日本語, 한국어, Español or Français**. Your choice is saved. Press **S** later to change language without restarting.
 
-1. Open the repository's **Releases**, choose **Windows Community Preview**, and download the named Windows ZIP under **Assets**. It is marked **Pre-release** deliberately.
-2. Right-click the ZIP → **Extract All**. Keep the extracted files together in a local folder. Do not run files from inside the ZIP or reuse a Mac `.venv`.
-3. Install Python from the official link above with its launcher, open a fresh Command Prompt, and run `py -3 --version`. It must show Python 3.10 or newer. If `py` is missing, repair the Python launcher installation before continuing. WSL is not supported.
-4. Install Npcap from its official site, using the options described above. Reopen terminals after installing the driver. Wireshark, Git and a USB cable are not required. The release ZIP does not bundle Python or Npcap.
-5. Double-click **Setup-Windows.cmd**. It creates a local `.venv`, installs the pinned Scapy dependency and runs offline tests. Internet access is needed for the dependency download. Continue only if tests end in `OK`.
-6. Right-click **Configure-Windows.cmd** → **Run as administrator**. Accept the Windows UAC prompt. Choose the physical LAN adapter, not VPN/loopback. Enter the current device addresses from the PS5/Portal network screens or router app. This writes only local configuration; do not upload it.
-7. Right-click **Check-Windows.cmd** → **Run as administrator**. Continue only on `CHECK PASSED`. If it reports Npcap, route, forwarding or peer-resolution errors, stop and report the redacted error. Do not disable your firewall to try to force it through.
-8. Disconnect the Portal session, leave PS5 on, then right-click **Baseline-Windows.cmd** → **Run as administrator**. Press Enter. Start a new Portal session **only after READY**. Wait for `Baseline passed` and confirm normal picture/control after restoration. If it fails, do not advance to bitrate modification.
-9. Disconnect again and run **Start-Windows.cmd** as administrator. Select **65**, press Enter, wait for READY, then connect. After a successful result, observe a moving scene for 30-60 seconds. Test **100** and **200** in separate fresh sessions only if earlier profiles work well.
-10. Open an issue using **Windows preview test result**. Report successes as well as failures. This is how we establish whether the Windows implementation actually works across adapters.
+1. **Prepare:** keep Portal disconnected from PS5, keep PS5 on, and check that PC, PS5 and Portal use the same home network.
+2. **Devices:** enter the PS5 and Portal **IPv4 addresses** from your router’s device list. On **PC LAN adapter**, use **← / →** to choose the Wi-Fi or Ethernet connection that reaches those devices. Choose **65 Mbps** for your first attempt, then **Save and prepare connection**. Use Tab or ↑ / ↓ to move between rows and Enter to continue.
+3. **Connect:** keep Portal disconnected during **WAIT**. When **CONNECT NOW** appears, connect Portal to PS5 normally. The **120-second countdown** starts at that prompt. A request near the end still gets its own confirmation window. Follow the terminal art as the request, PS5 acceptance and target reports arrive.
+4. **Result:** **Bitrate target confirmed** means the software observed the higher target, checked local packet egress and completed its restoration steps. **Check picture, sound and controls on Portal.** If the screen is black, disconnect and reconnect normally without Better Portal. Press **D** for local report/recovery details, **Enter** to retry when allowed, or **Q** to quit.
 
-## What has and has not been validated
+The [illustrated README](README.md#your-first-session) shows the shared wizard. Those images were recorded on Mac in demo mode; Windows uses the PC adapter selector and Windows launchers described here.
 
-The synthetic tests and extracted ZIP were tested on macOS. They cover exact ciphertext deltas, packet length/checksum, confirmation gating, configuration validation and mocked recovery paths. Native Windows execution, Npcap injection on physical adapters, actual PS5 acceptance and Portal playback on Windows remain unverified. GitHub-hosted tests may also be blocked by the maintainer's account runner availability; check the actual run rather than assuming a green CI result.
+Addresses are saved in `config.windows.json`; language and bitrate in `tui-settings.json`. The Mac’s `config.json` is separate. Disconnecting or turning off Portal ends the session: run **Start-Windows.cmd** again for the next connection.
 
-Test on your own devices. Driver incompatibility or interrupted cleanup can temporarily disrupt their connection. The bounded relay and watchdog reduce that risk but are not a guarantee. Report any recovery issue before repeating a run. The named 200 Mbps profile is an experimental request; on the Mac prototype it produced roughly 158-166 Mbps console targets, not verified sustained 200 Mbps traffic.
+To make a desktop shortcut, right-click **Start-Windows.cmd** → **Show more options** → **Send to → Desktop (create shortcut)**. Keep the original project folder in place.
 
-- `0`: the selected stage met its software criteria; still check actual picture/control.
-- `1`: stage not confirmed; for 200, the target may settle below the 160 Mbps confirmation threshold despite a working session.
-- `2`: an error occurred; read the message and restoration fields. Do not repeatedly retry blindly.
+## Questions and fixes
 
-Reference: [Scapy Windows installation](https://scapy.readthedocs.io/en/stable/installation.html#windows).
+**Do I need my PlayStation account credentials?**
+
+No. Better Portal does not ask for your PSN username or password. Enter the two local device addresses and choose your PC’s network adapter.
+
+**Python or `py` cannot be found.**
+
+Repair or reinstall Python with its launcher, then open **Setup-Windows.cmd** again. In a new terminal, `py -3 --version` should show the installed Python version.
+
+**The wizard cannot import curses, or closes during startup.**
+
+Run **Setup-Windows.cmd** again to install the Windows terminal dependency. Use the supported x86-64 Python version. If necessary, open **Windows Terminal**, change to the project folder, and run `Start-Windows.cmd` so the error remains visible. Do not run the live wizard through WSL or a notebook.
+
+**No LAN adapter is available, or the check reports Npcap missing.**
+
+Install Npcap, close the wizard and reopen **Start-Windows.cmd**. Keep the intended Wi-Fi or Ethernet adapter connected. Choose that adapter instead of a VPN or loopback interface. If Windows permission was cancelled, reopen the launcher and accept the prompt.
+
+**A device cannot be reached, or the route/forwarding check fails.**
+
+Keep both devices awake, check their current IPv4 addresses, and select the adapter on the same home LAN. Avoid guest Wi-Fi, client isolation, VPN routes and Internet Connection Sharing on that adapter. The tool checks routing and forwarding; it does not change firewall, registry or forwarding settings. Do not disable the firewall to work around an error.
+
+**There is no new connection, or the countdown expires.**
+
+Disconnect Portal from PS5. Retry in the wizard and reconnect only after the next **CONNECT NOW** prompt. Previously saved settings remain available. Q, Esc or Ctrl+C during the connection attempt stops it and runs restoration before showing the result.
+
+**Network recovery needs attention.**
+
+Keep the PC awake. Press **D** and read the report path and automatic recovery deadline. The independent watchdog retains a machine-wide lock while recovery is pending; another attempt cannot run over it. The wizard also disables retry after a recovery error.
+
+If recovery still fails after the displayed deadline, wait until the attempt/watchdog has stopped. In an **administrator terminal**, use the exact recovery command shown by **D** with a state file created by this tool. Do not delete locks to force a retry. Reconnecting the devices’ network connections can also refresh their mappings. A powered-off PC cannot run its watchdog.
+
+## Optional diagnostic commands
+
+The guided path does **not** require running separate Check, Configure or Baseline launchers. They remain available for troubleshooting. The legacy command-line bitrate probe still requires a successful baseline receipt for the same configuration.
+
+From the project folder in an administrator terminal:
+
+```bat
+.venv\Scripts\python.exe portal_windows.py --check
+.venv\Scripts\python.exe portal_windows.py --baseline
+.venv\Scripts\python.exe portal_windows.py --profile 65
+```
+
+Each baseline or bitrate attempt needs a fresh Portal connection after READY. These legacy commands keep their shorter 35-second connection window. The TUI uses 120 seconds.
+
+Preview the actual UI without administrator permission, Npcap or devices:
+
+```bat
+.venv\Scripts\python.exe portal_tui.py --demo
+```
+
+Add `--no-animations` for a motion-free preview. Demo mode does not save settings or change networking.
+
+For an always-on service, see [AUTOMATION.md](AUTOMATION.md). Do not run that service and the manual wizard at the same time.
+
+## Report a Windows 11 test
+
+Use the [Windows test issue template](https://github.com/wchwawa/better-portal/issues/new?template=windows-test.md). Include the version, Windows build, Python/Npcap versions, adapter, Portal firmware, last visible stage and whether picture/sound/controls worked after restoration. Report cancellation and a second attempt too.
+
+See [validation details](docs/windows-tui-validation.md) for what automated checks establish. Keep configuration, recovery files and captures private. Share only redacted report fields; a reported target bitrate is not measured throughput.
