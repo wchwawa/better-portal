@@ -51,8 +51,15 @@ try:
         if b'better portal' in screen.lower():
             break
     assert b'better portal' in screen.lower(), screen.decode(errors='replace')
-    os.write(master, b'\x1b')
-    assert process.wait(timeout=5) == 0, screen.decode(errors='replace')
+    os.write(master, b'q')
+    deadline = time.monotonic() + 10
+    while process.poll() is None and time.monotonic() < deadline:
+        if select.select([master], [], [], .1)[0]:
+            try:
+                screen.extend(os.read(master, 65536))
+            except OSError:
+                break  # macOS reports EIO when the slave terminal closes.
+    assert process.wait(timeout=2) == 0, screen.decode(errors='replace')
 finally:
     if process.poll() is None:
         process.kill()
