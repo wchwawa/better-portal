@@ -127,7 +127,7 @@ function Prepare-Environment {
     if (-not (Test-Dependencies $python)) {
         & $python -m ensurepip --upgrade | Out-Host
         if ($LASTEXITCODE -ne 0) { throw 'Python package setup failed. Reopen Start-Windows.cmd to retry.' }
-        & $python -m pip install --disable-pip-version-check -r (Join-Path $script:ProjectRoot 'requirements.txt') | Out-Host
+        & $python -m pip install --disable-pip-version-check --force-reinstall -r (Join-Path $script:ProjectRoot 'requirements.txt') | Out-Host
         if ($LASTEXITCODE -ne 0 -or -not (Test-Dependencies $python)) {
             throw 'Dependencies are not ready. Check your Internet connection and the error above, then reopen Start-Windows.cmd.'
         }

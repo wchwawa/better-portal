@@ -56,6 +56,15 @@ try {
     Run-Setup 2
     [IO.File]::WriteAllText($requirementsPath, $requirements)
     Run-Setup 0
+    # Package metadata can survive a missing native module. Repair its files too.
+    $native = @(Get-ChildItem (Join-Path $stage '.venv\Lib\site-packages\_curses.*.pyd'))
+    Assert-True ($native.Count -ge 1) 'Native curses module was not installed'
+    Remove-Item -LiteralPath $native[0].FullName
+    $env:PIP_NO_INDEX = $oldNoIndex
+    Run-Setup 0
+    Assert-True (Test-Path -LiteralPath $native[0].FullName) 'Broken native module was not repaired'
+    $env:PIP_NO_INDEX = '1'
+    Run-Setup 0
     Assert-True ([IO.File]::ReadAllText((Join-Path $stage 'tui-settings.json')) -eq $settings) 'Language/bitrate changed during setup'
     Assert-True ([IO.File]::ReadAllText((Join-Path $stage 'config.windows.json')) -eq $config) 'Addresses changed during setup'
 
