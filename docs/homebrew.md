@@ -35,9 +35,19 @@ better-portal update
 
 Wait for **Update complete**, then run `better-portal` again. This command calls **`brew update`**, then **`brew upgrade --fetch-HEAD wchwawa/better-portal/better-portal`**. The `--fetch-HEAD` option is needed to check for new main-branch commits. A plain `brew upgrade` does not always check HEAD installations for new commits.
 
+Terminal shows the old and new revision, followed by the changes included in the version actually installed. If there is no newer version, it says **Already up to date** and shows that installed version's notes again. Direct Brew installs and upgrades also display notes. You can read them again without an internet connection:
+
+```sh
+better-portal changes
+```
+
+Headings follow your saved language. Change descriptions use the original English commit subjects. Notes normally cover the changes since the previous installed revision, with a link to the exact comparison. On a first install, or if the previous revision is no longer in the project history, they are labeled **Recent changes included in this version**. Long lists are shortened with a link to the rest. These are notes from your installed package, not a possibly newer version on GitHub.
+
 An open wizard launched through `better-portal`, or an active Mac recovery lock, prevents the update command from running. If you run Brew directly, close the wizard first. Updates do not stop a play session or repair the network for you.
 
 If Brew reports a download or build error, read that error and retry when it is resolved. Do not run Brew with sudo. Better Portal reports failure if either Brew command fails, and keeps your settings. This wrapper disables automatic keg cleanup during the update; Brew still controls installation and dependency changes, and the wrapper does not promise an automatic rollback of every dependency.
+
+If the error names another tap (an additional source of Brew packages), `brew update` could not refresh that source. Better Portal stops before upgrading. Fix that tap's source, then retry. Only remove a tap if you know you no longer need it; a tap pointing to a deleted local test folder can still have installed software or local commits worth keeping.
 
 ## Keep existing addresses and language
 
@@ -67,7 +77,9 @@ Your settings and reports remain available for a future installation. The source
 
 `Formula/better-portal.rb` is the tap definition in this same repository. The custom tap URL avoids requiring a separate repository. It installs Python and a checksummed Scapy resource into an isolated virtual environment, with a stable `better-portal` entry point. The source checkout and Windows launchers keep their existing settings locations.
 
-Keep the Scapy resource in sync with `requirements.txt`. The package must not write settings, reports or mutable state into Homebrew's Cellar. CI builds the current commit through Homebrew, checks the installed imports and command, and opens the packaged wizard in demo mode. No test installs a root service or changes LAN settings.
+Keep the Scapy resource in sync with `requirements.txt`. The package must not write settings, reports or mutable state into Homebrew's Cellar. The formula bundles notes from the exact source revision at build time; write commit subjects that explain the user-visible change.
+
+CI uses a separate disposable formula and command to test a real install, dependencies, three upgrades, repeated updates, a broken tap, a failed source fetch, retry, direct Brew notes and preservation of settings and reports through uninstall. It also opens the installed TUI before and after upgrades. The existing Better Portal command, user settings and network lock stay untouched. No test installs a root service or changes LAN settings. Run the same check on a Mac from a committed checkout with `python3 tests/integration/homebrew_lifecycle.py --log-dir /tmp/better-portal-brew-logs`.
 
 Once numbered releases and a signed macOS app are available, a stable formula or cask can be added separately. This HEAD channel does not promise a signed app or persistent privilege approval.
 

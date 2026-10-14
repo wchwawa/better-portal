@@ -34,8 +34,10 @@ def main():
                         raise
                     chunk = b''
                 output.extend(chunk)
-            if not quit_sent and b'BETTER PORTAL' in output.upper():
-                os.write(master, b'q')
+            # A saved language opens Prepare directly instead of the welcome
+            # screen. Both screens must remain usable after an upgrade.
+            if not quit_sent and any(title in output.upper() for title in (b'BETTER PORTAL', b'PS5 PORTAL')):
+                os.write(master, b'\x1b')
                 quit_sent = True
             if child.poll() is not None:
                 break

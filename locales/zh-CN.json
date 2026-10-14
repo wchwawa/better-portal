@@ -177,7 +177,6 @@
   "Manual recovery in administrator PowerShell from this project folder: {command}": "在此项目文件夹的管理员 PowerShell 中手动恢复：{command}",
   "Open Better Portal or update its Homebrew installation.": "打开 Better Portal，或通过 Homebrew 更新。",
   "Preview the wizard without network changes.": "预览向导，不更改网络。",
-  "Update with Homebrew, or import settings from an old folder.": "通过 Homebrew 更新，或从旧文件夹导入设置。",
   "Close the other Better Portal window before continuing.": "请先关闭另一个 Better Portal 窗口，再继续。",
   "Install Better Portal with Homebrew before using this command.": "请先通过 Homebrew 安装 Better Portal，再使用此命令。",
   "A Portal connection or recovery is active. Wait until it finishes.": "Portal 连接准备或网络恢复仍在进行，请等待完成。",
@@ -188,5 +187,14 @@
   "Homebrew could not finish. Read the error above, then retry better-portal update.": "Homebrew 未能完成更新。请查看上方错误，解决后重试 better-portal update。",
   "Imported {count} settings files. Existing settings were kept.": "已导入 {count} 个设置文件，已有设置保持不变。",
   "Opening Better Portal. Enter your Mac login password if requested.": "正在打开 Better Portal。如有提示，请输入 Mac 登录密码。",
-  "Manual recovery in Terminal: {command}": "在终端中手动恢复：{command}"
+  "Manual recovery in Terminal: {command}": "在终端中手动恢复：{command}",
+  "Changes in {version}:": "{version} 的更新内容：",
+  "Since {version}:": "自 {version} 以来：",
+  "Recent changes included in this version:": "此版本包含的近期更新：",
+  "No change notes are bundled with this installation.": "此安装版本未附带更新说明。",
+  "More changes are available at the link below.": "更多更新请查看下方链接。",
+  "Already up to date: {version}.": "已经是最新版本：{version}。",
+  "Updated: {before} -> {after}.": "已更新：{before} -> {after}。",
+  "Homebrew finished, but the installed version could not be verified. Run better-portal --version.": "Homebrew 已结束，但无法验证安装的版本。请运行 better-portal --version。",
+  "Update with Homebrew, read change notes, or import settings from an old folder.": "通过 Homebrew 更新、查看更新说明，或从旧文件夹导入设置。"
 }

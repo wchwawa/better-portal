@@ -23,6 +23,8 @@ brew install --HEAD wchwawa/better-portal/better-portal
 
 以后运行 **`better-portal`** 打开向导。更新前关闭向导，再运行 **`better-portal update`**。地址、语言、码率和报告保留在用户目录里。此方式跟随最新的 `main` 分支；真实连接仍会按需提示输入 Mac 密码。[完整说明与旧设置导入](docs/homebrew.md)。也可以继续使用下方的 ZIP 安装方式。
 
+每次更新后，终端会显示实际安装的版本和更新内容。运行 **`better-portal changes`** 可随时再次查看，也支持离线使用。标题会使用你保存的语言，具体更新说明保留原始英文提交描述。
+
 ## Windows 快速开始
 
 **Windows 11 和 Windows 10** 可以使用同一套 TUI 向导。Windows 实机验证仍在进行；详细步骤和排错请看 [Windows 中文指南](WINDOWS.zh-CN.md)。

@@ -23,6 +23,8 @@ brew install --HEAD wchwawa/better-portal/better-portal
 
 Lancez l’assistant avec **`better-portal`**. Fermez-le avant une mise à jour, puis lancez **`better-portal update`**. Les adresses, la langue, le débit et les rapports restent dans votre dossier utilisateur. Cette option suit la dernière version de la branche `main` ; les connexions réelles demandent toujours le mot de passe du Mac si nécessaire. [Guide complet et importation des anciens réglages](docs/homebrew.md). L’installation ZIP ci-dessous reste disponible.
 
+Après chaque mise à jour, le Terminal affiche la version installée et ses changements. Lancez **`better-portal changes`** pour les relire, même hors ligne. Les titres suivent la langue enregistrée ; les descriptions conservent le texte anglais des commits d’origine.
+
 ## Démarrage rapide sous Windows
 
 Le même assistant est disponible sous **Windows 11 et Windows 10**. Les essais sur appareils réels sous Windows sont encore en cours ; consultez le [guide Windows (en anglais)](WINDOWS.md).

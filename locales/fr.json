@@ -177,7 +177,6 @@
   "Manual recovery in administrator PowerShell from this project folder: {command}": "Restauration depuis ce dossier dans PowerShell administrateur : {command}",
   "Open Better Portal or update its Homebrew installation.": "Ouvrir Better Portal ou mettre à jour son installation Homebrew.",
   "Preview the wizard without network changes.": "Afficher un aperçu sans modifier le réseau.",
-  "Update with Homebrew, or import settings from an old folder.": "Mettre à jour avec Homebrew ou importer les réglages d’un ancien dossier.",
   "Close the other Better Portal window before continuing.": "Fermez l’autre fenêtre Better Portal avant de continuer.",
   "Install Better Portal with Homebrew before using this command.": "Installez Better Portal avec Homebrew avant d’utiliser cette commande.",
   "A Portal connection or recovery is active. Wait until it finishes.": "Une connexion ou une restauration Portal est en cours. Attendez la fin.",
@@ -188,5 +187,14 @@
   "Homebrew could not finish. Read the error above, then retry better-portal update.": "Homebrew n’a pas pu terminer. Consultez l’erreur ci-dessus, puis relancez better-portal update.",
   "Imported {count} settings files. Existing settings were kept.": "{count} fichiers de réglages importés. Les réglages existants ont été conservés.",
   "Opening Better Portal. Enter your Mac login password if requested.": "Ouverture de Better Portal. Saisissez le mot de passe de votre Mac si demandé.",
-  "Manual recovery in Terminal: {command}": "Restauration manuelle dans Terminal : {command}"
+  "Manual recovery in Terminal: {command}": "Restauration manuelle dans Terminal : {command}",
+  "Changes in {version}:": "Changements de {version} :",
+  "Since {version}:": "Depuis {version} :",
+  "Recent changes included in this version:": "Changements récents inclus dans cette version :",
+  "No change notes are bundled with this installation.": "Cette installation ne contient pas de notes de changements.",
+  "More changes are available at the link below.": "Consultez les autres changements via le lien ci-dessous.",
+  "Already up to date: {version}.": "Déjà à jour : {version}.",
+  "Updated: {before} -> {after}.": "Mis à jour : {before} -> {after}.",
+  "Homebrew finished, but the installed version could not be verified. Run better-portal --version.": "Homebrew a terminé, mais la version installée n’a pas pu être vérifiée. Lancez better-portal --version.",
+  "Update with Homebrew, read change notes, or import settings from an old folder.": "Mettre à jour avec Homebrew, lire les changements ou importer les réglages d’un ancien dossier."
 }
