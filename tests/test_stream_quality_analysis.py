@@ -9,7 +9,7 @@ from unittest.mock import patch
 
 from scapy.all import Ether, IP, UDP, Raw, wrpcap
 
-from tools.analyze_stream_quality import analyze, main
+from portal_quality import analyze, main
 from test_probe import field
 
 

@@ -38,7 +38,7 @@ For an older report, the local `egress-private.pcap` may still contain these
 fields. From a checkout with the Python dependencies installed, run:
 
 ```sh
-python tools/analyze_stream_quality.py /path/to/experiment-folder
+python portal_quality.py /path/to/experiment-folder
 ```
 
 Pass several experiment folders to compare them. This reads existing files only;

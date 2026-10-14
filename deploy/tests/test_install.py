@@ -34,7 +34,7 @@ class InstallerTests(unittest.TestCase):
                          'portal_windows_network.py', 'protocol.py',
                          'portal_recovery.py', 'portal_tui.py', 'portal_tui_text.py',
                          'portal_tui_platform.py', 'portal_windows_launcher.py', 'portal_cli.py',
-                         'requirements.txt', 'LICENSE'):
+                         'portal_quality.py', 'requirements.txt', 'LICENSE'):
                 (source / name).write_text('# installer fixture\n')
             (deploy / 'portal').write_text('#!/bin/sh\nprintf "fixture version\\n"\n')
             (deploy / 'portal-bitrate.initd').write_text('# fixture\n')
@@ -85,7 +85,7 @@ class InstallerTests(unittest.TestCase):
         self.assertTrue(helper_installed)
         self.assertIn('==> Installed: fixture version', result.stdout)
         self.assertTrue({'portal_recovery.py', 'portal_tui.py', 'portal_tui_text.py',
-                         'portal_tui_platform.py', 'portal_windows_launcher.py'} <= modules,
+                         'portal_tui_platform.py', 'portal_windows_launcher.py', 'portal_quality.py'} <= modules,
                         'Shared self-tests need the wizard and its translations in the installed bundle')
         self.assertTrue({f'locales/{language}.json' for language in ('zh-CN', 'ja', 'ko', 'es', 'fr')} <= modules,
                         'The installed wizard must include every language catalog')
