@@ -142,7 +142,9 @@ def update(info, run=subprocess.run, t=lambda text, **values: text.format(**valu
         raise RuntimeError('A Portal connection or recovery is active. Wait until it finishes.')
     # Homebrew owns downloads, dependency upgrades and installation. Retain old
     # kegs for manual recovery; never call sudo or alter the user's source tree.
-    environment = dict(os.environ, HOMEBREW_NO_INSTALL_CLEANUP='1', BETTER_PORTAL_UPDATING='1')
+    # Brew preserves HOMEBREW_* variables when filtering its environment. Let
+    # our wrapper render notes once, in the user's language, after verification.
+    environment = dict(os.environ, HOMEBREW_NO_INSTALL_CLEANUP='1', HOMEBREW_BETTER_PORTAL_UPDATING='1')
     formula = info.get('formula', FORMULA)
     for arguments in ([brew, 'update'], [brew, 'upgrade', '--fetch-HEAD', formula]):
         result = run(arguments, env=environment, check=False)

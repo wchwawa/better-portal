@@ -35,7 +35,7 @@ class BetterPortal < Formula
 
   def caveats
     notes = opt_libexec/"app/changes.txt"
-    updates = notes.read if notes.exist? && ENV["BETTER_PORTAL_UPDATING"] != "1"
+    updates = notes.read if notes.exist? && ENV["HOMEBREW_BETTER_PORTAL_UPDATING"] != "1"
     <<~EOS
       #{updates}
       Open the wizard: better-portal
