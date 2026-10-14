@@ -10,6 +10,8 @@ else
   BP_BREW=/usr/local/bin/brew
 fi
 BP_PYTHON="$("$BP_BREW" --prefix python@3.14)/bin/python3.14"
+umask 077
+mkdir -p "$BP_SOURCE_DIR/research"
 BP_OUTPUT="$BP_SOURCE_DIR/research/session-$(date +%Y%m%d-%H%M%S)"
 exec /usr/bin/sudo "$BP_PYTHON" "$BP_SOURCE_DIR/tools/observe_portal_session.py" \
   --config "$HOME/Library/Application Support/Better Portal/config.json" \

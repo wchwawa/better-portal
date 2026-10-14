@@ -138,7 +138,9 @@ def main():
     if addresses[0] == addresses[1] or any(not ip.is_private or ip.is_multicast or ip.is_loopback for ip in addresses):
         parser.error('Use two distinct private LAN IPv4 addresses.')
     os.umask(0o077)
-    args.output.mkdir(parents=True, exist_ok=False)
+    if not args.output.parent.is_dir():
+        parser.error('Create the output parent directory as your normal user before running this command.')
+    args.output.mkdir(exist_ok=False)
     uid, gid = int(os.environ['SUDO_UID']), int(os.environ['SUDO_GID'])
     os.chown(args.output, uid, gid)
     events = (args.output / 'events.jsonl').open('x', encoding='utf-8')
