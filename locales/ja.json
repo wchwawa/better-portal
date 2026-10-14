@@ -177,7 +177,6 @@
   "Manual recovery in administrator PowerShell from this project folder: {command}": "このフォルダーで管理者 PowerShell を開き、手動復旧：{command}",
   "Open Better Portal or update its Homebrew installation.": "Better Portal を開くか、Homebrew で更新します。",
   "Preview the wizard without network changes.": "ネットワークを変更せずにウィザードを表示します。",
-  "Update with Homebrew, or import settings from an old folder.": "Homebrew で更新するか、以前のフォルダから設定を読み込みます。",
   "Close the other Better Portal window before continuing.": "別の Better Portal ウィンドウを閉じてから続行してください。",
   "Install Better Portal with Homebrew before using this command.": "このコマンドを使う前に Homebrew で Better Portal をインストールしてください。",
   "A Portal connection or recovery is active. Wait until it finishes.": "Portal の接続処理または復旧が進行中です。完了するまでお待ちください。",
@@ -188,5 +187,14 @@
   "Homebrew could not finish. Read the error above, then retry better-portal update.": "Homebrew の更新が完了しませんでした。上のエラーを確認し、better-portal update を再実行してください。",
   "Imported {count} settings files. Existing settings were kept.": "設定ファイルを {count} 個読み込みました。既存の設定は保持されました。",
   "Opening Better Portal. Enter your Mac login password if requested.": "Better Portal を開いています。求められたら Mac のログインパスワードを入力してください。",
-  "Manual recovery in Terminal: {command}": "ターミナルで手動復旧：{command}"
+  "Manual recovery in Terminal: {command}": "ターミナルで手動復旧：{command}",
+  "Changes in {version}:": "{version} の更新内容：",
+  "Since {version}:": "{version} 以降：",
+  "Recent changes included in this version:": "このバージョンに含まれる最近の変更：",
+  "No change notes are bundled with this installation.": "このインストールには更新内容が含まれていません。",
+  "More changes are available at the link below.": "その他の変更は下のリンクで確認できます。",
+  "Already up to date: {version}.": "すでに最新です：{version}。",
+  "Updated: {before} -> {after}.": "更新しました：{before} -> {after}。",
+  "Homebrew finished, but the installed version could not be verified. Run better-portal --version.": "Homebrew は終了しましたが、インストール済みのバージョンを確認できませんでした。better-portal --version を実行してください。",
+  "Update with Homebrew, read change notes, or import settings from an old folder.": "Homebrew で更新する、更新内容を読む、または以前のフォルダから設定を読み込みます。"
 }

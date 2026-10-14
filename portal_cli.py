@@ -4,6 +4,7 @@ from contextlib import contextmanager
 import json
 import os
 from pathlib import Path
+import re
 import subprocess
 import sys
 
@@ -18,11 +19,57 @@ def data_directory():
     return Path.home() / 'Library' / 'Application Support' / 'Better Portal'
 
 
-def installation():
+def installation(directory=None):
     try:
-        return json.loads((ROOT / 'installation.json').read_text(encoding='utf-8'))
+        value = json.loads(((directory or ROOT) / 'installation.json').read_text(encoding='utf-8'))
+        return value if isinstance(value, dict) else {}
     except (OSError, ValueError):
         return {}
+
+
+def changes_text(info, t=lambda text, **values: text.format(**values)):
+    """Use notes bundled with the installed revision, including when offline."""
+    lines = [t('Changes in {version}:', version=info.get('version', 'source'))]
+    if info.get('changes_scope') == 'update':
+        lines.append(t('Since {version}:', version=info['previous_version']))
+    else:
+        lines.append(t('Recent changes included in this version:'))
+    lines.extend('  - ' + subject for subject in info.get('changes', []))
+    if not info.get('changes'):
+        lines.append(t('No change notes are bundled with this installation.'))
+    if info.get('changes_truncated'):
+        lines.append(t('More changes are available at the link below.'))
+    if info.get('changes_url'):
+        lines.append(info['changes_url'])
+    return '\n'.join(lines)
+
+
+def write_installation(source, app, opt_app, brew, formula):
+    """Called by the formula while its exact source revision is being built."""
+    def git(*arguments, check=True):
+        return subprocess.run(['git', *arguments], cwd=source, check=check,
+                              capture_output=True, text=True)
+
+    revision = git('rev-parse', 'HEAD').stdout.strip()
+    previous = installation(opt_app)
+    previous_revision = previous.get('revision') or previous.get('version', '').removeprefix('HEAD-')
+    # The previous revision may have disappeared after a force push. Do not label
+    # a recent-history fallback as the exact set of changes since that version.
+    comparable = bool(re.fullmatch(r'[0-9a-f]{7,40}', previous_revision)) and git(
+        'merge-base', '--is-ancestor', previous_revision, revision, check=False).returncode == 0
+    scope = f'{previous_revision}..{revision}' if comparable else revision
+    limit = 50 if comparable else 10
+    subjects = git('log', '--no-merges', f'--max-count={limit + 1}', '--format=%s', scope).stdout.splitlines()
+    # Commit subjects are displayed in a terminal; discard control sequences.
+    subjects = [''.join(char for char in subject if char.isprintable()) for subject in subjects]
+    repository = 'https://github.com/wchwawa/better-portal'
+    info = dict(version='HEAD-' + revision[:12], revision=revision, brew=str(brew), formula=formula,
+                previous_version=previous.get('version'), changes_scope='update' if comparable else 'recent',
+                changes=subjects[:limit], changes_truncated=len(subjects) > limit,
+                changes_url=(f'{repository}/compare/{previous_revision}...{revision}' if comparable
+                             else f'{repository}/commits/{revision}'))
+    (app / 'installation.json').write_text(json.dumps(info, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+    (app / 'changes.txt').write_text(changes_text(info) + '\n', encoding='utf-8')
 
 
 def translator(directory):
@@ -87,7 +134,7 @@ def import_settings(source, destination):
     return len(pending)
 
 
-def update(info, run=subprocess.run):
+def update(info, run=subprocess.run, t=lambda text, **values: text.format(**values)):
     brew = info.get('brew')
     if not isinstance(brew, str) or not Path(brew).is_absolute() or not Path(brew).is_file():
         raise RuntimeError('Install Better Portal with Homebrew before using this command.')
@@ -95,11 +142,25 @@ def update(info, run=subprocess.run):
         raise RuntimeError('A Portal connection or recovery is active. Wait until it finishes.')
     # Homebrew owns downloads, dependency upgrades and installation. Retain old
     # kegs for manual recovery; never call sudo or alter the user's source tree.
-    environment = dict(os.environ, HOMEBREW_NO_INSTALL_CLEANUP='1')
-    for arguments in ([brew, 'update'], [brew, 'upgrade', '--fetch-HEAD', FORMULA]):
+    environment = dict(os.environ, HOMEBREW_NO_INSTALL_CLEANUP='1', BETTER_PORTAL_UPDATING='1')
+    formula = info.get('formula', FORMULA)
+    for arguments in ([brew, 'update'], [brew, 'upgrade', '--fetch-HEAD', formula]):
         result = run(arguments, env=environment, check=False)
         if result.returncode:
             return result.returncode
+    # This process is still executing the old keg. Resolve the new one through
+    # Homebrew, never display old notes or the latest remote GitHub revision.
+    result = run([brew, '--prefix', formula], env=environment, check=False, capture_output=True, text=True)
+    if result.returncode or not result.stdout.strip() or not Path(result.stdout.strip()).is_absolute():
+        raise RuntimeError('Homebrew finished, but the installed version could not be verified. Run better-portal --version.')
+    current = installation(Path(result.stdout.strip()) / 'libexec' / 'app')
+    if not current.get('version') or not current.get('revision'):
+        raise RuntimeError('Homebrew finished, but the installed version could not be verified. Run better-portal --version.')
+    if current['version'] == info.get('version'):
+        print(t('Already up to date: {version}.', version=current['version']))
+    else:
+        print(t('Updated: {before} -> {after}.', before=info.get('version', 'unknown'), after=current['version']))
+    print(changes_text(current, t))
     return 0
 
 
@@ -122,8 +183,8 @@ def main(argv=None):
                         version='Better Portal ' + installation().get('version', 'source'))
     parser.add_argument('--demo', action='store_true', help=t('Preview the wizard without network changes.'))
     parser.add_argument('--no-animations', action='store_true')
-    parser.add_argument('command', nargs='?', choices=('update', 'import-settings'),
-                        help=t('Update with Homebrew, or import settings from an old folder.'))
+    parser.add_argument('command', nargs='?', choices=('update', 'changes', 'import-settings'),
+                        help=t('Update with Homebrew, read change notes, or import settings from an old folder.'))
     parser.add_argument('folder', nargs='?', type=Path)
     args = parser.parse_args(argv)
     if (args.command == 'import-settings') != (args.folder is not None):
@@ -135,10 +196,13 @@ def main(argv=None):
             raise RuntimeError('The Homebrew launcher supports macOS.')
         if os.geteuid() == 0:
             raise RuntimeError('Run better-portal without sudo. It requests permission when needed.')
+        if args.command == 'changes':
+            print(changes_text(installation(), t))
+            return 0
         with session_lock(directory):
             if args.command == 'update':
                 print(t('Updating Better Portal with Homebrew. Your settings stay in place.'), flush=True)
-                result = update(installation())
+                result = update(installation(), t=t)
                 if result == 0:
                     print(t('Update complete. Run better-portal to open the wizard.'))
                 else:

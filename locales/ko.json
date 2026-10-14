@@ -177,7 +177,6 @@
   "Manual recovery in administrator PowerShell from this project folder: {command}": "이 프로젝트 폴더의 관리자 PowerShell에서 수동 복구: {command}",
   "Open Better Portal or update its Homebrew installation.": "Better Portal을 열거나 Homebrew로 업데이트합니다.",
   "Preview the wizard without network changes.": "네트워크 변경 없이 마법사를 미리 봅니다.",
-  "Update with Homebrew, or import settings from an old folder.": "Homebrew로 업데이트하거나 이전 폴더의 설정을 가져옵니다.",
   "Close the other Better Portal window before continuing.": "다른 Better Portal 창을 닫은 후 계속하세요.",
   "Install Better Portal with Homebrew before using this command.": "이 명령을 사용하기 전에 Homebrew로 Better Portal을 설치하세요.",
   "A Portal connection or recovery is active. Wait until it finishes.": "Portal 연결 준비 또는 복구가 진행 중입니다. 완료될 때까지 기다리세요.",
@@ -188,5 +187,14 @@
   "Homebrew could not finish. Read the error above, then retry better-portal update.": "Homebrew 업데이트를 완료하지 못했습니다. 위 오류를 확인한 후 better-portal update를 다시 실행하세요.",
   "Imported {count} settings files. Existing settings were kept.": "설정 파일 {count}개를 가져왔습니다. 기존 설정은 유지되었습니다.",
   "Opening Better Portal. Enter your Mac login password if requested.": "Better Portal을 엽니다. 요청하면 Mac 로그인 암호를 입력하세요.",
-  "Manual recovery in Terminal: {command}": "터미널에서 수동 복구: {command}"
+  "Manual recovery in Terminal: {command}": "터미널에서 수동 복구: {command}",
+  "Changes in {version}:": "{version}의 변경 내용:",
+  "Since {version}:": "{version} 이후:",
+  "Recent changes included in this version:": "이 버전에 포함된 최근 변경 사항:",
+  "No change notes are bundled with this installation.": "이 설치 버전에는 변경 내역이 포함되어 있지 않습니다.",
+  "More changes are available at the link below.": "아래 링크에서 더 많은 변경 내용을 확인하세요.",
+  "Already up to date: {version}.": "이미 최신 버전입니다: {version}.",
+  "Updated: {before} -> {after}.": "업데이트 완료: {before} -> {after}.",
+  "Homebrew finished, but the installed version could not be verified. Run better-portal --version.": "Homebrew 작업이 끝났지만 설치된 버전을 확인하지 못했습니다. better-portal --version을 실행하세요.",
+  "Update with Homebrew, read change notes, or import settings from an old folder.": "Homebrew로 업데이트하거나 변경 내역을 읽거나 이전 폴더에서 설정을 가져옵니다."
 }

@@ -23,6 +23,8 @@ brew install --HEAD wchwawa/better-portal/better-portal
 
 Open with **`better-portal`**. Close the wizard before updating, then run **`better-portal update`**. Addresses, language, bitrate and reports stay in your user folder. This follows the latest `main` branch and still uses the Mac password prompt for live sessions. [Full guide and importing your old settings](docs/homebrew.md). The ZIP instructions below remain available.
 
+After each update, Terminal shows the installed version and its changes. Run **`better-portal changes`** to read them again, even offline. The headings follow your saved language; change descriptions keep the original English commit text.
+
 ## Windows quick start
 
 The same guided TUI is available on **Windows 11 and Windows 10**. Windows device testing is still in progress; see the [Windows guide](WINDOWS.md) for requirements and troubleshooting.

@@ -23,6 +23,8 @@ brew install --HEAD wchwawa/better-portal/better-portal
 
 **`better-portal`** で起動します。更新前にウィザードを閉じ、**`better-portal update`** を実行してください。アドレス、言語、ビットレート、レポートはユーザーフォルダに保持されます。最新の `main` ブランチを使用し、実際の接続では引き続き Mac のパスワードが必要です。[詳細と以前の設定の読み込み](docs/homebrew.md)。下記の ZIP インストールも引き続き使えます。
 
+更新後は、インストールされたバージョンと変更内容がターミナルに表示されます。**`better-portal changes`** でオフラインでも再確認できます。見出しは保存した言語で表示され、変更内容は元の英語のコミット説明が使われます。
+
 ## Windows で始める
 
 **Windows 11 / Windows 10** でも同じ設定ガイドを使えます。Windows の実機検証は継続中です。詳しくは [Windows ガイド（英語）](WINDOWS.md)をご覧ください。
