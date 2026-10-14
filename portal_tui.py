@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Guided macOS launcher. Demo mode never changes configuration or networking."""
+"""Guided setup for macOS and Windows. Demo mode never changes configuration or networking."""
 import argparse
 import ipaddress
 import json
@@ -13,6 +13,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from portal_tui_text import LANGUAGE_NAMES, LANGUAGES, cell_width, clip_cells, pad_cells, translate, wrap_cells
+from portal_tui_platform import Adapter, WINDOWS_COPY, recovery_command, windows_adapters, windows_admin
 
 ROOT = Path(__file__).resolve().parent
 CONNECT_SECONDS = 120
@@ -37,7 +38,7 @@ def default_interface():
 def load_config(path):
     """Pre-fill real enrollment, but leave documentation placeholders blank."""
     try:
-        saved = json.loads(path.read_text())
+        saved = json.loads(path.read_text(encoding='utf-8-sig'))
         if not isinstance(saved, dict):
             return {}
     except (OSError, ValueError):
@@ -55,7 +56,7 @@ def load_config(path):
     return values
 
 
-def validate_form(values):
+def validate_form(values, *, adapters=None):
     config = {key: values[key].strip()
               for key in ('interface', 'ps5_ip', 'portal_ip')}
     for key, label in (('ps5_ip', 'PS5'), ('portal_ip', 'Portal')):
@@ -68,7 +69,10 @@ def validate_form(values):
             raise ValueError(f'Use the {label} IPv4 address shown by your router')
     if config['ps5_ip'] == config['portal_ip']:
         raise ValueError('PS5 and Portal must have different IPv4 addresses')
-    if not re.fullmatch(r'en[0-9]+', config['interface']):
+    if adapters is not None:
+        if config['interface'] not in {adapter.id for adapter in adapters}:
+            raise ValueError('Choose an available LAN adapter with the arrow keys')
+    elif not re.fullmatch(r'en[0-9]+', config['interface']):
         raise ValueError('Select a Mac LAN interface such as en0 or en4')
     return config
 
@@ -77,7 +81,7 @@ def save_private_json(path, value):
     """Replace atomically and leave sudo-created settings owned by the caller."""
     temporary = None
     try:
-        with tempfile.NamedTemporaryFile(mode='w', dir=path.parent,
+        with tempfile.NamedTemporaryFile(mode='w', encoding='utf-8', dir=path.parent,
                                          prefix='.' + path.name + '-', delete=False) as stream:
             temporary = Path(stream.name)
             os.chmod(temporary, 0o600)
@@ -155,23 +159,31 @@ class Wizard:
     MIN_ROWS = 24
     MIN_COLS = 72
 
-    def __init__(self, screen, curses, demo=False, animations=True, helper=False):
+    def __init__(self, screen, curses, demo=False, animations=True, platform=None, data_dir=None,
+                 helper=False):
         self.screen, self.curses, self.demo = screen, curses, demo
+        self.windows = (platform or sys.platform) == 'win32'
         self.animations = animations
         self.helper = helper
-        data_root = ROOT
-        if helper:
-            from portal_macos_client import user_directory
-            data_root = user_directory()
-            if not demo:
-                data_root.mkdir(parents=True, mode=0o700, exist_ok=True)
-        self.config_path = data_root / 'config.json'
-        self.preferences_path = data_root / 'tui-settings.json'
+        self.data_dir = Path(data_dir) if data_dir is not None else ROOT
+        self.config_path = self.data_dir / ('config.windows.json' if self.windows else 'config.json')
+        self.preferences_path = self.data_dir / 'tui-settings.json'
+        self.adapter_error = ''
+        self.adapters = []
+        if self.windows:
+            if demo:
+                self.adapters = [Adapter('demo-wifi', 'Wi-Fi (192.168.1.10)')]
+            else:
+                try:
+                    self.adapters = windows_adapters()
+                except Exception as exc:
+                    self.adapter_error = str(exc)
         saved = load_config(self.config_path)
+        interface = (self.adapters[0].id if self.adapters else '') if self.windows else default_interface()
         self.values = [saved.get('ps5_ip', ''), saved.get('portal_ip', ''),
-                       saved.get('interface') or default_interface()]
+                       saved.get('interface') or interface]
         if demo:
-            self.values = ['192.168.1.20', '192.168.1.30', 'en0']
+            self.values = ['192.168.1.20', '192.168.1.30', 'demo-wifi' if self.windows else 'en0']
         preferences = load_preferences(self.preferences_path)
         profile = preferences.get('profile', '65')
         self.profile = profile if profile in PROFILES else '65'
@@ -219,6 +231,8 @@ class Wizard:
         self.hide_cursor()
 
     def t(self, text, **values):
+        if self.windows:
+            text = WINDOWS_COPY.get(text, text)
         return translate(text, self.language, **values)
 
     def save_preferences(self, **changes):
@@ -366,7 +380,10 @@ class Wizard:
         if row < 0 or column < 0 or row >= rows or column >= columns - 1:
             return
         try:
-            text = translate(str(text), self.language if language is None else language)
+            text = str(text)
+            if self.windows:
+                text = WINDOWS_COPY.get(text, text)
+            text = translate(text, self.language if language is None else language)
             self.screen.addstr(row, column, clip_cells(text, columns - column - 1), style)
         except self.curses.error:
             pass
@@ -519,9 +536,12 @@ class Wizard:
             if focused:
                 style |= self.curses.A_REVERSE
             value = self.values[index] or self.t('Enter interface' if index == 2 else 'Enter IPv4 address')
+            if index == 2 and self.windows:
+                value = next((adapter.label for adapter in self.adapters if adapter.id == self.values[2]),
+                             self.t('Choose adapter'))
             self.put(row, 27, '[ ' + pad_cells(value, 24) + ' ]', style)
             if focused:
-                self.put(row, 57, 'type here', self.emphasis())
+                self.put(row, 57, '← / →' if index == 2 and self.windows else 'type here', self.emphasis())
         self.put(16, 2, '>' if self.focus == 3 else ' ', self.emphasis())
         self.put(15, 4, 'Bitrate (Mbps)', self.curses.A_BOLD if self.focus == 3 else 0)
         column = 4
@@ -545,14 +565,19 @@ class Wizard:
         elif self.focus < 2:
             self.put(18, 4, 'Type to replace; arrows to edit. Find IPs in your router list.', self.curses.A_DIM)
         elif self.focus == 2:
-            self.put(18, 4, 'Use the adapter on the PS5 / Portal LAN. Wi-Fi is often en0.', self.curses.A_DIM)
+            if self.windows:
+                hint = ('Use ← / → to choose the adapter on the PS5 / Portal LAN.' if self.adapters else
+                        'No LAN adapter found. Install Npcap and reopen Start-Windows.cmd.')
+                self.paragraph(18, self.adapter_error or hint, self.curses.A_DIM, max_rows=2)
+            else:
+                self.put(18, 4, 'Use the adapter on the PS5 / Portal LAN. Wi-Fi is often en0.', self.curses.A_DIM)
         else:
             self.put(18, 4, {'65': '65 Mbps is recommended for your first attempt.',
                              '100': 'Try 100 Mbps after a stable 65 Mbps session.',
                              '200': '200 Mbps is experimental and may increase stutter.'}[self.profile],
                      self.colors.get('warning', 0) if self.profile == '200' else self.curses.A_DIM)
         self.button(self.screen.getmaxyx()[0] - 4, 'Save and prepare connection  ->', self.focus == 4)
-        if self.focus < 3:
+        if self.focus < 3 and not (self.windows and self.focus == 2):
             try:
                 self.set_cursor(1)
                 self.screen.move(10 + self.focus * 2, 29 + min(self.cursor, 23))
@@ -586,7 +611,7 @@ class Wizard:
                     self.change_focus(1)
                     continue
                 try:
-                    config = validate_form(self.form_values())
+                    config = validate_form(self.form_values(), adapters=self.adapters if self.windows else None)
                     if not self.demo:
                         save_private_json(self.config_path, config)
                         self.save_preferences(profile=self.profile)
@@ -602,6 +627,13 @@ class Wizard:
             elif self.focus == 3 and key in (self.curses.KEY_LEFT, self.curses.KEY_RIGHT, 32):
                 direction = -1 if key == self.curses.KEY_LEFT else 1
                 self.profile = PROFILES[(PROFILES.index(self.profile) + direction) % len(PROFILES)]
+            elif self.windows and self.focus == 2:
+                if self.adapters and key in (self.curses.KEY_LEFT, self.curses.KEY_RIGHT, 32):
+                    ids = [adapter.id for adapter in self.adapters]
+                    direction = -1 if key == self.curses.KEY_LEFT else 1
+                    index = ids.index(self.values[2]) if self.values[2] in ids else (-1 if direction == 1 else 0)
+                    self.values[2] = ids[(index + direction) % len(ids)]
+                    self.error = ''
             elif self.focus < 3:
                 value = self.values[self.focus]
                 if key in (self.curses.KEY_BACKSPACE, 127, 8):
@@ -897,10 +929,17 @@ class Wizard:
                     return {'completed': False, 'run_error': str(exc), 'restoration_errors': [],
                             'preflight_failed': True}
             import portal_active_probe as probe
+            if self.windows:
+                import portal_windows
+                started = True
+                return portal_windows.run_session(
+                    self.profile, connect_timeout=CONNECT_SECONDS, confirmation_timeout=CONFIRM_SECONDS,
+                    progress=self.progress, config=config)
             probe.set_profile(self.profile)
             started = True
             return probe.run(True, finish_on_high_target=True, connect_timeout=CONNECT_SECONDS,
-                             confirmation_timeout=CONFIRM_SECONDS, progress=self.progress, config=config)
+                             confirmation_timeout=CONFIRM_SECONDS, progress=self.progress, config=config,
+                             output_root=self.data_dir)
         except KeyboardInterrupt:
             return {'completed': False, 'run_error': 'Cancelled by user', 'restoration_errors': []}
         except Exception as exc:
@@ -933,8 +972,14 @@ class Wizard:
                     if report.get('managed_helper'):
                         self.paragraph(row, 'Open Better Portal to check the connection helper. Keep this Mac awake for recovery.')
                     elif state:
-                        self.paragraph(row, self.t('Manual recovery from this project folder: {command}',
-                                       command='sudo .venv/bin/python portal_capture.py --restore ' + state))
+                        packaged = not self.windows and self.data_dir != ROOT
+                        hint = ('Manual recovery in administrator PowerShell from this project folder: {command}'
+                                if self.windows else 'Manual recovery in Terminal: {command}' if packaged
+                                else 'Manual recovery from this project folder: {command}')
+                        self.paragraph(row, self.t(hint,
+                                       command=recovery_command(state, self.windows,
+                                           python=sys.executable if packaged else None,
+                                           script=ROOT / 'portal_capture.py' if packaged else None)))
                 elif report.get('directory'):
                     self.paragraph(row, 'The report and captures stay local. Share only a redacted summary.')
                 else:
@@ -1002,44 +1047,61 @@ class Wizard:
 
 
 def main():
+    data_dir = ROOT
     def t(text, **values):
-        preferences = ROOT / 'tui-settings.json'
-        if '--helper' in sys.argv:
-            from portal_macos_client import user_directory
-            preferences = user_directory() / 'tui-settings.json'
-        language = load_preferences(preferences).get('language')
+        language = load_preferences(data_dir / 'tui-settings.json').get('language')
         return translate(text, language, **values)
 
     parser = argparse.ArgumentParser(description=t(__doc__))
     parser.add_argument('--demo', action='store_true',
-                        help=t('Preview the wizard with simulated events; no sudo or network changes'))
+                        help=t('Preview the wizard with simulated events; no administrator access or network changes'))
     parser.add_argument('--no-animations', action='store_true',
                         help=t('Keep state labels and highlights, without motion'))
     parser.add_argument('--helper', action='store_true',
                         help=t('Use the installed macOS connection helper without sudo'))
+    parser.add_argument('--data-dir', type=Path, help=argparse.SUPPRESS)
     args = parser.parse_args()
+    if args.helper:
+        if args.data_dir is not None:
+            parser.error('The installed helper chooses its own settings directory.')
+        from portal_macos_client import user_directory
+        data_dir = user_directory()
+        if not args.demo:
+            data_dir.mkdir(parents=True, mode=0o700, exist_ok=True)
+    if args.data_dir is not None:
+        data_dir = args.data_dir.resolve()
+        if not data_dir.is_dir():
+            parser.error('The settings directory must already exist.')
     if not sys.stdin.isatty() or not sys.stdout.isatty():
         parser.exit(2, t('Open this wizard in an interactive Terminal window.') + '\n')
     if not args.demo:
-        if sys.platform != 'darwin':
-            parser.exit(2, t('This guided launcher currently supports macOS.') + '\n')
-        if args.helper and os.geteuid() == 0:
+        if sys.platform == 'win32':
+            if args.helper:
+                parser.exit(2, t('The installed connection helper supports macOS only.') + '\n')
+            if not windows_admin():
+                parser.exit(2, t('Double-click Start-Windows.cmd and accept the Windows permission prompt.') + '\n')
+        elif sys.platform != 'darwin':
+            parser.exit(2, t('Live setup supports macOS and native Windows 10/11.') + '\n')
+        elif args.helper and os.geteuid() == 0:
             parser.exit(2, t('Open Better Portal as your normal Mac user.') + '\n')
-        if not args.helper and (os.geteuid() != 0 or 'SUDO_UID' not in os.environ):
+        elif not args.helper and (os.geteuid() != 0 or 'SUDO_UID' not in os.environ):
             parser.exit(2, t('Double-click Start.command, or run: sudo .venv/bin/python portal_tui.py') + '\n')
     try:
         import curses
     except ImportError:
-        parser.exit(2, t('This Python installation needs the standard curses module.') + '\n')
+        parser.exit(2, t('Run Setup-Windows.cmd to install terminal support.' if sys.platform == 'win32'
+                         else 'This Python installation needs the standard curses module.') + '\n')
     try:
         return curses.wrapper(lambda screen: Wizard(screen, curses, demo=args.demo,
                                                      animations=not args.no_animations,
-                                                     helper=args.helper).run())
+                                                     data_dir=data_dir, helper=args.helper).run())
     except KeyboardInterrupt:
         print(t('Demo closed.' if args.demo else 'Wizard closed.'))
         return 1
     except curses.error as exc:
-        print(t('Terminal setup failed: {error}. Try the macOS Terminal app.', error=str(exc)), file=sys.stderr)
+        message = ('Terminal setup failed: {error}. Try Windows Terminal.' if sys.platform == 'win32'
+                   else 'Terminal setup failed: {error}. Try the macOS Terminal app.')
+        print(t(message, error=str(exc)), file=sys.stderr)
         return 2
 
 

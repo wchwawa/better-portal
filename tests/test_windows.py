@@ -3,7 +3,7 @@ import json
 import tempfile
 import unittest
 from pathlib import Path
-from unittest.mock import MagicMock, patch
+from unittest.mock import ANY, MagicMock, patch
 import portal_windows as w
 import portal_windows_network as n
 from test_probe import fixture
@@ -57,7 +57,7 @@ class WindowsTests(unittest.TestCase):
         sent=[]
         with patch.object(n,'configure'),patch.object(n,'open_socket') as op,patch.object(n,'send_raw',side_effect=lambda sock,frame:sent.append(frame)),patch.object(n.time,'sleep'):
             self.assertEqual(n.restore(state),[])
-            self.assertEqual(len(sent),10)
+            self.assertEqual(len(sent),12)
             self.assertEqual(sent[0][n.ARP].hwsrc,state['portal_mac'])
             op.return_value.close.assert_called_once()
 
@@ -92,7 +92,7 @@ class WindowsTests(unittest.TestCase):
             stack.enter_context(patch.object(n,'frames',return_value=[b'test']))
             stack.enter_context(patch.object(n,'send_raw',side_effect=RuntimeError('synthetic injection failure')))
             order=[]
-            restore=stack.enter_context(patch.object(n,'restore',side_effect=lambda s:order.append('restore') or []))
+            restore=stack.enter_context(patch.object(n,'restore',side_effect=lambda s,**kw:order.append('restore') or []))
             witness=stack.enter_context(patch.object(w,'Witness'))
             witness.return_value.report.return_value={'all_expected_observed':False}
             stack.enter_context(patch.object(w,'set_profile'))
@@ -106,7 +106,7 @@ class WindowsTests(unittest.TestCase):
                 return child
             stack.enter_context(patch.object(w.subprocess,'Popen',side_effect=spawn))
             self.assertEqual(w.run('65',baseline=True),1)
-            restore.assert_called_once_with(state)
+            restore.assert_called_once_with(state, service=ANY)
             self.assertEqual(order,['restore','stop'])
             report=json.loads(next(Path(d).glob('experiments/*/report.json')).read_text())
             self.assertIn('synthetic injection failure',report['run_error'])

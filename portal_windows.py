@@ -81,7 +81,9 @@ def result_code(report):
                  and report['egress_witness']['all_expected_observed']) else 1
 
 
-def watchdog(path):
+def watchdog(path, seconds=50):
+    if not 1 <= seconds <= 170:
+        raise ValueError('Recovery deadline must be 1-170 seconds.')
     lock = net.MachineLock(existing=True)
     try:
         state = json.loads(path.read_text())
@@ -90,57 +92,137 @@ def watchdog(path):
         check = net.open_socket()
         check.close()
         path.with_suffix('.ready').write_text('ready')
-        time.sleep(50)
+        time.sleep(seconds)
         errors = net.restore(state)
         path.with_suffix('.recovery.json').write_text(json.dumps({'restoration_errors': errors}, indent=2))
     finally:
         lock.close()
 
 
-def run(profile, baseline=False):
-    net.require_windows()
-    c = net.configure()
-    state = net.preflight(c)
-    set_profile(profile)
-    if not baseline:
-        receipt = net.ROOT / 'windows-baseline.json'
-        previous = json.loads(receipt.read_text()) if receipt.exists() else {}
-        if previous.get('config') != state['config'] or not previous.get('baseline_ok'):
-            raise RuntimeError('Run Check-Windows.cmd and Baseline-Windows.cmd successfully before changing bitrate.')
-    lock = net.MachineLock()
+def run_session(profile, baseline=False, *, connect_timeout=120, confirmation_timeout=15,
+                progress=None, config=None, require_baseline=False):
+    """Return the same report/events as the macOS wizard, using native Npcap I/O.
+
+    The legacy CLI retains its separate baseline gate. The guided path performs
+    its own preflight, capture checks and watchdog handshake before changing ARP.
+    """
+    def notify(kind, message=None, **details):
+        if progress is not None:
+            if progress(dict(type=kind, **details)) is False and kind not in ('restoring', 'stopping'):
+                raise KeyboardInterrupt
+        elif message:
+            print(message, flush=True)
+
+    timing = core.RelayWindow(0, connect_timeout, confirmation_timeout)
+    notify('checking')
+    try:
+        net.require_windows()
+        c = net.configure(config)
+        state = net.preflight(c)
+        if require_baseline and not baseline:
+            receipt = net.ROOT / 'windows-baseline.json'
+            previous = json.loads(receipt.read_text()) if receipt.exists() else {}
+            if previous.get('config') != state['config'] or not previous.get('baseline_ok'):
+                raise RuntimeError('Run Check-Windows.cmd and Baseline-Windows.cmd successfully before changing bitrate.')
+        lock = net.MachineLock()
+    except Exception as exc:
+        raise core.PreflightError(str(exc)) from exc
+
+    # The packet transform is shared; leave its globals unchanged after a run.
+    profile_state = {key: getattr(core, key) for key in
+                     ('network', 'OFFSET', 'PATCH_DELTA', 'CONFIRM_TARGET', 'PROFILE_LABEL')}
     rx = witness = watcher = log = None
-    altered = completed = False
+    altered = completed = restoring = False
     errors, events, seen = [], [], set()
     counts, rates = collections.Counter(), collections.Counter()
+    restoration_forwarded = collections.Counter()
     confirmation = core.TargetConfirmation()
     run_error = None
+    last_target = None
+    service_restore = None
     folder = net.ROOT / 'experiments' / ('windows-' + datetime.datetime.now().strftime('%Y%m%d-%H%M%S-%f'))
+    saved = folder / 'recovery-state.json'
     old_signal = signal.getsignal(signal.SIGINT)
     try:
+        set_profile(profile)
         if baseline:
             (net.ROOT / 'windows-baseline.json').unlink(missing_ok=True)
         folder.mkdir(parents=True)
-        saved = folder / 'recovery-state.json'
         saved.write_text(json.dumps(state))
         rx = net.open_socket(f'ether dst {state["own_mac"]} and ip and host {net.PS5} and host {net.PORTAL}')
         witness = Witness(state)
         log = (folder / 'watchdog.log').open('w')
-        watcher = subprocess.Popen([sys.executable, str(Path(__file__).resolve()), '--watchdog', str(saved)],
+        watcher = subprocess.Popen([sys.executable, str(Path(__file__).resolve()),
+                                   '--watchdog-seconds', str(timing.watchdog_seconds), '--watchdog', str(saved)],
                                    creationflags=subprocess.CREATE_NEW_PROCESS_GROUP | subprocess.DETACHED_PROCESS,
                                    stdin=subprocess.DEVNULL, stdout=log, stderr=log)
         deadline = time.monotonic() + 10
         while not saved.with_suffix('.ready').exists():
             if watcher.poll() is not None or time.monotonic() >= deadline:
                 raise RuntimeError('Recovery watchdog did not become ready; no network changes made.')
+            notify('tick', phase='checking', seconds=connect_timeout)
             time.sleep(.05)
         def interrupted(sig, frame):
             raise KeyboardInterrupt
         signal.signal(signal.SIGINT, interrupted)
-        print('Preparing network path. Keep Portal disconnected until READY.', flush=True)
         start = time.monotonic()
-        next_arp = start
-        announced = False
-        while time.monotonic() - start < 40:
+        window = core.RelayWindow(start, connect_timeout, confirmation_timeout)
+        next_arp = next_progress = start
+        announced = early_session_warned = False
+
+        def relay_frame(raw, now):
+            nonlocal last_target, early_session_warned
+            item = core.transform(raw, state, not baseline)
+            if item is None:
+                return
+            outbound, payload, direction, changed = item
+            net.send_raw(rx, outbound)
+            counts['forwarded_' + direction] += 1
+            if restoring:
+                restoration_forwarded[direction] += 1
+            if changed:
+                witness.expected.add(digest(outbound))
+                counts['mutated_packets_including_retransmits'] += 1
+                seq = payload[17:21]
+                if seq not in seen:
+                    seen.add(seq)
+                    confirmation.modified()
+                    last_target = None
+                    window.startup(now)
+                if counts['mutated_packets_including_retransmits'] == 1 and not restoring:
+                    notify('modified', 'Startup packet modified; waiting for PS5 response.')
+            if payload is not None and direction == 'in':
+                rates[int(now - start)] += len(payload)
+                observed = []
+                core.observe(payload, observed)
+                events.extend(observed)
+                for event in observed:
+                    confirmation.observe(event)
+                    if event['type'] == 'CONNECTIONQUALITY' and confirmation.streaming:
+                        last_target = event.get('target_bitrate_raw')
+                    if event['type'] == 'DISCONNECT':
+                        last_target = None
+                    if not restoring:
+                        notify('observed', event=event, accepted=confirmation.accepted,
+                               streaming=confirmation.streaming, samples=confirmation.samples,
+                               target_bitrate=last_target)
+                    if (not baseline and not seen and not early_session_warned and not restoring
+                            and event['type'] == 'CONNECTIONQUALITY'):
+                        early_session_warned = True
+                        notify('reconnect', 'Stream detected without modified startup. Disconnect Portal and reconnect.')
+
+        def service_restore(seconds):
+            deadline = time.monotonic() + seconds
+            while time.monotonic() < deadline:
+                _, raw, _ = rx.recv_raw()
+                if raw:
+                    relay_frame(raw, time.monotonic())
+                else:
+                    time.sleep(.001)
+                witness.drain()
+
+        notify('preparing', 'Preparing network path; keep Portal disconnected.')
+        while time.monotonic() < window.deadline:
             now = time.monotonic()
             if watcher.poll() is not None:
                 raise RuntimeError('Recovery watchdog exited unexpectedly.')
@@ -149,48 +231,40 @@ def run(profile, baseline=False):
                 for frame in net.frames(state):
                     net.send_raw(rx, frame)
                 next_arp = now + 1
-            if not announced and now - start >= 5:
+            if not announced and now >= window.ready_at:
                 announced = True
-                print('READY / HAZIR: connect Portal to PS5 now.', flush=True)
+                notify('ready', 'READY: connect Portal to PS5 now.', seconds=connect_timeout)
+            if now >= next_progress:
+                notify('tick', phase=window.phase(now), seconds=window.remaining(now),
+                       counts=dict(counts), modified=len(seen), accepted=confirmation.accepted,
+                       streaming=confirmation.streaming, samples=confirmation.samples,
+                       target_bitrate=last_target)
+                next_progress = now + .1
             witness.drain()
             _, raw, _ = rx.recv_raw()
-            if not raw:
+            if raw:
+                relay_frame(raw, now)
+            else:
                 time.sleep(.001)
-                continue
-            item = core.transform(raw, state, not baseline)
-            if item is None:
-                continue
-            outbound, payload, direction, changed = item
-            net.send_raw(rx, outbound)
-            counts['forwarded_' + direction] += 1
-            if changed:
-                witness.expected.add(digest(outbound))
-                counts['mutated_packets_including_retransmits'] += 1
-                seq = payload[17:21]
-                if seq not in seen:
-                    seen.add(seq)
-                    confirmation.modified()
-                    print('Startup packet modified; waiting for PS5 target.', flush=True)
-            if payload is not None and direction == 'in':
-                rates[int(now-start)] += len(payload)
-                observed = []
-                core.observe(payload, observed)
-                events.extend(observed)
-                for event in observed:
-                    confirmation.observe(event)
-            if not baseline and confirmation.ready and witness.report()['all_expected_observed']:
-                print('High target observed; restoring direct path.', flush=True)
+            if not baseline and confirmation.ready:
+                notify('confirmed', 'PS5 reported high target bitrate. Restoring direct connection.')
                 break
         completed = True
     except KeyboardInterrupt:
-        run_error = 'Interrupted; restoring direct path.'
+        run_error = 'Cancelled by user'
+        notify('stopping', 'Stopping; restoring original network state.')
     except Exception as exc:
         run_error = f'{type(exc).__name__}: {exc}'
     finally:
+        restoring = True
         signal.signal(signal.SIGINT, signal.SIG_IGN)
+        try:
+            notify('restoring')
+        except (Exception, KeyboardInterrupt):
+            pass
         if altered:
             try:
-                errors = net.restore(state)
+                errors.extend(net.restore(state, service=service_restore))
             except Exception as exc:
                 errors = ['Unexpected restore failure: ' + type(exc).__name__]
         if witness:
@@ -208,34 +282,57 @@ def run(profile, baseline=False):
             except Exception as exc:
                 errors.append('Relay close: ' + type(exc).__name__)
         if watcher and not errors:
-            watcher.terminate()
             try:
+                watcher.terminate()
                 watcher.wait(timeout=5)
-            except subprocess.TimeoutExpired:
-                watcher.kill()
-                watcher.wait(timeout=5)
+            except Exception as exc:
+                errors.append('Watchdog stop: ' + str(exc))
         # If restore fails, keep the detached watchdog alive and its mutex handle held.
-        if log:
-            log.close()
-        lock.close()
-        signal.signal(signal.SIGINT, old_signal)
-    report = {'mode': 'baseline' if baseline else core.PROFILE_LABEL, 'completed': completed,
+        try:
+            if log:
+                log.close()
+        finally:
+            lock.close()
+            signal.signal(signal.SIGINT, old_signal)
+            for key, value in profile_state.items():
+                setattr(core, key, value)
+    report = {'mode': 'baseline' if baseline else 'candidate_byte_probe', 'completed': completed,
               'run_error': run_error, 'counts': dict(counts), 'unique_mutated_sequences': len(seen),
               'ps5_messages': events, 'high_target_confirmed': confirmation.ready,
+              'playback_verified': False, 'restoration_peer_state_verified': False,
+              'restoration_forwarded_packets': dict(restoration_forwarded),
               'egress_witness': witness.report() if witness else {'all_expected_observed': False},
               'restoration_errors': errors,
+              'profile': profile + 'mbps_experimental_windows', 'directory': str(folder),
+              'watchdog_state': str(saved) if saved.exists() else None,
+              'watchdog_seconds': timing.watchdog_seconds if watcher else None,
+              'connect_timeout_seconds': connect_timeout,
+              'confirmation_timeout_seconds': confirmation_timeout,
+              'candidate_plaintext_offset': 334 if not baseline else None,
+              'candidate_is_verified_portal_plaintext': False,
+              'xor_bytes_hex': PROFILES[profile][0] if not baseline else None,
               'udp_9296_mbps_by_second': {str(k): round(v*8/1e6,3) for k,v in sorted(rates.items())},
               'limits': ['Windows preview has not yet been validated on physical devices.',
                          'Target is not measured video throughput; no resolution fields changed.',
                          'ARP restoration sends were checked locally, not independently confirmed at peers.']}
-    if folder.exists():
-        (folder/'report.json').write_text(json.dumps(report, indent=2))
-    if baseline and baseline_ok(report):
-        (net.ROOT/'windows-baseline.json').write_text(json.dumps({'baseline_ok':True,'config':state['config']}))
+    try:
+        if folder.exists():
+            (folder/'report.json').write_text(json.dumps(report, indent=2))
+        if baseline and baseline_ok(report):
+            (net.ROOT/'windows-baseline.json').write_text(json.dumps({'baseline_ok':True,'config':state['config']}))
+    except OSError as exc:
+        report['report_write_error'] = f'{type(exc).__name__}: {exc}'
+    return report
+
+
+def run(profile, baseline=False):
+    """Keep the original command-line entry and baseline requirement."""
+    report = run_session(profile, baseline, connect_timeout=35, confirmation_timeout=0,
+                         require_baseline=True)
     print(json.dumps(report, indent=2))
-    print('Report:', folder/'report.json')
-    if errors:
-        print('Restoration failed. Leave PC running for watchdog recovery; see WINDOWS.tr.md.')
+    print('Report:', Path(report['directory'])/'report.json')
+    if report['restoration_errors']:
+        print('Restoration failed. Leave PC running for watchdog recovery; see WINDOWS.md.')
     elif result_code(report):
         print('NOT CONFIRMED. Code 1 does not prove session failure; inspect targets and mutation count.')
     else:
@@ -267,10 +364,11 @@ def main():
     group.add_argument('--watchdog', type=Path)
     group.add_argument('--restore', type=Path)
     parser.add_argument('--profile', choices=PROFILES, default='65')
+    parser.add_argument('--watchdog-seconds', type=int, default=50)
     args = parser.parse_args()
     net.require_windows()
     if args.watchdog:
-        watchdog(args.watchdog); return 0
+        watchdog(args.watchdog, args.watchdog_seconds); return 0
     if args.restore:
         # Acquire exclusive lock: don't restore over an active relay/watchdog.
         lock = net.MachineLock()

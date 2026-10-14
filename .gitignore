@@ -4,6 +4,7 @@ __pycache__/
 config.json
 tui-settings.json
 .config.json-*
+.config.windows.json-*
 .tui-settings.json-*
 experiments/
 captures/

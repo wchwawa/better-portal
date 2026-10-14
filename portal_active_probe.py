@@ -177,7 +177,7 @@ class TargetConfirmation:
 
 
 def run(active, finish_on_high_target=False, *, connect_timeout=35,
-        confirmation_timeout=0, progress=None, config=None, helper_context=None):
+        confirmation_timeout=0, progress=None, config=None, output_root=None, helper_context=None):
     """Run the existing relay; an optional callback receives structured UI events."""
     def notify(kind, message=None, **details):
         if progress is not None:
@@ -216,8 +216,9 @@ def run(active, finish_on_high_target=False, *, connect_timeout=35,
             os.write(fd, helper_context.lock_token.encode('ascii'))
     finally:
         os.close(fd)
-    output_root = helper_context.storage if helper_context else network.ROOT / 'experiments'
-    folder = output_root / (
+    folder_root = helper_context.storage if helper_context else (
+        (Path(output_root) if output_root is not None else network.ROOT) / 'experiments')
+    folder = folder_root / (
         'portal-' + ('patch-' if active else 'baseline-')
         + datetime.datetime.now().strftime('%Y%m%d-%H%M%S-%f'))
     saved = rx = tx = watcher = witness = None

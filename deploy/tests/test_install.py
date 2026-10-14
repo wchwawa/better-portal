@@ -32,7 +32,9 @@ class InstallerTests(unittest.TestCase):
                          'portal_auto_platform.py', 'portal_capture.py',
                          'portal_egress_witness.py', 'portal_windows.py',
                          'portal_windows_network.py', 'protocol.py',
-                         'portal_tui.py', 'portal_tui_text.py', 'portal_macos_client.py', 'portal_macos_runtime.py',
+                         'portal_recovery.py', 'portal_tui.py', 'portal_tui_text.py',
+                          'portal_tui_platform.py', 'portal_windows_launcher.py', 'portal_cli.py',
+                          'portal_macos_client.py', 'portal_macos_runtime.py',
                          'requirements.txt', 'LICENSE'):
                 (source / name).write_text('# installer fixture\n')
             (deploy / 'portal').write_text('#!/bin/sh\nprintf "fixture version\\n"\n')
@@ -83,7 +85,8 @@ class InstallerTests(unittest.TestCase):
         self.assertIn('full self-test output', result.stdout)
         self.assertTrue(helper_installed)
         self.assertIn('==> Installed: fixture version', result.stdout)
-        self.assertTrue({'portal_tui.py', 'portal_tui_text.py'} <= modules,
+        self.assertTrue({'portal_recovery.py', 'portal_tui.py', 'portal_tui_text.py',
+                         'portal_tui_platform.py', 'portal_windows_launcher.py'} <= modules,
                         'Shared self-tests need the wizard and its translations in the installed bundle')
         self.assertTrue({f'locales/{language}.json' for language in ('zh-CN', 'ja', 'ko', 'es', 'fr')} <= modules,
                         'The installed wizard must include every language catalog')

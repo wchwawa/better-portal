@@ -34,7 +34,7 @@ switch ($Action) {
   # Only SYSTEM and Administrators may change executable code or enrollment.
   Invoke-Checked 'icacls.exe' @($Target,'/inheritance:r','/grant:r','*S-1-5-18:(OI)(CI)F','*S-1-5-32-544:(OI)(CI)F')
   New-Item -ItemType Directory -Path $Runtime | Out-Null
-  $Files=@('portal_auto.py','portal_auto_platform.py','portal_active_probe.py','portal_capture.py','portal_egress_witness.py','portal_windows_network.py','protocol.py','requirements.txt','auto-config.json')
+  $Files=@('portal_auto.py','portal_auto_platform.py','portal_active_probe.py','portal_capture.py','portal_egress_witness.py','portal_windows_network.py','portal_recovery.py','protocol.py','requirements.txt','auto-config.json')
   foreach ($Name in $Files) { Copy-Item (Join-Path $Source $Name) (Join-Path $Target $Name) }
   Copy-Item (Join-Path $Source 'auto-runtime\auto-baseline.json') (Join-Path $Runtime 'auto-baseline.json')
   Invoke-Checked $BasePython @('-m','venv',(Join-Path $Target '.venv'))

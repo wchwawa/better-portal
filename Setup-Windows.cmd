@@ -19,5 +19,6 @@ if errorlevel 1 (
  exit /b 2
 )
 echo Install Npcap from https://npcap.com/#download if needed.
-echo Then right-click Configure-Windows.cmd and Run as administrator.
+echo Setup complete. Double-click Start-Windows.cmd to open the guided setup.
+echo Accept the Windows permission prompt. The wizard saves your addresses and language.
 pause

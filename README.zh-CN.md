@@ -14,6 +14,33 @@
 
 [安装与打开](#安装与打开) · [第一次使用](#第一次使用) · [查找设备地址](#find-device-addresses) · [遇到问题](#常见问题)
 
+## 通过 Homebrew 安装和更新（Mac）
+
+如果已经使用 [Homebrew](https://brew.sh)，在终端依次运行以下两行。Python 和依赖会自动安装：
+
+```sh
+brew tap wchwawa/better-portal https://github.com/wchwawa/better-portal
+brew install --HEAD wchwawa/better-portal/better-portal
+```
+
+以后运行 **`better-portal`** 打开向导。更新前关闭向导，再运行 **`better-portal update`**。地址、语言、码率和报告保留在用户目录里。此方式跟随最新的 `main` 分支；真实连接仍会按需提示输入 Mac 密码。[完整说明与旧设置导入](docs/homebrew.md)。也可以继续使用下方的 ZIP 安装方式。
+
+每次更新后，终端会显示实际安装的版本和更新内容。运行 **`better-portal changes`** 可随时再次查看，也支持离线使用。标题会使用你保存的语言，具体更新说明保留原始英文提交描述。
+
+## Windows 快速开始
+
+**Windows 11 和 Windows 10** 可以使用同一套 TUI 向导。Windows 实机验证仍在进行；详细步骤和排错请看 [Windows 中文指南](WINDOWS.zh-CN.md)。
+
+1. 安装 [Python](https://www.python.org/downloads/windows/)（3.10 或更高，包含 `py` 启动器）和 [Npcap](https://npcap.com/#download)。安装 Npcap 时不要勾选 WinPcap 兼容模式。
+2. 下载并完整解压 [Better Portal ZIP](https://github.com/wchwawa/better-portal/archive/refs/heads/main.zip)。首次双击 **Setup-Windows.cmd**，等待 **Setup complete**。
+3. **以后每次使用：**双击 **Start-Windows.cmd**，允许 Windows 的权限请求。无需输入命令，也无需单独运行配置工具。
+4. 选择语言、输入两个设备的 IPv4 地址，用 **← / →** 选择电脑的 Wi-Fi 或以太网网卡及码率。Portal 保持断开，看到 **现在连接 / CONNECT NOW** 后，在 **120 秒**内连接 PS5。
+
+语言、**S** 设置快捷键、动画、连接阶段和结果判断与下方 Mac 演示共用代码。Windows 的设备页显示 **PC 局域网网卡**。语言、地址和码率都会保存。目标码率确认后，仍请在 Portal 上检查画面、声音和操作。
+
+**使用 Mac？** 可以选择上方的 Homebrew 方式，或按下方的 ZIP 步骤安装。
+
+
 ## 开始前需要什么
 
 准备好以下设备和信息：
@@ -25,6 +52,8 @@
 这是一个实验性社区工具，建议先用 **65 Mbps**。码率表示每秒可以传送多少画面数据；调高后可能保留更多细节，但网络不稳定时也可能更卡。
 
 ## 安装与打开
+
+下面是 ZIP 安装步骤。如果已经通过 Homebrew 安装，运行 **`better-portal`**，直接看后面的**第一次使用**即可。指南中提到打开 Start.command 时，Brew 用户运行这个命令。
 
 只需要安装一次。请保留下载的整个文件夹，以后每次使用都从这里打开。
 
@@ -299,4 +328,4 @@ cd better-portal
 
 </details>
 
-**Windows 或 Linux 用户**：此向导面向 **macOS**。原项目提供独立的 [Windows 指南](https://github.com/atameric/ps5-portal-high-bitrate/blob/main/WINDOWS.md)和 [Linux / 自动化指南](https://github.com/atameric/ps5-portal-high-bitrate/blob/main/AUTOMATION.md)。
+**使用 Linux？** 请参阅原项目的 [Linux / 自动运行指南](https://github.com/atameric/ps5-portal-high-bitrate/blob/main/AUTOMATION.md)。

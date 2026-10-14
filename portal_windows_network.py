@@ -9,6 +9,7 @@ import time
 from pathlib import Path
 from scapy.all import ARP, Ether, conf, srp
 from scapy.interfaces import resolve_iface
+from portal_recovery import restore_peer_mappings
 
 ROOT = Path(__file__).resolve().parent
 PS5 = '192.0.2.10'
@@ -124,16 +125,14 @@ def send_raw(sock, frame):
         raise RuntimeError('Npcap packet injection failed.')
 
 
-def restore(state):
+def restore(state, *, service=None):
     sock = None
     errors = []
     try:
         configure(state['config'])
         sock = open_socket()
-        for _ in range(5):
-            for frame in frames(state, True):
-                send_raw(sock, frame)
-            time.sleep(.1)
+        errors.extend(restore_peer_mappings(
+            lambda frame: send_raw(sock, frame), frames(state, True), service=service))
     except Exception as exc:
         errors.append(f'{type(exc).__name__}: {exc}')
     finally:

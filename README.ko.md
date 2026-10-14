@@ -14,6 +14,33 @@ PlayStation Portal로 자신의 PS5를 플레이할 때 더 높은 화질을 위
 
 [설치 및 실행](#get-started) · [처음 사용하기](#first-session) · [기기 주소 찾기](#find-device-addresses) · [문제 해결](#questions-and-fixes)
 
+## Homebrew로 설치 및 업데이트（Mac）
+
+[Homebrew](https://brew.sh)를 사용한다면 터미널에서 다음 두 명령을 차례대로 실행하세요. Python과 필요한 패키지도 자동으로 설치됩니다:
+
+```sh
+brew tap wchwawa/better-portal https://github.com/wchwawa/better-portal
+brew install --HEAD wchwawa/better-portal/better-portal
+```
+
+**`better-portal`**로 실행합니다. 업데이트 전 마법사를 닫고 **`better-portal update`**를 실행하세요. 주소, 언어, 비트레이트와 보고서는 사용자 폴더에 유지됩니다. 최신 `main` 브랜치를 사용하며 실제 연결 시에는 여전히 Mac 암호를 요청합니다. [자세한 안내 및 이전 설정 가져오기](docs/homebrew.md). 아래 ZIP 설치 방법도 계속 사용할 수 있습니다.
+
+업데이트가 끝나면 터미널에 실제 설치된 버전과 변경 내용이 표시됩니다. **`better-portal changes`**로 오프라인에서도 다시 확인할 수 있습니다. 제목은 저장한 언어로 표시되며 변경 설명은 원래 영어 커밋 문구를 유지합니다.
+
+## Windows 빠른 시작
+
+**Windows 11과 Windows 10**에서도 같은 설정 가이드를 사용할 수 있습니다. Windows 실기기 검증은 진행 중입니다. 자세한 내용은 [Windows 가이드(영어)](WINDOWS.md)를 확인하세요.
+
+1. [Python](https://www.python.org/downloads/windows/)(3.10 이상, `py` 실행기 포함)과 [Npcap](https://npcap.com/#download)을 설치하세요. Npcap의 WinPcap 호환 모드는 선택하지 마세요.
+2. [Better Portal ZIP](https://github.com/wchwawa/better-portal/archive/refs/heads/main.zip)을 내려받아 전체 압축을 푸세요. 처음에만 **Setup-Windows.cmd**를 열고 **Setup complete**를 기다리세요.
+3. **다음부터는 Start-Windows.cmd**를 더블 클릭하고 Windows 권한 요청을 허용하세요. 명령 입력이나 별도의 설정 도구는 필요 없습니다.
+4. 언어와 두 기기의 IPv4 주소를 입력하고 **← / →**로 PC의 Wi-Fi / 이더넷 어댑터와 비트레이트를 고르세요. Portal 연결을 끊은 채 기다리다가 **CONNECT NOW**가 나오면 **120초 이내**에 PS5에 연결하세요.
+
+언어, **S** 설정 단축키, 애니메이션, 연결 단계와 결과 판단은 아래 Mac 버전과 같습니다. Windows에서는 **PC LAN 어댑터**를 선택합니다. 언어, 주소와 비트레이트가 저장됩니다. 목표 비트레이트가 확인되어도 Portal의 화면, 소리와 조작을 확인하세요.
+
+**Mac을 사용하나요?** 위의 Homebrew 방법이나 아래 ZIP 설치 방법을 선택하세요.
+
+
 ## 시작하기 전에
 
 다음을 준비하세요.
@@ -27,6 +54,8 @@ PlayStation Portal로 자신의 PS5를 플레이할 때 더 높은 화질을 위
 <a id="get-started"></a>
 
 ## 설치 및 실행
+
+아래는 ZIP 설치 단계입니다. Homebrew로 설치했다면 **`better-portal`**을 실행하고 아래의 첫 사용 안내로 이동하세요. 안내에서 Start.command를 열라고 하면 대신 이 명령을 실행하세요.
 
 설치는 처음 한 번만 하면 됩니다. 내려받은 폴더 전체를 보관하세요. 다음에도 그 안의 파일로 실행합니다.
 
@@ -309,4 +338,4 @@ cd better-portal
 
 </details>
 
-**Windows 또는 Linux 사용자:** 이 설정 도우미는 **macOS**용입니다. 원본 프로젝트에는 별도의 [Windows 안내](https://github.com/atameric/ps5-portal-high-bitrate/blob/main/WINDOWS.md)와 [Linux / 자동 설정 안내](https://github.com/atameric/ps5-portal-high-bitrate/blob/main/AUTOMATION.md)가 있습니다(영어).
+**Linux 사용자:** 원본 프로젝트의 [Linux / 자동 설정 가이드](https://github.com/atameric/ps5-portal-high-bitrate/blob/main/AUTOMATION.md)를 확인하세요.

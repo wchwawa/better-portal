@@ -14,6 +14,33 @@ Elige un bitrate objetivo más alto para mejorar la imagen al jugar a tu PS5 con
 
 [Instalar y abrir](#get-started) · [Primera sesión](#first-session) · [Buscar las direcciones](#find-device-addresses) · [Resolver problemas](#questions-and-fixes)
 
+## Instalar y actualizar con Homebrew (Mac)
+
+Si usas [Homebrew](https://brew.sh), ejecuta estas dos líneas en Terminal. Homebrew también instala Python y los paquetes necesarios:
+
+```sh
+brew tap wchwawa/better-portal https://github.com/wchwawa/better-portal
+brew install --HEAD wchwawa/better-portal/better-portal
+```
+
+Abre el asistente con **`better-portal`**. Ciérralo antes de actualizar y ejecuta **`better-portal update`**. Las direcciones, el idioma, el bitrate y los informes se conservan en tu carpeta de usuario. Esta opción sigue la última versión de la rama `main`; las conexiones reales siguen solicitando la contraseña del Mac cuando es necesario. [Guía completa e importación de ajustes anteriores](docs/homebrew.md). También puedes seguir usando la instalación ZIP descrita abajo.
+
+Después de cada actualización, Terminal muestra la versión instalada y sus cambios. Ejecuta **`better-portal changes`** para volver a leerlos, incluso sin conexión. Los encabezados usan tu idioma guardado; las descripciones conservan el texto original de los commits en inglés.
+
+## Inicio rápido en Windows
+
+La misma interfaz guiada está disponible en **Windows 11 y Windows 10**. Las pruebas con dispositivos reales en Windows siguen en curso; consulta la [guía para Windows (en inglés)](WINDOWS.md).
+
+1. Instala [Python](https://www.python.org/downloads/windows/) (3.10 o posterior, con el lanzador `py`) y [Npcap](https://npcap.com/#download). Deja desmarcado el modo de compatibilidad con WinPcap.
+2. Descarga y extrae todo el [ZIP de Better Portal](https://github.com/wchwawa/better-portal/archive/refs/heads/main.zip). Abre **Setup-Windows.cmd** una vez y espera a **Setup complete**.
+3. **Cada vez que juegues:** haz doble clic en **Start-Windows.cmd** y acepta el permiso de Windows. No necesitas escribir comandos ni usar otra herramienta de configuración.
+4. Elige el idioma, escribe las dos direcciones IPv4 y usa **← / →** para elegir el adaptador Wi-Fi o Ethernet del PC y el bitrate. Mantén Portal desconectado hasta **CONNECT NOW** y conecta con PS5 antes de que pasen **120 segundos**.
+
+Los idiomas, los ajustes con **S**, las animaciones, las fases y los resultados se comparten con la versión Mac que aparece abajo. En Windows se elige **Adaptador LAN del PC**. El idioma, las direcciones y el bitrate se guardan. Aunque se confirme el bitrate objetivo, comprueba la imagen, el sonido y los controles en Portal.
+
+**¿Usas Mac?** Elige Homebrew arriba o la instalación ZIP de abajo.
+
+
 ## Antes de empezar
 
 Prepara lo siguiente:
@@ -27,6 +54,8 @@ Esta es una herramienta experimental de la comunidad. Empieza con **65 Mbps**. E
 <a id="get-started"></a>
 
 ## Instalar y abrir
+
+Estos pasos son para la instalación ZIP. Si instalaste con Homebrew, ejecuta **`better-portal`** y sigue con **Tu primera sesión**. Usa ese comando donde la guía indique abrir Start.command.
 
 Solo necesitas instalar una vez. Conserva toda la carpeta descargada: contiene el archivo que abrirás cada vez que quieras jugar.
 
@@ -309,4 +338,4 @@ cd better-portal
 
 </details>
 
-**¿Windows o Linux?** Este asistente es para **macOS**. El proyecto original tiene guías separadas de [Windows](https://github.com/atameric/ps5-portal-high-bitrate/blob/main/WINDOWS.md) y [Linux / configuración automática](https://github.com/atameric/ps5-portal-high-bitrate/blob/main/AUTOMATION.md), en inglés.
+**¿Usas Linux?** Consulta la [guía de Linux / configuración automática original](https://github.com/atameric/ps5-portal-high-bitrate/blob/main/AUTOMATION.md).
