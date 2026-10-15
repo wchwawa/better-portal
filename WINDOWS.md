@@ -24,7 +24,7 @@ You do not need Git or Wireshark. Installation downloads Scapy and [windows-curs
 On first launch, choose **English, 简体中文, 日本語, 한국어, Español or Français**. Your choice is saved. Press **S** later to change language without restarting.
 
 1. **Prepare:** keep Portal disconnected from PS5, keep PS5 on, and check that PC, PS5 and Portal use the same home network.
-2. **Devices:** enter the PS5 and Portal **IPv4 addresses** from your router’s device list. On **PC LAN adapter**, use **← / →** to choose the Wi-Fi or Ethernet connection that reaches those devices. Choose **65 Mbps** for your first attempt, then **Save and prepare connection**. Use Tab or ↑ / ↓ to move between rows and Enter to continue.
+2. **Devices:** enter the PS5 and Portal **IPv4 addresses** from your router’s device list. On first use, **PC LAN adapter** suggests the connection Windows uses to reach both devices directly. Check it, or use **← / →** to choose your Wi-Fi or Ethernet connection. Saved and manual choices are kept. If no connection can be suggested, choose it yourself and check both addresses. Choose **65 Mbps** for your first attempt, then **Save and prepare connection**. Use Tab or ↑ / ↓ to move between rows and Enter to continue.
 3. **Connect:** keep Portal disconnected during **WAIT**. When **CONNECT NOW** appears, connect Portal to PS5 normally. The **120-second countdown** starts at that prompt. A request near the end still gets its own confirmation window. Follow the terminal art as the request, PS5 acceptance and target reports arrive.
 4. **Result:** **Bitrate target confirmed** means the software observed the higher target, checked local packet egress and completed its restoration steps. **Check picture, sound and controls on Portal.** If the screen is black, disconnect and reconnect normally without Better Portal. Press **D** for local report/recovery details, **Enter** to retry when allowed, or **Q** to quit.
 
@@ -51,6 +51,10 @@ Run **Setup-Windows.cmd** again to install the Windows terminal dependency. Use 
 **No LAN adapter is available, or the check reports Npcap missing.**
 
 Install Npcap, close the wizard and reopen **Start-Windows.cmd**. Keep the intended Wi-Fi or Ethernet adapter connected. Choose that adapter instead of a VPN or loopback interface. If Windows permission was cancelled, reopen the launcher and accept the prompt.
+
+**It goes straight from Devices to “Setup check failed” or “Could not finish”.**
+
+Read the error below the title. Press **D**, then **↑ / ↓**, to read the full error; press Enter or Esc to return. “Setup check failed” means a check stopped the attempt before network mappings changed. If the error names a different connection, retry and select it under **PC LAN adapter**. For other errors, follow the instructions below or share the full error text with private addresses removed. The title alone does not identify the cause.
 
 **A device cannot be reached, or the route/forwarding check fails.**
 
