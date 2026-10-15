@@ -196,5 +196,8 @@
   "Already up to date: {version}.": "이미 최신 버전입니다: {version}.",
   "Updated: {before} -> {after}.": "업데이트 완료: {before} -> {after}.",
   "Homebrew finished, but the installed version could not be verified. Run better-portal --version.": "Homebrew 작업이 끝났지만 설치된 버전을 확인하지 못했습니다. better-portal --version을 실행하세요.",
-  "Update with Homebrew, read change notes, or import settings from an old folder.": "Homebrew로 업데이트하거나 변경 내역을 읽거나 이전 폴더에서 설정을 가져옵니다."
+  "Update with Homebrew, read change notes, or import settings from an old folder.": "Homebrew로 업데이트하거나 변경 내역을 읽거나 이전 폴더에서 설정을 가져옵니다.",
+  "Setup check failed": "연결 전 확인 실패",
+  "Up / Down: scroll    Enter / Esc: back to result": "↑ / ↓: 스크롤    Enter / Esc: 결과로 돌아가기",
+  "Error: {error}": "오류: {error}"
 }

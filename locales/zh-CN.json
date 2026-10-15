@@ -196,5 +196,8 @@
   "Already up to date: {version}.": "已经是最新版本：{version}。",
   "Updated: {before} -> {after}.": "已更新：{before} -> {after}。",
   "Homebrew finished, but the installed version could not be verified. Run better-portal --version.": "Homebrew 已结束，但无法验证安装的版本。请运行 better-portal --version。",
-  "Update with Homebrew, read change notes, or import settings from an old folder.": "通过 Homebrew 更新、查看更新说明，或从旧文件夹导入设置。"
+  "Update with Homebrew, read change notes, or import settings from an old folder.": "通过 Homebrew 更新、查看更新说明，或从旧文件夹导入设置。",
+  "Setup check failed": "连接前检查失败",
+  "Up / Down: scroll    Enter / Esc: back to result": "↑ / ↓：滚动    Enter / Esc：返回结果",
+  "Error: {error}": "错误：{error}"
 }

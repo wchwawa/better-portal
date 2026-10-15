@@ -196,5 +196,8 @@
   "Already up to date: {version}.": "Ya está actualizado: {version}.",
   "Updated: {before} -> {after}.": "Actualizado: {before} -> {after}.",
   "Homebrew finished, but the installed version could not be verified. Run better-portal --version.": "Homebrew terminó, pero no se pudo verificar la versión instalada. Ejecuta better-portal --version.",
-  "Update with Homebrew, read change notes, or import settings from an old folder.": "Actualiza con Homebrew, lee los cambios o importa ajustes de una carpeta anterior."
+  "Update with Homebrew, read change notes, or import settings from an old folder.": "Actualiza con Homebrew, lee los cambios o importa ajustes de una carpeta anterior.",
+  "Setup check failed": "Falló la comprobación inicial",
+  "Up / Down: scroll    Enter / Esc: back to result": "↑ / ↓: desplazar    Enter / Esc: volver al resultado",
+  "Error: {error}": "Error: {error}"
 }

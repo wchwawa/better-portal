@@ -196,5 +196,8 @@
   "Already up to date: {version}.": "Déjà à jour : {version}.",
   "Updated: {before} -> {after}.": "Mis à jour : {before} -> {after}.",
   "Homebrew finished, but the installed version could not be verified. Run better-portal --version.": "Homebrew a terminé, mais la version installée n’a pas pu être vérifiée. Lancez better-portal --version.",
-  "Update with Homebrew, read change notes, or import settings from an old folder.": "Mettre à jour avec Homebrew, lire les changements ou importer les réglages d’un ancien dossier."
+  "Update with Homebrew, read change notes, or import settings from an old folder.": "Mettre à jour avec Homebrew, lire les changements ou importer les réglages d’un ancien dossier.",
+  "Setup check failed": "Échec de la vérification initiale",
+  "Up / Down: scroll    Enter / Esc: back to result": "↑ / ↓ : défiler    Entrée / Échap : retour au résultat",
+  "Error: {error}": "Erreur : {error}"
 }

@@ -13,7 +13,8 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from portal_tui_text import LANGUAGE_NAMES, LANGUAGES, cell_width, clip_cells, pad_cells, translate, wrap_cells
-from portal_tui_platform import Adapter, WINDOWS_COPY, recovery_command, windows_adapters, windows_admin
+from portal_tui_platform import (Adapter, WINDOWS_COPY, recovery_command, windows_adapters,
+                                windows_adapter_for_peers, windows_admin)
 
 ROOT = Path(__file__).resolve().parent
 CONNECT_SECONDS = 120
@@ -122,7 +123,8 @@ def summarize(report):
                       'Press D for recovery details. Start another attempt only after recovery.')
     if not report.get('completed'):
         message = report.get('run_error') or 'The attempt was stopped.'
-        title = 'Attempt stopped' if message == 'Cancelled by user' else 'Could not finish'
+        title = ('Attempt stopped' if message == 'Cancelled by user' else
+                 'Setup check failed' if report.get('preflight_failed') else 'Could not finish')
         return Result('warning', title, message,
                       ('No network mappings were changed. Keep both devices awake on the same LAN. '
                        'Check the addresses and LAN adapter, then try again.'
@@ -177,7 +179,8 @@ class Wizard:
                 except Exception as exc:
                     self.adapter_error = str(exc)
         saved = load_config(self.config_path)
-        interface = (self.adapters[0].id if self.adapters else '') if self.windows else default_interface()
+        interface = '' if self.windows else default_interface()
+        self.adapter_explicit = bool(saved.get('interface') in {item.id for item in self.adapters})
         self.values = [saved.get('ps5_ip', ''), saved.get('portal_ip', ''),
                        saved.get('interface') or interface]
         if demo:
@@ -516,8 +519,14 @@ class Wizard:
 
     def change_focus(self, direction):
         self.focus = (self.focus + direction) % 5
+        if self.focus == 2:
+            self.suggest_adapter()
         self.selected = True
         self.cursor = len(self.values[self.focus]) if self.focus < 3 else 0
+
+    def suggest_adapter(self):
+        if self.windows and not self.demo and not self.adapter_explicit:
+            self.values[2] = windows_adapter_for_peers(self.form_values(), self.adapters) or ''
 
     def draw_form(self):
         if not self.frame(1, 'Tab: next field    Enter: next / start    Esc: back'):
@@ -609,6 +618,7 @@ class Wizard:
                     self.change_focus(1)
                     continue
                 try:
+                    self.suggest_adapter()
                     config = validate_form(self.form_values(), adapters=self.adapters if self.windows else None)
                     if not self.demo:
                         save_private_json(self.config_path, config)
@@ -631,6 +641,7 @@ class Wizard:
                     direction = -1 if key == self.curses.KEY_LEFT else 1
                     index = ids.index(self.values[2]) if self.values[2] in ids else (-1 if direction == 1 else 0)
                     self.values[2] = ids[(index + direction) % len(ids)]
+                    self.adapter_explicit = True
                     self.error = ''
             elif self.focus < 3:
                 value = self.values[self.focus]
@@ -935,7 +946,7 @@ class Wizard:
             return {'completed': False, 'run_error': 'Cancelled by user', 'restoration_errors': []}
         except Exception as exc:
             if not started or (probe is not None and isinstance(exc, probe.PreflightError)):
-                return {'completed': False, 'run_error': str(exc), 'restoration_errors': [],
+                return {'completed': False, 'run_error': str(exc) or type(exc).__name__, 'restoration_errors': [],
                         'preflight_failed': True}
             return {'completed': False, 'run_error': str(exc),
                     'restoration_errors': ['Unexpected failure; recovery could not be confirmed: ' + str(exc)]}
@@ -944,36 +955,49 @@ class Wizard:
             self.curses.flushinp()
 
     def details(self, report):
+        offset = 0
         while True:
-            if self.frame(3, 'Enter / Esc: back to result'):
+            visible = 1
+            lines = []
+            if self.frame(3, 'Up / Down: scroll    Enter / Esc: back to result'):
                 self.put(7, 4, 'Local session details', self.curses.A_BOLD)
-                row = 9
+                width = min(86, self.screen.getmaxyx()[1] - 4) - 4
+
+                def add(text):
+                    for paragraph in text.splitlines() or ['']:
+                        lines.extend(wrap_cells(paragraph, max(10, width)) or [''])
+                    lines.append('')
+
+                if report.get('run_error'):
+                    add(self.t('Error: {error}', error=str(report['run_error'])))
                 if report.get('directory'):
-                    row = self.paragraph(row, self.t('Report: {path}',
-                                         path=str(Path(report['directory']) / 'report.json'))) + 1
+                    add(self.t('Report: {path}', path=str(Path(report['directory']) / 'report.json')))
                 if report.get('restoration_errors'):
-                    row = self.paragraph(row, self.t('Recovery errors: {errors}',
-                                         errors='; '.join(report['restoration_errors'])),
-                                         self.colors.get('error', 0)) + 1
+                    add(self.t('Recovery errors: {errors}', errors='; '.join(report['restoration_errors'])))
                     deadline = report.get('watchdog_seconds')
-                    row = self.paragraph(row, self.t('Automatic recovery deadline: {seconds}s after watchdog start.',
-                                                    seconds=deadline)
-                                         if deadline else 'The independent recovery process has its own deadline.') + 1
+                    add(self.t('Automatic recovery deadline: {seconds}s after watchdog start.', seconds=deadline)
+                        if deadline else self.t('The independent recovery process has its own deadline.'))
                     state = report.get('watchdog_state')
                     if state:
                         packaged = not self.windows and self.data_dir != ROOT
                         hint = ('Manual recovery in administrator PowerShell from this project folder: {command}'
                                 if self.windows else 'Manual recovery in Terminal: {command}' if packaged
                                 else 'Manual recovery from this project folder: {command}')
-                        self.paragraph(row, self.t(hint,
-                                       command=recovery_command(state, self.windows,
-                                           python=sys.executable if packaged else None,
-                                           script=ROOT / 'portal_capture.py' if packaged else None)))
+                        add(self.t(hint, command=recovery_command(state, self.windows,
+                                   python=sys.executable if packaged else None,
+                                   script=ROOT / 'portal_capture.py' if packaged else None)))
                 elif report.get('directory'):
-                    self.paragraph(row, 'The report and captures stay local. Share only a redacted summary.')
+                    add(self.t('The report and captures stay local. Share only a redacted summary.'))
                 else:
-                    self.paragraph(row, 'Demo sessions do not write reports or change networking.' if self.demo
-                                   else 'The attempt stopped before a report was created.')
+                    add(self.t('Demo sessions do not write reports or change networking.' if self.demo
+                               else 'The attempt stopped before a report was created.'))
+                visible = max(1, self.screen.getmaxyx()[0] - 13)
+                offset = min(offset, max(0, len(lines) - visible))
+                for row, line in enumerate(lines[offset:offset + visible], 9):
+                    self.put(row, 4, line)
+                if len(lines) > visible:
+                    self.put(8, 4, f'{offset + 1}-{min(offset + visible, len(lines))} / {len(lines)}',
+                             self.curses.A_DIM)
                 self.refresh()
             else:
                 self.small_terminal()
@@ -982,6 +1006,10 @@ class Wizard:
                 continue
             if key in (10, 13, 27, self.curses.KEY_ENTER):
                 return
+            if key == self.curses.KEY_DOWN:
+                offset = min(offset + 1, max(0, len(lines) - visible))
+            elif key == self.curses.KEY_UP:
+                offset = max(0, offset - 1)
 
     def draw_result(self, summary, elapsed):
         if not self.frame(3, 'Enter / R: try again    D: details    Q / Esc: quit' if summary.kind != 'error'
