@@ -29,10 +29,12 @@ After each update, Terminal shows the installed version and its changes. Run **`
 
 The same guided TUI is available on **Windows 11 and Windows 10**. Windows device testing is still in progress; see the [Windows guide](WINDOWS.md) for requirements and troubleshooting.
 
-1. Install [Python](https://www.python.org/downloads/windows/) (3.10 or newer, with the `py` launcher) and [Npcap](https://npcap.com/#download). Leave Npcap’s WinPcap compatibility mode unchecked.
-2. Download and extract the whole [Better Portal ZIP](https://github.com/wchwawa/better-portal/archive/refs/heads/main.zip). Double-click **Setup-Windows.cmd** once and wait for **Setup complete**.
-3. **Every time you play:** double-click **Start-Windows.cmd** and accept the Windows permission prompt. No commands or separate configuration tool are needed.
-4. Choose your language, enter the two device IPv4 addresses, and use **← / →** to select the PC’s Wi-Fi or Ethernet adapter and bitrate. Keep Portal disconnected until **CONNECT NOW**, then connect within **120 seconds**.
+1. Download the [Better Portal ZIP](https://github.com/wchwawa/better-portal/archive/refs/heads/main.zip). Right-click it → **Extract All**, then open the extracted folder.
+2. Double-click **Start-Windows.cmd**. It checks Python and installs missing application dependencies. If Python is missing, it uses Windows Package Manager; if that is unavailable, it opens Python's official installation page.
+3. If asked to install **Npcap**, follow the official download page that opens. Leave **WinPcap compatibility mode unchecked**. Finish the installer, then press **Enter** in the setup window. This step is only needed when Npcap is missing.
+4. Accept the Windows permission prompt. Choose your language, enter the two device IPv4 addresses, and use **← / →** to select the PC's Wi-Fi or Ethernet adapter and bitrate. Keep Portal disconnected until **CONNECT NOW**, then connect within **120 seconds**.
+
+**Next time, just double-click Start-Windows.cmd.** No separate Setup step or commands are needed. This quick start supports x64 Windows PCs.
 
 The languages, **S** settings shortcut, animations, connection stages and result rules are shared with the Mac version shown below. Windows uses **PC LAN adapter** in Devices. Language, addresses and bitrate are remembered. A confirmed bitrate target still requires checking picture, sound and controls on Portal.
 

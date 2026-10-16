@@ -31,3 +31,6 @@ id_rsa*
 id_ed25519*
 *.mobileprovision
 release-assets/
+
+# Windows first-launch setup lock
+.windows-setup.lock

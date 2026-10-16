@@ -1,0 +1,23 @@
+name: Windows quick start
+on:
+  push:
+    paths: ['*Windows.cmd', 'tools/windows*', 'tools/tests/**', 'tests/integration/windows_quick_start*', 'requirements.txt', '.github/workflows/windows-quick-start.yml']
+  pull_request:
+    paths: ['*Windows.cmd', 'tools/windows*', 'tools/tests/**', 'tests/integration/windows_quick_start*', 'requirements.txt', '.github/workflows/windows-quick-start.yml']
+permissions:
+  contents: read
+jobs:
+  install:
+    runs-on: windows-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+          architecture: x64
+      - name: Runtime fault checks
+        run: python -m unittest discover -s tools/tests -v
+      - name: First launch, retry, repeat launch, and native console
+        shell: powershell
+        run: ./tests/integration/windows_quick_start.ps1
