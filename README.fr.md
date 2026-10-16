@@ -8,6 +8,8 @@ Sous licence [MIT](LICENSE). Logiciel communautaire indépendant ; sans affiliat
 
 [English](README.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · [Español](README.es.md) · **Français** · [Türkçe](README.tr.md)
 
+[Rejoignez la communauté Discord](https://discord.gg/C957je4ehv)
+
 Choisissez un débit cible pour améliorer l’image lorsque vous jouez à votre PS5 depuis PlayStation Portal. Better Portal vous guide dans la configuration sur **macOS ou Windows**, un écran à la fois.
 
 [Démarrage rapide sur macOS](#macos-quick-start) · [Démarrage rapide sur Windows](#windows-quick-start) · [Première session](#first-session) · [Trouver les adresses](#find-device-addresses) · [Résoudre un problème](#questions-and-fixes)

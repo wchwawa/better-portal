@@ -8,6 +8,8 @@
 
 [English](README.md) · [简体中文](README.zh-CN.md) · **日本語** · [한국어](README.ko.md) · [Español](README.es.md) · [Français](README.fr.md) · [Türkçe](README.tr.md)
 
+[Discord コミュニティに参加](https://discord.gg/C957je4ehv)
+
 PlayStation Portal で自分の PS5 を遊ぶときに、より高い画質を目指すビットレートを設定できます。**macOS または Windows** の設定ガイドが、画面ごとに操作を案内します。
 
 [macOS で始める](#macos-quick-start) · [Windows で始める](#windows-quick-start) · [初めて使うとき](#first-session) · [機器のアドレスを調べる](#find-device-addresses) · [困ったとき](#questions-and-fixes)

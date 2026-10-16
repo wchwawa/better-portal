@@ -8,6 +8,8 @@
 
 [English](README.md) · **简体中文** · [日本語](README.ja.md) · [한국어](README.ko.md) · [Español](README.es.md) · [Français](README.fr.md) · [Türkçe](README.tr.md)
 
+[加入 Discord 社区](https://discord.gg/C957je4ehv)
+
 用 PlayStation Portal 玩自己的 PS5 时，通过 **macOS 或 Windows** 上的逐步向导选择更高的画面码率目标。
 
 [macOS 快速开始](#macos-quick-start) · [Windows 快速开始](#windows-quick-start) · [第一次使用](#第一次使用) · [查找设备地址](#find-device-addresses) · [遇到问题](#常见问题)

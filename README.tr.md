@@ -8,6 +8,8 @@ Orijinal bit hızı ayarlama yöntemi **[@atameric](https://github.com/atameric)
 
 [English](README.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · [Español](README.es.md) · [Français](README.fr.md) · **Türkçe**
 
+[Discord topluluğuna katılın](https://discord.gg/C957je4ehv)
+
 PlayStation Portal üzerinden kendi PS5’inizde oynarken daha yüksek bir görüntü kalitesi hedefi seçin. Better Portal, **macOS veya Windows** üzerinde kurulumu ekran ekran anlatır.
 
 Bu kılavuz Türkçedir. Terminal arayüzü şu anda **English, 简体中文, 日本語, 한국어, Español ve Français** dillerini destekler. Aşağıdaki görseller İngilizce Mac arayüzünden alınmıştır.

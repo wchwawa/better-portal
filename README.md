@@ -8,6 +8,8 @@ Licensed under [MIT](LICENSE). Independent community software; not affiliated wi
 
 **English** · [简体中文](README.zh-CN.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · [Español](README.es.md) · [Français](README.fr.md) · [Türkçe](README.tr.md)
 
+[Join the Discord community](https://discord.gg/C957je4ehv)
+
 Choose a higher picture-quality target when playing your PS5 through PlayStation Portal. Better Portal guides you through the setup on **macOS or Windows**, one screen at a time.
 
 [macOS quick start](#macos-quick-start) · [Windows quick start](#windows-quick-start) · [First session](#your-first-session) · [Find device addresses](#find-device-addresses) · [Get unstuck](#questions-and-fixes)
