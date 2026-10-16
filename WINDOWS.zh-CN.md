@@ -8,14 +8,14 @@ Windows 与 Mac 使用**同一个 TUI 向导**：选择语言、检查前提、�
 
 ## 首次安装
 
-准备 Windows 11 或 Windows 10 电脑、PS5 和 PlayStation Portal。普通 Remote Play 应已能正常使用。三台设备接入同一个家庭路由器，PS5 可以用网线。Portal 保持开机并连接 Wi-Fi，但断开当前 PS5 会话；电脑保持唤醒。
+准备 x64 Windows 11 或 Windows 10 电脑、PS5 和 PlayStation Portal。普通 Remote Play 应已能正常使用。三台设备接入同一个家庭路由器，PS5 可以用网线。Portal 保持开机并连接 Wi-Fi，但断开当前 PS5 会话；电脑保持唤醒。此快速启动暂不支持原生 ARM64 电脑。
 
-1. 从 [Python 官网](https://www.python.org/downloads/windows/)安装 **64 位 Python 3.14**，包含 `py` 启动器。使用 **x86-64** 安装包；当前固定版本的终端依赖没有原生 ARM64 Python 安装包。
-2. 从 [Npcap 官网](https://npcap.com/#download)安装 **Npcap**。**不要勾选 WinPcap 兼容模式**，也不需要 Wi-Fi 监听模式或 raw 802.11 支持。“仅管理员访问”可以保留，因为启动器会申请管理员权限。
-3. 下载 [Better Portal ZIP](https://github.com/wchwawa/better-portal/archive/refs/heads/main.zip)。在文件资源管理器右键 ZIP → **全部解压缩**，打开解压后的文件夹。保留完整目录，不要在 ZIP 内直接运行，也不要复制 Mac 的 `.venv` 文件夹。
-4. 双击 **Setup-Windows.cmd**。它会安装依赖并运行离线测试。看到 **Setup complete** 后按任意键关闭窗口。若出现错误，请先处理错误再继续。
+1. 下载 [Better Portal ZIP](https://github.com/wchwawa/better-portal/archive/refs/heads/main.zip)。在文件资源管理器右键 ZIP → **全部解压缩**，打开解压后的文件夹。保留完整目录，不要在 ZIP 内直接运行，也不要复制 Mac 的 `.venv` 文件夹。
+2. 双击 **Start-Windows.cmd**。已有 x64 Python 3.10–3.14 时会直接使用，否则通过 Windows 包管理器安装 Python 3.14。如果包管理器不可用，会打开 [Python 官网](https://www.python.org/downloads/windows/)：选择 Python 3.14 的 **Windows installer (64-bit)** 完成安装，再回到启动窗口按 Enter。程序依赖会自动安装。
+3. 如果尚未安装 Npcap，会打开 [Npcap 官网](https://npcap.com/#download)。下载并运行安装程序，允许 Windows 的权限请求。**不要勾选 WinPcap 兼容模式**，也不需要 Wi-Fi 监听模式或 raw 802.11 支持。“仅管理员访问”可以保留。安装结束后，回到启动窗口按 **Enter** 继续。如果安装程序要求重启，请重启电脑后重新打开 Start-Windows.cmd。
+4. 依赖准备完成后，TUI 向导会自动打开。允许 Windows 的权限请求，再按下方步骤操作。无需单独运行 Setup。
 
-不需要安装 Git 或 Wireshark。首次安装需要联网下载 Python 依赖，Npcap 需要单独安装。
+不需要安装 Git 或 Wireshark。首次安装需要联网，已安装的依赖会复用。Npcap 从官方网站安装，不随本项目打包；其免费版需要[通过安装窗口操作](https://npcap.com/guide/npcap-users-guide.html)。**Setup-Windows.cmd** 仍可使用，用于只准备依赖、不打开向导。
 
 ## 以后每次使用
 
@@ -24,7 +24,7 @@ Windows 与 Mac 使用**同一个 TUI 向导**：选择语言、检查前提、�
 首次打开会让你选择英语、简体中文、日语、韩语、西班牙语或法语。选择会保存，以后按 **S** 可随时切换语言。
 
 1. **准备：**Portal 断开与 PS5 的连接，PS5 保持开机，确认三台设备在同一个家庭局域网内。
-2. **设备：**输入路由器设备列表里的 PS5 和 Portal **IPv4 地址**。在 **PC 局域网网卡**一行用 **← / →** 选择连接该网络的 Wi-Fi 或以太网网卡。首次保留 **65 Mbps**，再选择“保存并准备连接”。Tab 或 ↑ / ↓ 切换行，Enter 继续。
+2. **设备：**输入路由器设备列表里的 PS5 和 Portal **IPv4 地址**。首次使用时，**PC 局域网网卡**会建议 Windows 用于直接访问这两个设备的连接。核对该选项，或用 **← / →** 选择连接家庭网络的 Wi-Fi 或以太网网卡；已保存或手动选择的网卡会保留。若无法建议网卡，请自行选择并核对两个地址。首次保留 **65 Mbps**，再选择“保存并准备连接”。Tab 或 ↑ / ↓ 切换行，Enter 继续。
 3. **连接：**“等待 / WAIT”时保持 Portal 断开。看到 **现在连接 / CONNECT NOW** 后，再在 Portal 上正常连接 PS5。此时才开始 **120 秒倒计时**；临近结束才收到连接请求，也会留出独立的确认时间。终端图案会跟随请求、PS5 接受和目标码率报告变化。
 4. **结果：**“目标码率已确认”表示程序观察到高目标、验证了本机发包，并完成恢复步骤。**仍需在 Portal 检查画面、声音和操作。**若黑屏，请断开后正常重连，不运行 Better Portal。**D** 查看报告或恢复详情，允许重试时按 **Enter**，按 **Q** 退出。
 
@@ -40,17 +40,21 @@ Windows 与 Mac 使用**同一个 TUI 向导**：选择语言、检查前提、�
 
 不需要。Better Portal 不要求 PSN 用户名或密码，只需两个设备的局域网地址及电脑网卡。Windows 的管理员权限请求与 PSN 账号无关。
 
-**找不到 Python 或 `py`。**
+**Python 安装失败。**
 
-修复或重新安装带启动器的 Python，再打开 **Setup-Windows.cmd**。新终端中运行 `py -3 --version` 应能显示版本。
+查看启动窗口中的错误，检查网络，再次打开 **Start-Windows.cmd** 重试。也可以从上方官网手动安装 x64 Python 3.14。启动器会直接查找已安装的解释器，无需修改 PATH 或自行运行 `py`。
 
 **提示缺少 curses，或启动时关闭了。**
 
-重新运行 **Setup-Windows.cmd** 安装 Windows 终端依赖。使用上面指定的 x86-64 Python。必要时在 Windows Terminal 中进入项目文件夹运行 `Start-Windows.cmd`，保留完整报错。实际连接不能通过 WSL 或 Notebook 运行。
+重新打开 **Start-Windows.cmd**。它会检查依赖版本和模块能否加载，缺失或损坏时会重新安装。启动错误会保留在窗口中，直到你按 Enter。确保解压目录可写，并关闭其他安装窗口。实际连接不能通过 WSL 或 Notebook 运行。
 
 **找不到网卡，或提示缺少 Npcap。**
 
 安装 Npcap 后关闭向导，重新打开 **Start-Windows.cmd**。确保 Wi-Fi 或以太网网卡已连接，不要选 VPN 或回环网卡。若取消了权限弹窗，重新启动并允许授权。
+
+**填写设备后直接显示“连接前检查失败 / Setup check failed”或“未能完成设置 / Could not finish”。**
+
+先看标题下方的错误。按 **D**，再用 **↑ / ↓** 滚动查看完整错误；Enter 或 Esc 返回。“连接前检查失败”表示程序在修改网络映射前就被检查拦下。若错误指出另一张网卡，请重试并在 **PC 局域网网卡**中选择它。其他错误可按下面的说明排查，或提供隐去私人地址后的完整报错。仅凭标题无法判断原因。
 
 **设备无法访问，或路由／转发检查失败。**
 

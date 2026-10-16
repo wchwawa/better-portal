@@ -9,29 +9,18 @@ permissions:
 jobs:
   install:
     runs-on: macos-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
     env:
       HOMEBREW_NO_AUTO_UPDATE: '1'
       HOMEBREW_NO_INSTALL_CLEANUP: '1'
     steps:
       - uses: actions/checkout@v4
-      - name: Prepare a local test tap for this exact commit
-        run: |
-          git branch homebrew-package-test HEAD
-          tap="$(brew --repository)/Library/Taps/better-portal-tests/homebrew-ci"
-          mkdir -p "$tap/Formula"
-          git init -q "$tap"
-          python3 - "$tap" <<'PY'
-          from pathlib import Path
-          import sys
-          source = Path('Formula/better-portal.rb').read_text()
-          source = source.replace('https://github.com/wchwawa/better-portal.git', Path.cwd().as_uri())
-          source = source.replace('branch: "main"', 'branch: "homebrew-package-test", using: :git')
-          (Path(sys.argv[1]) / 'Formula/better-portal.rb').write_text(source)
-          PY
-      - name: Install through Homebrew
-        run: brew install --HEAD better-portal-tests/ci/better-portal
-      - name: Test installed dependencies and command
-        run: brew test better-portal-tests/ci/better-portal
-      - name: Open the installed wizard without privileges or devices
-        run: python3 tests/integration/homebrew_tui_smoke.py "$(brew --prefix)/bin/better-portal"
+        with:
+          fetch-depth: 0
+      - name: Install, upgrade, fail, retry and verify the installed wizard
+        run: python3 tests/integration/homebrew_lifecycle.py --log-dir "${{ runner.temp }}/homebrew-lifecycle-logs"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: homebrew-lifecycle-logs
+          path: ${{ runner.temp }}/homebrew-lifecycle-logs

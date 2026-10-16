@@ -34,7 +34,7 @@ PlayStation Portal로 자신의 PS5를 플레이할 때 더 높은 화질을 위
 | --- | --- | --- |
 | **macOS — Homebrew** | 아래 두 명령 실행 | **`better-portal`** 실행 |
 | **macOS — ZIP** | **Setup.command** 더블 클릭 | **Start.command** 더블 클릭 |
-| **Windows 10 / 11** | **Setup-Windows.cmd** 더블 클릭 | **Start-Windows.cmd** 더블 클릭 |
+| **Windows 10 / 11** | **Start-Windows.cmd** 더블 클릭 | **Start-Windows.cmd** 더블 클릭 |
 
 <a id="macos-quick-start"></a>
 
@@ -50,6 +50,8 @@ brew install --HEAD wchwawa/better-portal/better-portal
 ```
 
 **`better-portal`**로 실행합니다. 업데이트 전 마법사를 닫고 **`better-portal update`**를 실행하세요. 주소, 언어, 비트레이트와 보고서는 사용자 폴더에 유지됩니다. 최신 `main` 브랜치를 사용하며 실제 연결 시에는 여전히 Mac 암호를 요청합니다. [자세한 안내 및 이전 설정 가져오기](docs/homebrew.md). 아래 ZIP 설치 방법도 계속 사용할 수 있습니다.
+
+업데이트가 끝나면 터미널에 실제 설치된 버전과 변경 내용이 표시됩니다. **`better-portal changes`**로 오프라인에서도 다시 확인할 수 있습니다. 제목은 저장한 언어로 표시되며 변경 설명은 원래 영어 커밋 문구를 유지합니다.
 
 아래는 ZIP 설치 단계입니다. Homebrew로 설치했다면 **`better-portal`**을 실행하고 아래의 첫 사용 안내로 이동하세요. 안내에서 Start.command를 열라고 하면 대신 이 명령을 실행하세요.
 
@@ -69,13 +71,16 @@ macOS가 실행을 차단하면[‘macOS가 파일을 열지 않음’](#macos-b
 
 ### Windows 빠른 시작
 
-1. **Python 설치:** [Python 공식 Windows 다운로드 페이지](https://www.python.org/downloads/windows/)에서 **64비트 Python 3.14(x86-64)**를 설치하고 **`py` 실행기**를 포함하세요. 호환되는 x86-64 Python 3.10–3.14가 이미 설치되어 있다면 그대로 사용할 수 있습니다.
-2. **Npcap 설치:** [npcap.com](https://npcap.com/#download)에서 내려받으세요. **WinPcap 호환 모드는 선택하지 마세요.** Wi-Fi 모니터 모드 / raw 802.11 지원은 필요하지 않습니다.[Scapy의 Windows 설명](https://scapy.readthedocs.io/en/stable/installation.html#windows)에 따른 설정입니다.
-3. **Better Portal 다운로드:** [ZIP을 내려받고](https://github.com/wchwawa/better-portal/archive/refs/heads/main.zip) **파일 탐색기 → 다운로드**에서 ZIP을 오른쪽 클릭 → **압축 풀기**를 선택하세요. 압축을 푼 **better-portal-main** 폴더를 엽니다.
-4. **첫 설정:** **Setup-Windows.cmd**를 더블 클릭하세요. **`Setup complete`**가 나오면 키를 눌러 창을 닫습니다. 오프라인 검사가 실패하면 연결을 시작하기 전에 오류를 해결하세요.
-5. **연결 도우미 실행:** 같은 폴더의 **Start-Windows.cmd**를 더블 클릭하고 **Windows 권한 요청**을 승인하세요.[처음 사용하기](#first-session)로 진행합니다.
+**Windows 11과 Windows 10**에서도 같은 설정 가이드를 사용할 수 있습니다. Windows 실기기 검증은 진행 중입니다. 자세한 내용은 [Windows 가이드(영어)](WINDOWS.md)를 확인하세요.
 
-Windows에서도 같은 도우미, 언어, 설정과 120초 연결 카운트다운을 사용합니다. 기기 화면에는 **PC LAN 어댑터** 선택기가 있습니다. Windows 실기기 검증은 진행 중입니다. 자세한 요구 사항과 문제 해결은 [Windows 가이드(영어)](WINDOWS.md)를 참고하세요.
+1. [Better Portal ZIP](https://github.com/wchwawa/better-portal/archive/refs/heads/main.zip)을 내려받고, 오른쪽 클릭 → **압축 풀기**로 전체 압축을 푼 뒤 폴더를 여세요.
+2. **Start-Windows.cmd**를 더블 클릭하세요. Python을 확인하고 필요한 패키지를 설치합니다. Python이 없으면 Windows 패키지 관리자로 설치하며, 패키지 관리자가 없으면 Python 공식 설치 페이지를 엽니다.
+3. **Npcap** 설치 안내가 나오면 열린 공식 페이지에서 설치하세요. **WinPcap 호환 모드는 선택하지 마세요.** 설치가 끝나면 시작 창으로 돌아와 **Enter**를 누르세요. Npcap이 이미 설치되어 있으면 이 단계는 건너뜁니다.
+4. Windows 권한 요청을 허용하세요. 언어와 두 기기의 IPv4 주소를 입력하고 **← / →**로 PC의 Wi-Fi / 이더넷 어댑터와 비트레이트를 고르세요. Portal 연결을 끊은 채 기다리다가 **CONNECT NOW**가 나오면 **120초 이내**에 PS5에 연결하세요.
+
+**다음부터는 Start-Windows.cmd만 더블 클릭하면 됩니다.** 별도의 Setup 실행이나 명령 입력은 필요 없습니다. 이 빠른 시작은 x64 Windows PC를 지원합니다.
+
+언어, **S** 설정 단축키, 애니메이션, 연결 단계와 결과 판단은 아래 Mac 버전과 같습니다. Windows에서는 **PC LAN 어댑터**를 선택합니다. 언어, 주소와 비트레이트가 저장됩니다. 목표 비트레이트가 확인되어도 Portal의 화면, 소리와 조작을 확인하세요.
 
 **두 플랫폼의 ZIP 설치 모두:**압축을 푼 폴더 전체를 보관하고 다음에도 해당 Start 파일을 여세요. 주소, 언어, 비트레이트는 저장됩니다. 파일을 더블 클릭하여 설치하고 실행할 수 있으며 코드를 수정할 필요는 없습니다.
 

@@ -26,7 +26,8 @@ class WindowsWizardTests(unittest.TestCase):
                          Adapter(r'\Device\NPF_{87654321-1234-1234-1234-123456789012}',
                                  'Ethernet (192.168.1.11)')]
         for override in (patch.object(tui, 'ROOT', self.root),
-                         patch.object(tui, 'windows_adapters', return_value=self.adapters)):
+                         patch.object(tui, 'windows_adapters', return_value=self.adapters),
+                         patch.object(tui, 'windows_adapter_for_peers', return_value=self.adapters[0].id)):
             override.start()
             self.addCleanup(override.stop)
         self.curses = SimpleNamespace(

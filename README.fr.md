@@ -34,7 +34,7 @@ Choisissez les instructions pour **votre ordinateur**.
 | --- | --- | --- |
 | **macOS — Homebrew** | Exécutez les deux commandes ci-dessous | Lancez **`better-portal`** |
 | **macOS — ZIP** | Double-cliquez sur **Setup.command** | Double-cliquez sur **Start.command** |
-| **Windows 10 / 11** | Double-cliquez sur **Setup-Windows.cmd** | Double-cliquez sur **Start-Windows.cmd** |
+| **Windows 10 / 11** | Double-cliquez sur **Start-Windows.cmd** | Double-cliquez sur **Start-Windows.cmd** |
 
 <a id="macos-quick-start"></a>
 
@@ -50,6 +50,8 @@ brew install --HEAD wchwawa/better-portal/better-portal
 ```
 
 Lancez l’assistant avec **`better-portal`**. Fermez-le avant une mise à jour, puis lancez **`better-portal update`**. Les adresses, la langue, le débit et les rapports restent dans votre dossier utilisateur. Cette option suit la dernière version de la branche `main` ; les connexions réelles demandent toujours le mot de passe du Mac si nécessaire. [Guide complet et importation des anciens réglages](docs/homebrew.md). L’installation ZIP ci-dessous reste disponible.
+
+Après chaque mise à jour, le Terminal affiche la version installée et ses changements. Lancez **`better-portal changes`** pour les relire, même hors ligne. Les titres suivent la langue enregistrée ; les descriptions conservent le texte anglais des commits d’origine.
 
 Ces étapes concernent l’installation ZIP. Si vous avez installé avec Homebrew, lancez **`better-portal`** et passez à **Votre première session**. Utilisez cette commande partout où le guide indique d’ouvrir Start.command.
 
@@ -69,13 +71,16 @@ Si macOS bloque un fichier, consultez [« macOS refuse d’ouvrir le fichier »]
 
 ### Démarrage rapide sur Windows
 
-1. **Installez Python :** ouvrez la [page officielle de Python pour Windows](https://www.python.org/downloads/windows/) et installez **Python 3.14 64 bits (x86-64)** avec le **lanceur `py`**. Une installation compatible existante de Python x86-64 3.10–3.14 convient aussi.
-2. **Installez Npcap :** téléchargez-le sur [npcap.com](https://npcap.com/#download). Laissez **le mode de compatibilité WinPcap décoché** ; le mode moniteur Wi-Fi / raw 802.11 n’est pas nécessaire. Ces options suivent les [instructions de Scapy pour Windows](https://scapy.readthedocs.io/en/stable/installation.html#windows).
-3. **Téléchargez Better Portal :** [téléchargez le ZIP](https://github.com/wchwawa/better-portal/archive/refs/heads/main.zip). Dans **Explorateur de fichiers → Téléchargements**, faites un clic droit sur le ZIP → **Extraire tout**, puis ouvrez le dossier **better-portal-main** extrait.
-4. **Configurez une fois :** double-cliquez sur **Setup-Windows.cmd**. Attendez **`Setup complete`**, puis appuyez sur une touche pour fermer la fenêtre. Si les vérifications hors connexion échouent, corrigez l’erreur avant de démarrer une session.
-5. **Démarrez une session :** double-cliquez sur **Start-Windows.cmd** dans le même dossier et acceptez la **demande d’autorisation de Windows**. Continuez avec [Votre première session](#first-session).
+Le même assistant est disponible sous **Windows 11 et Windows 10**. Les essais sur appareils réels sous Windows sont encore en cours ; consultez le [guide Windows (en anglais)](WINDOWS.md).
 
-Windows utilise le même assistant, les mêmes langues et réglages, ainsi que le compte à rebours de 120 secondes. L’écran Appareils propose un sélecteur d’**adaptateur LAN du PC**. Les tests sur appareils réels sous Windows sont encore en cours ; consultez le [guide Windows (en anglais)](WINDOWS.md) pour les exigences et le dépannage.
+1. Téléchargez le [ZIP Better Portal](https://github.com/wchwawa/better-portal/archive/refs/heads/main.zip). Faites un clic droit → **Extraire tout**, puis ouvrez le dossier extrait.
+2. Double-cliquez sur **Start-Windows.cmd**. Le lanceur vérifie Python et installe les dépendances manquantes. Si Python manque, il utilise le Gestionnaire de package Windows ; si celui-ci est indisponible, il ouvre la page officielle d'installation de Python.
+3. Si l'installation de **Npcap** est demandée, suivez la page officielle qui s'ouvre. Laissez **le mode de compatibilité WinPcap décoché**. Terminez l'installation, puis appuyez sur **Entrée** dans la fenêtre de démarrage. Cette étape est ignorée si Npcap est déjà installé.
+4. Acceptez l'autorisation Windows. Choisissez la langue, saisissez les deux adresses IPv4, puis utilisez **← / →** pour choisir l'adaptateur Wi-Fi ou Ethernet du PC et le débit. Gardez Portal déconnecté jusqu'à **CONNECT NOW**, puis connectez-le à la PS5 dans les **120 secondes**.
+
+**La prochaine fois, double-cliquez simplement sur Start-Windows.cmd.** Aucune étape Setup séparée ni commande à saisir n'est nécessaire. Ce démarrage rapide prend en charge les PC Windows x64.
+
+Les langues, les réglages avec **S**, les animations, les étapes et les résultats sont communs à la version Mac illustrée ci-dessous. Sous Windows, choisissez **Adaptateur LAN du PC**. La langue, les adresses et le débit sont enregistrés. Même si le débit cible est confirmé, vérifiez l’image, le son et les commandes sur Portal.
 
 **Pour les installations ZIP sur les deux plateformes :** conservez tout le dossier extrait et ouvrez son fichier Start pour chaque nouvelle session. Les adresses, la langue et le débit sont enregistrés. L’installation et le lancement se font en double-cliquant sur ces fichiers ; vous n’avez pas besoin de modifier le code.
 

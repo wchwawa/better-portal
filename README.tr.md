@@ -36,7 +36,7 @@ Kurulumu yalnızca bir kez yapmanız gerekir. ZIP kurulumunda indirdiğiniz klas
 | --- | --- | --- |
 | **macOS — Homebrew** | Aşağıdaki iki komutu çalıştırın | **`better-portal`** komutunu çalıştırın |
 | **macOS — ZIP** | **Setup.command** dosyasına çift tıklayın | **Start.command** dosyasına çift tıklayın |
-| **Windows 10 / 11** | **Setup-Windows.cmd** dosyasına çift tıklayın | **Start-Windows.cmd** dosyasına çift tıklayın |
+| **Windows 10 / 11** | **Start-Windows.cmd** dosyasına çift tıklayın | **Start-Windows.cmd** dosyasına çift tıklayın |
 
 <a id="macos-quick-start"></a>
 
@@ -52,6 +52,8 @@ brew install --HEAD wchwawa/better-portal/better-portal
 ```
 
 Sihirbazı **`better-portal`** komutuyla açın. Güncellemeden önce sihirbazı kapatın, ardından **`better-portal update`** komutunu çalıştırın. Adresler, dil, bit hızı ve raporlar kullanıcı klasörünüzde saklanır. Bu yöntem en güncel `main` dalını izler; gerçek oturumlarda Mac parolası istendiğinde girmeniz gerekir. [Tam kılavuz ve eski ayarları içe aktarma (İngilizce)](docs/homebrew.md). Aşağıdaki ZIP kurulumu da kullanılabilir.
+
+Her güncellemeden sonra Terminal, kurulan sürümü ve değişikliklerini gösterir. Bunları çevrimdışıyken de yeniden okumak için **`better-portal changes`** komutunu çalıştırın. Başlıklar kaydedilmiş dilinizde gösterilir; değişiklik açıklamaları özgün İngilizce commit metnini korur.
 
 Aşağıdaki adımlar ZIP kurulumu içindir. Homebrew ile kurduysanız **`better-portal`** komutunu çalıştırıp [İlk oturum](#first-session) bölümüne geçin. Kılavuzda Start.command dosyasını açmanız istendiğinde bu komutu kullanın.
 
@@ -71,13 +73,16 @@ macOS bir başlatıcıyı engellerse [“macOS dosyayı açmıyor”](#macos-blo
 
 ### Windows hızlı başlangıç
 
-1. **Python’u kurun:** [Python’un Windows indirme sayfasını](https://www.python.org/downloads/windows/) açın ve **`py` başlatıcısıyla birlikte 64 bit Python 3.14 (x86-64)** kurun. Mevcut, uyumlu bir x86-64 Python 3.10–3.14 kurulumu da kullanılabilir.
-2. **Npcap’i kurun:** [npcap.com](https://npcap.com/#download) adresinden indirin. **WinPcap uyumluluk modunu işaretlemeyin**; Wi-Fi izleme modu / raw 802.11 desteği gerekmez. Bu seçenekler [Scapy’nin Windows kurulum adımlarına](https://scapy.readthedocs.io/en/stable/installation.html#windows) uygundur.
-3. **Better Portal’ı indirin:** [ZIP dosyasını indirin](https://github.com/wchwawa/better-portal/archive/refs/heads/main.zip). **Dosya Gezgini → İndirilenler** içinde ZIP dosyasına sağ tıklayın → **Tümünü Ayıkla** seçeneğini seçin. Çıkarılan **better-portal-main** klasörünü açın.
-4. **İlk kurulumu yapın:** **Setup-Windows.cmd** dosyasına çift tıklayın. **`Setup complete`** yazısını bekleyin, ardından pencereyi kapatmak için bir tuşa basın. Çevrimdışı kontroller başarısız olursa oturum başlatmadan önce hatayı çözün.
-5. **Oturum başlatın:** aynı klasördeki **Start-Windows.cmd** dosyasına çift tıklayın ve **Windows izin istemini** onaylayın. [İlk oturum](#first-session) bölümüne geçin.
+Aynı TUI sihirbazı **Windows 11 ve Windows 10** üzerinde kullanılabilir. Windows'ta gerçek cihaz testleri sürmektedir; gereksinimler ve sorun giderme için [Windows kılavuzuna (İngilizce)](WINDOWS.md) bakın.
 
-Windows aynı sihirbazı, dilleri, ayarları ve 120 saniyelik bağlantı geri sayımını kullanır. Cihazlar ekranında **PC LAN adapter** seçimi bulunur. Windows’ta gerçek cihaz testleri devam etmektedir; ayrıntılı gereksinimler ve sorun giderme için [Windows kılavuzuna (İngilizce)](WINDOWS.md) bakın.
+1. [Better Portal ZIP dosyasını](https://github.com/wchwawa/better-portal/archive/refs/heads/main.zip) indirin. Sağ tıklayın → **Tümünü Ayıkla**, ardından çıkarılan klasörü açın.
+2. **Start-Windows.cmd** dosyasına çift tıklayın. Python'u kontrol eder ve eksik uygulama bağımlılıklarını kurar. Python yoksa Windows Paket Yöneticisi'ni kullanır; o da yoksa Python'un resmî kurulum sayfasını açar.
+3. **Npcap** kurulumu istenirse açılan resmî indirme sayfasındaki adımları izleyin. **WinPcap uyumluluk modunu işaretlemeyin.** Kurulumu tamamlayın, ardından başlangıç penceresinde **Enter** tuşuna basın. Bu adım yalnızca Npcap eksikse gereklidir.
+4. Windows izin istemini onaylayın. Dilinizi seçin, iki cihazın IPv4 adreslerini girin ve **← / →** ile bilgisayarın Wi-Fi veya Ethernet bağdaştırıcısını ve bit hızını seçin. **CONNECT NOW** görünene kadar Portal'ın bağlantısını kesik tutun, ardından **120 saniye** içinde bağlanın.
+
+**Sonraki kullanımda yalnızca Start-Windows.cmd dosyasına çift tıklayın.** Ayrı bir Setup adımı veya komut gerekmez. Bu hızlı başlangıç x64 Windows bilgisayarları destekler.
+
+Diller, **S** ayar kısayolu, animasyonlar, bağlantı aşamaları ve sonuç kuralları aşağıda gösterilen Mac sürümüyle ortaktır. Windows'un Devices ekranında **PC LAN adapter** bulunur. Dil, adresler ve bit hızı hatırlanır. Bit hızı hedefi doğrulansa da Portal'da görüntü, ses ve kontrolleri kontrol edin.
 
 **Her iki platformdaki ZIP kurulumları için:** çıkarılan klasörü bütünüyle saklayın ve her yeni oturum için ilgili Start dosyasını açın. Adresler, dil ve bit hızı kaydedilir. Bu dosyalara çift tıklayarak kurulum yapabilir ve uygulamayı açabilirsiniz; kod düzenlemeniz gerekmez.
 

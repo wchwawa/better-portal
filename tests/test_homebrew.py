@@ -1,5 +1,6 @@
 """Homebrew launch, migration and update tests; no privilege or network changes."""
-from contextlib import contextmanager
+from contextlib import contextmanager, redirect_stdout
+import io
 import json
 import os
 from pathlib import Path
@@ -83,10 +84,115 @@ class HomebrewTests(unittest.TestCase):
         self.assertEqual(run.call_args.args[0], [str(brew), 'update'])
         self.assertEqual(run.call_args.kwargs['env']['HOMEBREW_NO_INSTALL_CLEANUP'], '1')
         run.reset_mock()
-        run.return_value.returncode = 0
+        run.side_effect = [MagicMock(returncode=0), MagicMock(returncode=9)]
         with patch.object(cli, 'NETWORK_LOCK', self.root / 'inactive'):
-            self.assertEqual(cli.update({'brew': str(brew)}, run), 0)
+            self.assertEqual(cli.update({'brew': str(brew)}, run), 9)
         self.assertEqual(run.call_args.args[0], [str(brew), 'upgrade', '--fetch-HEAD', cli.FORMULA])
+
+    def installed_update(self, *, current='b' * 40, prefix_result=0, missing=False):
+        brew = self.root / 'brew'
+        brew.touch()
+        prefix = self.root / 'new keg'
+        app = prefix / 'libexec' / 'app'
+        app.mkdir(parents=True)
+        if not missing:
+            (app / 'installation.json').write_text(json.dumps({
+                'version': 'HEAD-' + current[:12], 'revision': current,
+                'changes_scope': 'update', 'previous_version': 'HEAD-' + 'a' * 12,
+                'changes': ['Keep saved settings when upgrading'],
+            }))
+        run = MagicMock(side_effect=[MagicMock(returncode=0), MagicMock(returncode=0),
+                                    MagicMock(returncode=prefix_result, stdout=str(prefix) + '\n')])
+        info = {'version': 'HEAD-' + 'a' * 12, 'brew': str(brew),
+                'formula': 'test/tap/better-portal', 'changes': ['Stale old notes']}
+        return info, run
+
+    def test_update_displays_new_installed_notes_and_uses_the_installed_tap(self):
+        info, run = self.installed_update()
+        output = io.StringIO()
+        with patch.object(cli, 'NETWORK_LOCK', self.root / 'inactive'), redirect_stdout(output):
+            self.assertEqual(cli.update(info, run), 0)
+        self.assertIn('Updated: HEAD-aaaaaaaaaaaa -> HEAD-bbbbbbbbbbbb.', output.getvalue())
+        self.assertIn('Keep saved settings when upgrading', output.getvalue())
+        self.assertNotIn('Stale old notes', output.getvalue())
+        self.assertEqual(run.call_args_list[1].args[0][-1], 'test/tap/better-portal')
+        self.assertEqual(run.call_args.args[0], [info['brew'], '--prefix', 'test/tap/better-portal'])
+
+    def test_no_op_update_still_displays_current_notes_without_claiming_a_new_version(self):
+        info, run = self.installed_update(current='a' * 40)
+        output = io.StringIO()
+        with patch.object(cli, 'NETWORK_LOCK', self.root / 'inactive'), redirect_stdout(output):
+            self.assertEqual(cli.update(info, run), 0)
+        self.assertIn('Already up to date: HEAD-aaaaaaaaaaaa.', output.getvalue())
+        self.assertIn('Keep saved settings when upgrading', output.getvalue())
+        self.assertNotIn('Updated:', output.getvalue())
+
+    def test_cannot_claim_success_when_brew_prefix_lookup_fails(self):
+        info, run = self.installed_update(prefix_result=1)
+        output = io.StringIO()
+        with patch.object(cli, 'NETWORK_LOCK', self.root / 'inactive'), redirect_stdout(output):
+            with self.assertRaisesRegex(RuntimeError, 'could not be verified'):
+                cli.update(info, run)
+        self.assertEqual(output.getvalue(), '')
+
+    def test_cannot_claim_success_when_new_installation_metadata_is_missing(self):
+        info, run = self.installed_update(missing=True)
+        output = io.StringIO()
+        with patch.object(cli, 'NETWORK_LOCK', self.root / 'inactive'), redirect_stdout(output):
+            with self.assertRaisesRegex(RuntimeError, 'could not be verified'):
+                cli.update(info, run)
+        self.assertEqual(output.getvalue(), '')
+
+    def test_changes_can_be_read_offline_without_a_session_lock(self):
+        output = io.StringIO()
+        with patch.object(cli.sys, 'platform', 'darwin'), \
+                patch.object(cli.os, 'geteuid', return_value=501, create=True), \
+                patch.object(cli, 'installation', return_value={'version': 'HEAD-example', 'changes': ['Saved notes']}), \
+                patch.object(cli, 'data_directory', return_value=self.destination), \
+                patch.object(cli, 'session_lock') as lock, \
+                patch.object(cli.subprocess, 'run') as run, redirect_stdout(output):
+            self.assertEqual(cli.main(['changes']), 0)
+        self.assertIn('Saved notes', output.getvalue())
+        lock.assert_not_called()
+        run.assert_not_called()
+
+    def test_change_notes_use_the_saved_language(self):
+        (self.destination / 'tui-settings.json').write_text('{"language": "zh-CN"}')
+        text = cli.changes_text({'version': 'HEAD-example', 'changes': ['Original English subject']},
+                                cli.translator(self.destination))
+        self.assertIn('更新内容', text)
+        self.assertIn('Original English subject', text)
+
+    def test_invalid_metadata_is_treated_as_missing(self):
+        for content in ('[]', 'null', '{'):
+            (self.destination / 'installation.json').write_text(content)
+            self.assertEqual(cli.installation(self.destination), {})
+
+    def test_notes_are_bound_to_the_built_revision_and_previous_install(self):
+        (self.source / 'installation.json').write_text(json.dumps({'version': 'HEAD-' + 'a' * 12}))
+        run = MagicMock(side_effect=[MagicMock(stdout='b' * 40 + '\n'), MagicMock(returncode=0),
+                                    MagicMock(stdout='A new feature\nFix a connection error\n')])
+        with patch.object(cli.subprocess, 'run', run):
+            cli.write_installation(self.root, self.destination, self.source, '/brew', cli.FORMULA)
+        info = cli.installation(self.destination)
+        self.assertEqual(info['revision'], 'b' * 40)
+        self.assertEqual(info['changes_scope'], 'update')
+        self.assertEqual(info['changes'], ['A new feature', 'Fix a connection error'])
+        self.assertEqual(run.call_args.args[0][-1], 'a' * 12 + '..' + 'b' * 40)
+        self.assertIn('Since HEAD-aaaaaaaaaaaa:', (self.destination / 'changes.txt').read_text())
+
+    def test_rewritten_history_is_explicitly_labeled_as_recent_changes(self):
+        (self.source / 'installation.json').write_text(json.dumps({'version': 'HEAD-' + 'a' * 12}))
+        run = MagicMock(side_effect=[MagicMock(stdout='b' * 40), MagicMock(returncode=1),
+                                    MagicMock(stdout='\n'.join('Change ' + str(i) for i in range(11)))])
+        with patch.object(cli.subprocess, 'run', run):
+            cli.write_installation(self.root, self.destination, self.source, '/brew', cli.FORMULA)
+        info = cli.installation(self.destination)
+        self.assertEqual(info['changes_scope'], 'recent')
+        self.assertTrue(info['changes_truncated'])
+        self.assertEqual(len(info['changes']), 10)
+        self.assertNotIn('Since ', cli.changes_text(info))
+        self.assertEqual(run.call_args.args[0][-1], 'b' * 40)
 
     def test_active_recovery_prevents_brew_from_running(self):
         brew = self.root / 'brew'

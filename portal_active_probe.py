@@ -133,7 +133,27 @@ def observe(data,events):
         if kind==1:
             q=fields(f[3]); events.append({'type':'BANG','version':q.get(1),'key_accepted':q.get(3),'version_accepted':q.get(4)})
         elif kind==13:events.append({'type':'STREAMINFO'})
-        elif kind==16:events.append({'type':'CONNECTIONQUALITY','target_bitrate_raw':fields(f[17]).get(1)})
+        elif kind==16:
+            quality = fields(f[17], with_wire=True)
+            target = quality.get(1)
+            if target is None or target[0] != 0 or not 0 <= target[1] < (1 << 32):
+                return
+            event = {'type': 'CONNECTIONQUALITY', 'target_bitrate_raw': target[1]}
+            # chiaki-ng lib/protobuf/takion.proto at c8bea2642d0e defines these
+            # wire types. Units and reporting intervals remain unverified.
+            for number, name, bits in ((2, 'upstream_bitrate_raw', 32),
+                                       (6, 'loss_raw', 64)):
+                value = quality.get(number)
+                if value is not None and value[0] == 0 and 0 <= value[1] < (1 << bits):
+                    event[name] = value[1]
+            for number, name, wire, fmt in ((3, 'upstream_loss_raw', 5, '<f'),
+                                            (5, 'rtt_raw', 1, '<d')):
+                value = quality.get(number)
+                if value is not None and value[0] == wire:
+                    decoded = struct.unpack(fmt, value[1])[0]
+                    if math.isfinite(decoded) and decoded >= 0:
+                        event[name] = decoded
+            events.append(event)
         elif kind==8:events.append({'type':'DISCONNECT'})
     except (ValueError,TypeError,KeyError):pass
 

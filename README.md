@@ -34,7 +34,7 @@ Choose the instructions for **your computer**.
 | --- | --- | --- |
 | **macOS — Homebrew** | Run the two commands below | Run **`better-portal`** |
 | **macOS — ZIP** | Double-click **Setup.command** | Double-click **Start.command** |
-| **Windows 10 / 11** | Double-click **Setup-Windows.cmd** | Double-click **Start-Windows.cmd** |
+| **Windows 10 / 11** | Double-click **Start-Windows.cmd** | Double-click **Start-Windows.cmd** |
 
 ### macOS quick start
 
@@ -48,6 +48,8 @@ brew install --HEAD wchwawa/better-portal/better-portal
 ```
 
 Open with **`better-portal`**. Close the wizard before updating, then run **`better-portal update`**. Addresses, language, bitrate and reports stay in your user folder. This follows the latest `main` branch and still uses the Mac password prompt for live sessions. [Full guide and importing your old settings](docs/homebrew.md). The ZIP instructions below remain available.
+
+After each update, Terminal shows the installed version and its changes. Run **`better-portal changes`** to read them again, even offline. The headings follow your saved language; change descriptions keep the original English commit text.
 
 These steps are for ZIP installs. If you installed with Homebrew, run **`better-portal`** and continue with **Your first session** below. In the guide, use that command wherever it says to open Start.command.
 
@@ -65,13 +67,16 @@ If macOS blocks a launcher, see [“macOS won't open the file”](#macos-blocked
 
 ### Windows quick start
 
-1. **Install Python:** open [Python's Windows download page](https://www.python.org/downloads/windows/) and install **64-bit Python 3.14 (x86-64)** with the **`py` launcher**. An existing compatible x86-64 Python 3.10–3.14 installation also works.
-2. **Install Npcap:** download it from [npcap.com](https://npcap.com/#download). Leave **WinPcap compatibility mode unchecked**; Wi-Fi monitor mode / raw 802.11 support is not needed. These options follow [Scapy's Windows instructions](https://scapy.readthedocs.io/en/stable/installation.html#windows).
-3. **Download Better Portal:** [download the ZIP](https://github.com/wchwawa/better-portal/archive/refs/heads/main.zip). In **File Explorer → Downloads**, right-click the ZIP → **Extract All**, then open the extracted **better-portal-main** folder.
-4. **Set up once:** double-click **Setup-Windows.cmd**. Wait for **`Setup complete`**, then press a key to close the window. If the offline checks fail, fix the error before starting a session.
-5. **Start a session:** double-click **Start-Windows.cmd** in the same folder and accept the **Windows permission prompt**. Continue with [Your first session](#your-first-session).
+The same guided TUI is available on **Windows 11 and Windows 10**. Windows device testing is still in progress; see the [Windows guide](WINDOWS.md) for requirements and troubleshooting.
 
-Windows uses the same wizard, languages, settings and 120-second connection countdown. Its Devices screen has a **PC LAN adapter** selector. Real-device testing on Windows is still in progress; see the [Windows guide](WINDOWS.md) for detailed requirements and troubleshooting.
+1. Download the [Better Portal ZIP](https://github.com/wchwawa/better-portal/archive/refs/heads/main.zip). Right-click it → **Extract All**, then open the extracted folder.
+2. Double-click **Start-Windows.cmd**. It checks Python and installs missing application dependencies. If Python is missing, it uses Windows Package Manager; if that is unavailable, it opens Python's official installation page.
+3. If asked to install **Npcap**, follow the official download page that opens. Leave **WinPcap compatibility mode unchecked**. Finish the installer, then press **Enter** in the setup window. This step is only needed when Npcap is missing.
+4. Accept the Windows permission prompt. Choose your language, enter the two device IPv4 addresses, and use **← / →** to select the PC's Wi-Fi or Ethernet adapter and bitrate. Keep Portal disconnected until **CONNECT NOW**, then connect within **120 seconds**.
+
+**Next time, just double-click Start-Windows.cmd.** No separate Setup step or commands are needed. This quick start supports x64 Windows PCs.
+
+The languages, **S** settings shortcut, animations, connection stages and result rules are shared with the Mac version shown below. Windows uses **PC LAN adapter** in Devices. Language, addresses and bitrate are remembered. A confirmed bitrate target still requires checking picture, sound and controls on Portal.
 
 **For ZIP installs on either platform:** keep the entire extracted folder, and open its Start file for each new session. Addresses, language and bitrate are saved. You can install and launch by double-clicking these files; you do not need to edit code.
 

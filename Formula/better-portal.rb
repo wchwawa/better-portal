@@ -20,18 +20,27 @@ class BetterPortal < Formula
     venv = virtualenv_create(libexec, "python3.14", system_site_packages: false)
     venv.pip_install resource("scapy")
     (libexec/"app").install Dir["*.py"], "locales"
-    (libexec/"app/installation.json").write JSON.generate(
-      version: "HEAD-#{Utils.safe_popen_read("git", "rev-parse", "--short=12", "HEAD").strip}",
-      brew:    (HOMEBREW_PREFIX/"bin/brew").to_s,
-    )
+    system libexec/"bin/python", "-c", <<~PYTHON
+      import sys
+      from pathlib import Path
+      sys.path.insert(0, #{(libexec/"app").to_s.to_json})
+      from portal_cli import write_installation
+      write_installation(Path(#{buildpath.to_s.to_json}), Path(#{(libexec/"app").to_s.to_json}),
+                         Path(#{(opt_libexec/"app").to_s.to_json}),
+                         #{(HOMEBREW_PREFIX/"bin/brew").to_s.to_json}, #{full_name.to_json})
+    PYTHON
     (bin/"better-portal").write_env_script libexec/"bin/python",
                                          [(libexec/"app/portal_cli.py").to_s.shellescape], {}
   end
 
   def caveats
+    notes = opt_libexec/"app/changes.txt"
+    updates = notes.read if notes.exist? && ENV["HOMEBREW_BETTER_PORTAL_UPDATING"] != "1"
     <<~EOS
+      #{updates}
       Open the wizard: better-portal
       Update from main: better-portal update
+      Read this version's changes again: better-portal changes
       Preview without a password or devices: better-portal --demo
 
       Settings and reports stay in ~/Library/Application Support/Better Portal.
@@ -43,6 +52,7 @@ class BetterPortal < Formula
 
   test do
     assert_match "Better Portal HEAD-", shell_output("#{bin}/better-portal --version")
+    assert_match "Changes in HEAD-", shell_output("#{bin}/better-portal changes")
     system libexec/"bin/python", "-c", <<~PYTHON
       import sys
       sys.path.insert(0, #{(libexec/"app").to_s.to_json})

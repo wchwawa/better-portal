@@ -36,7 +36,7 @@
 | --- | --- | --- |
 | **macOS — Homebrew** | 执行下方两条命令 | 运行 **`better-portal`** |
 | **macOS — ZIP** | 双击 **Setup.command** | 双击 **Start.command** |
-| **Windows 10 / 11** | 双击 **Setup-Windows.cmd** | 双击 **Start-Windows.cmd** |
+| **Windows 10 / 11** | 双击 **Start-Windows.cmd** | 双击 **Start-Windows.cmd** |
 
 <a id="macos-quick-start"></a>
 
@@ -52,6 +52,8 @@ brew install --HEAD wchwawa/better-portal/better-portal
 ```
 
 以后运行 **`better-portal`** 打开向导。更新前关闭向导，再运行 **`better-portal update`**。地址、语言、码率和报告保留在用户目录里。此方式跟随最新的 `main` 分支；真实连接仍会按需提示输入 Mac 密码。[完整说明与旧设置导入](docs/homebrew.md)。也可以继续使用下方的 ZIP 安装方式。
+
+每次更新后，终端会显示实际安装的版本和更新内容。运行 **`better-portal changes`** 可随时再次查看，也支持离线使用。标题会使用你保存的语言，具体更新说明保留原始英文提交描述。
 
 下面是 ZIP 安装步骤。如果已经通过 Homebrew 安装，运行 **`better-portal`**，直接看后面的**第一次使用**即可。指南中提到打开 Start.command 时，Brew 用户运行这个命令。
 
@@ -71,13 +73,16 @@ brew install --HEAD wchwawa/better-portal/better-portal
 
 ### Windows 快速开始
 
-1. **安装 Python：**打开 [Python 官方 Windows 下载页](https://www.python.org/downloads/windows/)，安装 **64 位 Python 3.14（x86-64）**，包含 **`py` 启动器**。已经安装兼容的 x86-64 Python 3.10–3.14，也可以继续使用。
-2. **安装 Npcap：**从 [npcap.com](https://npcap.com/#download) 下载。**不要勾选 WinPcap 兼容模式**；不需要 Wi-Fi 监听模式或 raw 802.11 支持。这些选项与 [Scapy 的 Windows 安装说明](https://scapy.readthedocs.io/en/stable/installation.html#windows)一致。
-3. **下载 Better Portal：**[下载 ZIP](https://github.com/wchwawa/better-portal/archive/refs/heads/main.zip)，在**文件资源管理器 → 下载**中右键点击 ZIP → **全部解压缩**，再打开解压后的 **better-portal-main** 文件夹。
-4. **首次设置：**双击 **Setup-Windows.cmd**，等待 **`Setup complete`**，再按任意键关闭窗口。如果离线检查失败，先解决错误，再启动连接向导。
-5. **启动连接向导：**双击同一文件夹里的 **Start-Windows.cmd**，允许 **Windows 的权限请求**。接着看[第一次使用](#第一次使用)。
+**Windows 11 和 Windows 10** 可以使用同一套 TUI 向导。Windows 实机验证仍在进行；详细步骤和排错请看 [Windows 中文指南](WINDOWS.zh-CN.md)。
 
-Windows 与 Mac 共用向导、语言、设置和 120 秒连接倒计时。Windows 的设备页提供 **PC 局域网网卡**选择器。Windows 实机验证仍在进行，详细要求和排错请看 [Windows 中文指南](WINDOWS.zh-CN.md)。
+1. 下载 [Better Portal ZIP](https://github.com/wchwawa/better-portal/archive/refs/heads/main.zip)，右键 → **全部解压缩**，打开解压后的文件夹。
+2. 双击 **Start-Windows.cmd**。它会检查 Python 并安装缺少的程序依赖。若未安装 Python，会通过 Windows 包管理器安装；包管理器不可用时，会打开 Python 官方安装页面。
+3. 如果提示安装 **Npcap**，按自动打开的官方网站完成安装。**不要勾选 WinPcap 兼容模式**。安装结束后，回到启动窗口按 **Enter** 继续。已经安装 Npcap 时会跳过这一步。
+4. 允许 Windows 的权限请求。选择语言、输入两个设备的 IPv4 地址，用 **← / →** 选择电脑的 Wi-Fi 或以太网网卡及码率。Portal 保持断开，看到 **现在连接 / CONNECT NOW** 后，在 **120 秒**内连接 PS5。
+
+**以后只需双击 Start-Windows.cmd。**无需单独运行 Setup，也无需输入命令。此快速启动支持 x64 Windows 电脑。
+
+语言、**S** 设置快捷键、动画、连接阶段和结果判断与下方 Mac 演示共用代码。Windows 的设备页显示 **PC 局域网网卡**。语言、地址和码率都会保存。目标码率确认后，仍请在 Portal 上检查画面、声音和操作。
 
 **两个平台的 ZIP 安装都一样：**保留完整的解压文件夹，以后每次使用打开对应的 Start 文件。地址、语言和码率会保存。安装和启动都可以通过双击文件完成，无需修改代码。
 
