@@ -27,6 +27,14 @@ layout, demo isolation, native recovery commands and UAC launch argument handlin
 The real Windows mutex test checks that an independent recovery handle continues
 to block a new attempt after the original session releases its handle.
 
+Setup-failure regressions cover route-based adapter suggestions with multiple
+adapters, saved/manual choices, stale adapter IDs, complete scrollable errors on
+both hosts, and preservation of PowerShell failure reasons. The production Windows
+preflight path is exercised with controlled OS responses for permission, Npcap,
+route, forwarding and address-discovery failures. Each must stop before opening a
+relay socket or changing network mappings. These cases reproduce failure paths;
+they do not identify the cause of a user report without its full error text.
+
 On native Windows, also run:
 
 ```bat
@@ -34,7 +42,7 @@ python tests\integration\windows_tui_smoke.py
 ```
 
 This opens a private native console, runs real windows-curses drawing and keyboard
-input through Prepare, Devices, simulated Connect, Result and Settings in all six
+input through Prepare, Devices, simulated Connect, Result, scrollable error details and Settings in all six
 languages, and fails on any drawing error. No administrator access, Npcap, PS5 or
 Portal is involved. GitHub Actions runs this on Windows for Python 3.10, 3.12 and
 3.14, alongside the existing macOS/Linux checks. A hosted Windows runner is not a

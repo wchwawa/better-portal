@@ -54,6 +54,7 @@ def exercise(screen):
         def __init__(self):
             self.keys = []
             self.writes = 0
+            self.text = []
 
         def __getattr__(self, key):
             return getattr(screen, key)
@@ -69,6 +70,7 @@ def exercise(screen):
             except curses.error as exc:
                 raise AssertionError(f'Native drawing failed at {args!r}') from exc
             self.writes += 1
+            self.text.append(args[2])
 
     strict = StrictScreen()
     results = []
@@ -94,12 +96,21 @@ def exercise(screen):
                 for failed in ({'completed': True, 'unique_mutated_sequences': 0},
                                {'restoration_errors': ['simulated recovery failure']}):
                     wizard.draw_result(tui.summarize(failed), 1)
+                failed = {'completed': False, 'preflight_failed': True,
+                          'run_error': ('Diagnostic context ' * 100) + 'CIM_ACCESS_DENIED',
+                          'restoration_errors': []}
+                assert tui.summarize(failed).title == 'Setup check failed'
+                wizard.draw_result(tui.summarize(failed), 1)
+                strict.text.clear()
+                strict.keys = [curses.KEY_DOWN] * 40 + [13]
+                wizard.details(failed)
+                assert 'CIM_ACCESS_DENIED' in '\n'.join(strict.text), 'Error details must be readable by scrolling'
                 wizard.settings_key(ord('s'))
                 wizard.settings_key(curses.KEY_RIGHT)
                 wizard.refresh()
                 assert wizard.language == LANGUAGES[(index + 1) % len(LANGUAGES)]
                 wizard.settings_key(27)
-                results.append({'language': language, 'flow': 'prepare/devices/connect/result/settings'})
+                results.append({'language': language, 'flow': 'prepare/devices/connect/result/error-details/settings'})
             assert not list(Path(directory).iterdir()), 'Demo must not write configuration or reports'
         finally:
             tui.ROOT = previous_root

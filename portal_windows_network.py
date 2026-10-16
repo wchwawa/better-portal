@@ -63,11 +63,23 @@ def forwarding_disabled(index):
     # Query only: do not disable sharing, firewalls, routing or registry settings.
     script = ("$ErrorActionPreference='Stop'; Get-NetIPInterface -AddressFamily IPv4 "
               f"-InterfaceIndex {int(index)} | Select-Object InterfaceIndex,Forwarding | ConvertTo-Json -Compress")
-    result = subprocess.run(['powershell.exe', '-NoProfile', '-NonInteractive', '-Command', script],
-                            capture_output=True, text=True, check=True, timeout=15)
-    data = json.loads(result.stdout.lstrip('\ufeff'))
+    try:
+        result = subprocess.run(['powershell.exe', '-NoProfile', '-NonInteractive', '-Command', script],
+                                capture_output=True, text=True, check=True, timeout=15)
+    except subprocess.CalledProcessError as exc:
+        reason = (exc.stderr or exc.stdout or f'Exit status {exc.returncode}').strip()
+        raise RuntimeError('Windows could not check adapter forwarding. ' + reason) from exc
+    except subprocess.TimeoutExpired as exc:
+        raise RuntimeError('Windows adapter forwarding check timed out. Retry the setup check.') from exc
+    except OSError as exc:
+        raise RuntimeError('Windows could not start its adapter check: ' + str(exc)) from exc
+    try:
+        data = json.loads(result.stdout.lstrip('\ufeff'))
+    except (ValueError, AttributeError) as exc:
+        raise RuntimeError('Windows returned an unreadable adapter forwarding status. No network changes made.') from exc
     rows = data if isinstance(data, list) else [data]
-    if not rows or any(int(x['InterfaceIndex']) != int(index) or x['Forwarding'] not in (0, 'Disabled') for x in rows):
+    if not rows or any(not isinstance(x, dict) or x.get('InterfaceIndex') != int(index)
+                       or x.get('Forwarding') not in (0, 'Disabled') for x in rows):
         raise RuntimeError('Selected adapter has forwarding enabled or unknown state. No changes made.')
 
 
@@ -85,8 +97,12 @@ def preflight(c):
     conf.route.resync()
     for ip in (PS5, PORTAL):
         iface, source, gateway = conf.route.route(ip)
-        if resolve_iface(iface).network_name != IFACE.network_name or gateway != '0.0.0.0':
-            raise RuntimeError('Both peers must route directly through the selected LAN adapter.')
+        routed = resolve_iface(iface)
+        device = 'PS5' if ip == PS5 else 'Portal'
+        if routed.network_name != IFACE.network_name:
+            raise RuntimeError(f'{device} uses {routed.name}. Select that connection under PC LAN adapter, then retry.')
+        if gateway != '0.0.0.0':
+            raise RuntimeError(f'{device} is not on the selected local network. Check its IPv4 address and VPN/guest Wi-Fi routes.')
         if source in (PS5, PORTAL, '0.0.0.0'):
             raise RuntimeError('Peer IP matches this computer, or no local address exists.')
     forwarding_disabled(IFACE.index)

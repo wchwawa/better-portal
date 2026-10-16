@@ -52,6 +52,10 @@ Windows desteği fiziksel cihazlarla henüz doğrulanmadı. GitHub'da yalnız ö
 
 ## Paylaşılacak sonuç
 
+TUI, IP adreslerini girdikten hemen sonra **Setup check failed** veya **Could not finish** gösterirse başlığın altındaki hatayı oku. **D**, ardından **↑ / ↓** ile tam hata metnini görüntüle; Enter veya Esc ile geri dön. **Setup check failed**, ağ eşlemeleri değiştirilmeden önce bir kontrolün denemeyi durdurduğu anlamına gelir. Hata başka bir bağlantıyı gösteriyorsa tekrar dene ve **PC LAN adapter** altında onu seç. Yalnız başlık nedeni belirlemez; özel adresleri kaldırarak tam hata metnini paylaş.
+
+TUI ilk kullanımda iki cihazın IP adreslerine doğrudan ulaşan bağlantıyı önerir. Öneriyi kontrol et veya **← / →** ile Wi-Fi/Ethernet bağlantını seç. Kaydedilmiş ve elle seçilmiş adaptörler korunur. Öneri yoksa adaptörü elle seç ve iki IP adresini kontrol et.
+
 Önce Check ve Baseline terminal çıktılarını gönder. Sonra profil testi sonucu: `counts`, `ps5_messages`, `high_target_confirmed`, `egress_witness`, `restoration_errors` ve Portal gözlemin. `config.windows.json`, `windows-baseline.json`, `recovery-state.json` özel ağ bilgisi içerir; public issue'ya yükleme. Paket içindeki gerçek IP'ler yalnız sen Windows'ta girince oluşur.
 
 Teknik kaynaklar: [Scapy Windows kurulumu](https://scapy.readthedocs.io/en/stable/installation.html), [Npcap rehberi](https://npcap.com/guide/npcap-users-guide.html). Adaptör/sürücü uyumluluğu canlı test gerektirir.

@@ -47,6 +47,33 @@ def windows_admin():
     return bool(ctypes.windll.shell32.IsUserAnAdmin())
 
 
+def windows_adapter_for_peers(values, adapters):
+    """Suggest only a shared direct route; never probe devices or change routes."""
+    if not adapters:
+        return None
+    from scapy.all import conf
+    from scapy.interfaces import resolve_iface
+    try:
+        peers = [str(ipaddress.IPv4Address(values[key].strip()))
+                 for key in ('ps5_ip', 'portal_ip')]
+        if peers[0] == peers[1]:
+            return None
+        conf.route.resync()
+        choices = set()
+        for peer in peers:
+            iface, source, gateway = conf.route.route(peer)
+            if gateway != '0.0.0.0' or source in (*peers, '0.0.0.0'):
+                return None
+            choices.add(resolve_iface(iface).network_name)
+        if len(choices) == 1:
+            choice = choices.pop()
+            if choice in {adapter.id for adapter in adapters}:
+                return choice
+    except (OSError, ValueError, KeyError, AttributeError):
+        pass
+    return None
+
+
 def recovery_command(state, windows=False, *, python=None, script=None):
     if windows:
         # This is displayed for pasting into PowerShell, not passed to CreateProcess.

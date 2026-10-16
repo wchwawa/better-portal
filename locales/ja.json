@@ -196,5 +196,8 @@
   "Already up to date: {version}.": "すでに最新です：{version}。",
   "Updated: {before} -> {after}.": "更新しました：{before} -> {after}。",
   "Homebrew finished, but the installed version could not be verified. Run better-portal --version.": "Homebrew は終了しましたが、インストール済みのバージョンを確認できませんでした。better-portal --version を実行してください。",
-  "Update with Homebrew, read change notes, or import settings from an old folder.": "Homebrew で更新する、更新内容を読む、または以前のフォルダから設定を読み込みます。"
+  "Update with Homebrew, read change notes, or import settings from an old folder.": "Homebrew で更新する、更新内容を読む、または以前のフォルダから設定を読み込みます。",
+  "Setup check failed": "接続前の確認に失敗しました",
+  "Up / Down: scroll    Enter / Esc: back to result": "↑ / ↓：スクロール    Enter / Esc：結果に戻る",
+  "Error: {error}": "エラー：{error}"
 }
