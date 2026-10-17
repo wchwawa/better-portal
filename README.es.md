@@ -112,7 +112,7 @@ Usa **↑ / ↓** para elegir **Español, English, 简体中文, 日本語, 한�
 
 ### 1. Prepara los dispositivos
 
-En **Portal**, desliza hacia la izquierda desde la esquina superior derecha para abrir el menú rápido y elige **Desconectar**. Deja desactivada la opción de poner la PS5 conectada en modo de reposo para que siga encendida. La [guía de Sony sobre Uso a distancia (en inglés)](https://www.playstation.com/en-nz/support/hardware/playstation-remote-play-on-psportal/) te ayuda a encontrar el menú.
+En **Portal**, desliza hacia la izquierda desde la esquina superior derecha para abrir el menú rápido y elige **Desconectar**. La [guía de Sony sobre Uso a distancia (en inglés)](https://www.playstation.com/en-nz/support/hardware/playstation-remote-play-on-psportal/) te ayuda a encontrar el menú.
 
 **Mantén Portal encendido y conectado al Wi-Fi.** Solo estás terminando la sesión de juego actual. Mantén también el Mac despierto y, si es un portátil, con la tapa abierta.
 
@@ -262,7 +262,7 @@ Arrastra una esquina de Terminal para ampliarlo. La aplicación necesita al meno
 
 **Un dispositivo no responde o la imagen da tirones.**
 
-Mantén PS5 y Portal despiertos. Revisa las direcciones actuales y el Wi-Fi de casa. Si hay tirones, prueba 65 Mbps o desconecta Portal y vuelve a conectarlo normalmente sin ejecutar Better Portal.
+Mantén Portal despierto. Revisa las direcciones actuales y el Wi-Fi de casa. Si hay tirones, prueba 65 Mbps o desconecta Portal y vuelve a conectarlo normalmente sin ejecutar Better Portal.
 
 **¿Se guarda mi contraseña del Mac?**
 

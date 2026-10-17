@@ -44,7 +44,7 @@ bash ps5-portal-high-bitrate-main/deploy/pve/create-lxc.sh
 Then, inside the CT (`pct enter <CTID>`):
 
 ```sh
-portal configure 65   # PS5 + Portal awake; interface: eth0; enter both IPv4 addresses
+portal configure 65   # Portal awake; interface: eth0; enter both IPv4 addresses
 portal baseline       # disconnect Portal; connect after BASELINE READY; check 60 s
 portal try            # connect after AUTO READY; check the Portal's network display; Ctrl+C
 portal enable         # only after a good 'try': starts now and at boot

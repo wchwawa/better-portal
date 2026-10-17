@@ -23,7 +23,7 @@ Windows desteği fiziksel cihazlarla henüz doğrulanmadı. GitHub'da yalnız ö
 
 ## 3. Önce değişikliksiz bağlantı denemesi
 
-- Portal'ın PS5 bağlantısını kes; PS5 açık kalsın.
+- Portal'ın PS5 bağlantısını kes.
 - `Baseline-Windows.cmd` → **Yönetici olarak çalıştır**.
 - Enter, ardından **READY / HAZIR** mesajından sonra Portal'dan PS5'e bağlan.
 - Aktarma 40 saniyeyle sınırlı. PS5 kabulü + STREAMINFO, iki yönde paket aktarımı ve hatasız geri yükleme görülürse `Baseline passed` yazılır.

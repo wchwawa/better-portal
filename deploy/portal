@@ -91,7 +91,7 @@ case "${1:-help}" in
 	configure)
 		need_stopped; forwarding_off
 		mkdir -p "$(dirname "$CFG")" "$RT"
-		echo "PS5 and Portal must both be awake. LAN interface inside the relay is 'eth0'."
+		echo "Keep Portal awake and connected to Wi-Fi. LAN interface inside the relay is 'eth0'."
 		auto configure --profile "${2:-65}" --config "$CFG" --runtime "$RT"
 		echo "Next: disconnect the Portal from the PS5, then: portal baseline" ;;
 	baseline)

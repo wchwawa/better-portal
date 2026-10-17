@@ -126,8 +126,8 @@ def summarize(report):
         title = ('Attempt stopped' if message == 'Cancelled by user' else
                  'Setup check failed' if report.get('preflight_failed') else 'Could not finish')
         return Result('warning', title, message,
-                      ('No network mappings were changed. Keep both devices awake on the same LAN. '
-                       'Check the addresses and LAN adapter, then try again.'
+                      ('No network mappings were changed. '
+                       'Check the device addresses and LAN adapter, then try again.'
                        if report.get('preflight_failed') else
                        'Network restoration completed. You can try again or quit.'))
     if not report.get('unique_mutated_sequences'):
@@ -492,8 +492,7 @@ class Wizard:
                             ('  /  Mac + PS5 + Portal', 0))
                 self.put(10, 7, 'Use the main LAN; avoid guest Wi-Fi and VPN routes.', self.curses.A_DIM)
                 self.inline(12, 4, ('2. ', self.curses.A_DIM),
-                            ('DISCONNECT PORTAL', highlight),
-                            ('  /  keep ', 0), ('PS5 powered on', highlight))
+                            ('DISCONNECT PORTAL', highlight))
                 self.inline(13, 7, ('On Portal: ', self.curses.A_DIM),
                             ('Quick Menu -> Disconnect', highlight))
                 self.inline(15, 4, ('Keep this ', 0), ('Mac awake', highlight),
