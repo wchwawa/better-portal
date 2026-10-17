@@ -10,7 +10,7 @@ Bilgisayar açık, uyanık ve PS5/Portal ile aynı doğrudan yerel ağda kalmal�
 2. [python.org](https://www.python.org/downloads/windows/) üzerinden 64-bit Python 3.10+ kur. Otomatik servis için tam kurucuda **tüm kullanıcılar için**, `C:\Program Files` altına kurulum seç; Python launcher da kurulsun. Store veya kullanıcı klasörüne kurulmuş Python, SYSTEM görevi için uygun değil.
 3. [Npcap](https://npcap.com/#download) kur; WinPcap API uyumluluğunu seç. Wi-Fi monitor mode kullanma. Kurucu isterse yeniden başlat.
 4. `Setup-Windows.cmd` çalıştır. Bağımlılıkları kurar ve çevrimdışı testleri çalıştırır. `py -3` yanlış Python'u seçiyorsa `.venv` klasörünü tüm kullanıcılara kurulu Python'un tam yoluyla yeniden oluştur.
-5. PS5 ve Portal açık olsun. `Auto-Windows.cmd` dosyasına sağ tıkla, **Yönetici olarak çalıştır**. `Configure`, ilk deneme için `65`, yerel ağ adaptörünün **listedeki numarasını** seç, sonra cihazların IPv4 adreslerini gir. Adaptörün yanında gösterilen PC IP'si sadece bilgi içindir. Eski preview.1 sürümündeki interface name/GUID alanı adaptör adı veya tam Npcap cihaz kimliğini ister; PC IP'sini yazma. MAC adresleri yerel olarak kaydedilir.
+5. Portal açık ve Wi-Fi'ye bağlı olsun. `Auto-Windows.cmd` dosyasına sağ tıkla, **Yönetici olarak çalıştır**. `Configure`, ilk deneme için `65`, yerel ağ adaptörünün **listedeki numarasını** seç, sonra cihazların IPv4 adreslerini gir. Adaptörün yanında gösterilen PC IP'si sadece bilgi içindir. Eski preview.1 sürümündeki interface name/GUID alanı adaptör adı veya tam Npcap cihaz kimliğini ister; PC IP'sini yazma. MAC adresleri yerel olarak kaydedilir.
 6. Portal oyun bağlantısını kes. Aynı yönetici menüsünden `Baseline` seç. **BASELINE READY** görünce Portal'dan bağlan, 60 saniye görüntü ve kontrolü dene. Bu tur bitrate değiştirmez. Trafik aktarılıp geri yükleme tamamlanınca yerel test kaydı yazılır; görüntüyü otomatik doğrulamaz.
 7. Sorunsuzsa `Run` seç. **AUTO READY** sonrasında yeni Portal bağlantısı kur. Göstergeyi ve hareketli oyunu kontrol et. Ctrl+C ile durdur, geri yüklemenin bitmesini bekle. Bu deneme çalışmıyorsa servis kurma.
 8. Çalışıyorsa `Install` seç ve baseline gözlemini onayla. Kod/ayarlar `C:\ProgramData\PortalBitrateAuto` altına kopyalanır; sadece Administrators/SYSTEM yazabilir. `PortalBitrateAutoPreview` görevi Windows açılışında SYSTEM olarak çalışır. Kullanıcı parolası/token saklanmaz.
@@ -30,7 +30,7 @@ sh Auto-Linux.sh setup
 sh Auto-Linux.sh configure 65
 ```
 
-Adaptörü `ip -br link` / `ip -br addr` ile bul. Örneğin `eth0` veya `enp3s0`; kendi adaptörünü kullan. Cihazlar kayıt sırasında açık olsun.
+Adaptörü `ip -br link` / `ip -br addr` ile bul. Örneğin `eth0` veya `enp3s0`; kendi adaptörünü kullan. Kayıt sırasında her iki cihaza da yerel ağdan erişilebilmeli.
 
 1. Portal oyun bağlantısını kes. `sh Auto-Linux.sh baseline` çalıştır. **BASELINE READY** sonrasında bağlanıp 60 saniye görüntü/kontrol testi yap.
 2. Çalışıyorsa `sh Auto-Linux.sh run` ile aktif dene. **AUTO READY** sonrası yeni bağlantı kur, göstergeyi kontrol et. Ctrl+C ile durdur.

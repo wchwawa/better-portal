@@ -20,7 +20,7 @@ Mac üzerinden kendi PS5 ve Portal cihazların için **geçici yüksek bitrate i
 
 ## Kullanım
 
-1. Portal'ın PS5 bağlantısını kes; PS5 açık kalsın.
+1. Portal'ın PS5 bağlantısını kes.
 2. `Start.command` aç. Parolayı yalnız Mac'in sudo istemine gir. Vurgulanan ön koşulları ve düzenlenebilir cihaz adreslerini kontrol et; ilk deneme için 65 Mbps seç. Tab veya yukarı/aşağı tuşları alanı, sağ/sol veya boşluk tuşu profili seçer. Yazarak seçili değeri değiştirebilirsin.
 3. **WAIT** sırasında Portal bağlantısı kesik kalsın. Yeşil **READY / CONNECT NOW** mesajından sonra Portal'dan bağlan. Ekrandaki **02:00** ile başlayan **120 saniyelik geri sayım** bağlantı süresini gösterir.
 4. Başlangıç paketi değiştiğinde hedefi doğrulamak için en fazla 15 saniye daha beklenir. Üç yüksek hedef bildirimi gelirse doğrudan ağ yolu hemen geri yüklenir.

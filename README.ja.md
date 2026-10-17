@@ -112,7 +112,7 @@ macOS にファイルの起動を止められた場合は、[「macOS がファ�
 
 ### 1. 機器を準備する
 
-**Portal** の画面右上から左へスワイプしてクイックメニューを開き、**接続を切断**します。PS5 を起動したままにするため、切断時に接続先の PS5 をレストモードにするオプションはオフにしてください。メニューが見つからない場合は、[Sony のリモートプレイガイド（英語）](https://www.playstation.com/en-nz/support/hardware/playstation-remote-play-on-psportal/)を参照できます。
+**Portal** の画面右上から左へスワイプしてクイックメニューを開き、**接続を切断**します。メニューが見つからない場合は、[Sony のリモートプレイガイド（英語）](https://www.playstation.com/en-nz/support/hardware/playstation-remote-play-on-psportal/)を参照できます。
 
 **Portal の電源と Wi-Fi 接続は維持してください。** 終了するのは現在のプレイ接続だけです。Mac もスリープさせず、ノート型なら画面を閉じないでください。
 
@@ -262,7 +262,7 @@ Mac のログインパスワードを入力してください。管理者アカ�
 
 **機器が応答しない、または映像がカクつきます。**
 
-PS5 と Portal を起動したままにし、現在のアドレスと自宅の Wi-Fi 接続を確認します。カクつく場合は 65 Mbps を試すか、Portal を切断し、Better Portal を使わず普段どおり再接続してください。
+Portal を起動したままにし、現在のアドレスと自宅の Wi-Fi 接続を確認します。カクつく場合は 65 Mbps を試すか、Portal を切断し、Better Portal を使わず普段どおり再接続してください。
 
 **Mac のパスワードは保存されますか？**
 

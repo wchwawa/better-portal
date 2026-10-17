@@ -2,7 +2,7 @@
 # Run these from deploy/docker/:
 #
 #   docker compose build
-#   docker compose run --rm relay configure 65   # PS5 + Portal awake; interface: eth0
+#   docker compose run --rm relay configure 65   # Portal awake; interface: eth0
 #   docker compose run --rm relay baseline       # connect the Portal after BASELINE READY
 #   docker compose run --rm relay try            # connect after AUTO READY; Ctrl+C to stop
 #   docker compose up -d                         # always-on; restarts with the host

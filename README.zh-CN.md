@@ -106,7 +106,7 @@ Python 用来运行 Better Portal，你不需要写代码。如果已经安装 P
 
 ### 1. 准备设备
 
-在 **Portal** 上，从屏幕右上角向左滑，打开快捷菜单，选择**断开连接**。让**断开后将 PS5 置于待机模式**这一选项保持关闭，使 PS5 继续开机。找不到菜单时，可以参考 [Sony 的远程游玩说明](https://www.playstation.com/en-nz/support/hardware/playstation-remote-play-on-psportal/)。
+在 **Portal** 上，从屏幕右上角向左滑，打开快捷菜单，选择**断开连接**。找不到菜单时，可以参考 [Sony 的远程游玩说明](https://www.playstation.com/en-nz/support/hardware/playstation-remote-play-on-psportal/)。
 
 **Portal 继续开机，并保持连接 Wi-Fi。** 这里只结束当前的游玩连接。Mac 也保持唤醒，笔记本不要合上盖子。
 
@@ -252,7 +252,7 @@ Portal 连上后，保持连接，等 Mac 显示**结果页**再关闭窗口。�
 
 **设备没有响应，或画面卡顿。**
 
-保持 PS5 和 Portal 唤醒，重新核对当前地址和家庭 Wi-Fi 连接。画面卡顿时先尝试 65 Mbps，或断开 Portal，不运行 Better Portal，直接正常重连。
+保持 Portal 唤醒，重新核对当前地址和家庭 Wi-Fi 连接。画面卡顿时先尝试 65 Mbps，或断开 Portal，不运行 Better Portal，直接正常重连。
 
 **会保存我的 Mac 密码吗？**
 
