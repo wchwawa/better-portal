@@ -79,7 +79,7 @@ def state_for(c, enroll=False):
         found = {win.normal_mac(r[ARP].hwsrc) for _, r in ans if ARP in r and r[ARP].op == 2 and r[ARP].psrc == ip}
         if enroll:
             if len(found) != 1:
-                raise RuntimeError(f'{ip}: wake the device and verify its IP, then enroll again.')
+                raise RuntimeError(f'{ip}: verify the device IP and LAN connection, then enroll again.')
             state[key] = found.pop()
         else:
             state[key] = win.normal_mac(c[key])

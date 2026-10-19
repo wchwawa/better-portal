@@ -105,7 +105,7 @@ Done. CT $CTID ($CT_HOSTNAME) at $CT_IP. The service is installed but not enable
 
 Next, from this shell:
   pct enter $CTID
-  portal configure 65     # PS5 + Portal awake; interface: eth0; enter both IPs
+  portal configure 65     # Portal awake; interface: eth0; enter both IPs
   portal baseline         # disconnect Portal first; connect after BASELINE READY; check 60 s
   portal try              # connect after AUTO READY; check the Portal's network info; Ctrl+C
   portal enable           # only if 'try' looked good: starts now and at every boot

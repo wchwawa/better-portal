@@ -23,7 +23,7 @@ You do not need Git or Wireshark. Installation downloads Scapy and [windows-curs
 
 On first launch, choose **English, 简体中文, 日本語, 한국어, Español or Français**. Your choice is saved. Press **S** later to change language without restarting.
 
-1. **Prepare:** keep Portal disconnected from PS5, keep PS5 on, and check that PC, PS5 and Portal use the same home network.
+1. **Prepare:** keep Portal disconnected from PS5 and check that PC, PS5 and Portal use the same home network.
 2. **Devices:** enter the PS5 and Portal **IPv4 addresses** from your router’s device list. On first use, **PC LAN adapter** suggests the connection Windows uses to reach both devices directly. Check it, or use **← / →** to choose your Wi-Fi or Ethernet connection. Saved and manual choices are kept. If no connection can be suggested, choose it yourself and check both addresses. Choose **65 Mbps** for your first attempt, then **Save and prepare connection**. Use Tab or ↑ / ↓ to move between rows and Enter to continue.
 3. **Connect:** keep Portal disconnected during **WAIT**. When **CONNECT NOW** appears, connect Portal to PS5 normally. The **120-second countdown** starts at that prompt. A request near the end still gets its own confirmation window. Follow the terminal art as the request, PS5 acceptance and target reports arrive.
 4. **Result:** **Bitrate target confirmed** means the software observed the higher target, checked local packet egress and completed its restoration steps. **Check picture, sound and controls on Portal.** If the screen is black, disconnect and reconnect normally without Better Portal. Press **D** for local report/recovery details, **Enter** to retry when allowed, or **Q** to quit.
@@ -58,7 +58,7 @@ Read the error below the title. Press **D**, then **↑ / ↓**, to read the ful
 
 **A device cannot be reached, or the route/forwarding check fails.**
 
-Keep both devices awake, check their current IPv4 addresses, and select the adapter on the same home LAN. Avoid guest Wi-Fi, client isolation, VPN routes and Internet Connection Sharing on that adapter. The tool checks routing and forwarding; it does not change firewall, registry or forwarding settings. Do not disable the firewall to work around an error.
+Keep Portal awake, check both current IPv4 addresses, and select the adapter on the same home LAN. Avoid guest Wi-Fi, client isolation, VPN routes and Internet Connection Sharing on that adapter. The tool checks routing and forwarding; it does not change firewall, registry or forwarding settings. Do not disable the firewall to work around an error.
 
 **There is no new connection, or the countdown expires.**
 

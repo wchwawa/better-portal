@@ -109,7 +109,7 @@ Utilisez **↑ / ↓** pour choisir **Français, English, 简体中文, 日本�
 
 ### 1. Préparer les appareils
 
-Sur **Portal**, balayez vers la gauche depuis le coin supérieur droit pour ouvrir le menu rapide, puis choisissez **Déconnecter**. Laissez désactivée l’option qui place la PS5 connectée en mode repos afin qu’elle reste allumée. Le [guide de Lecture à distance de Sony (en anglais)](https://www.playstation.com/en-nz/support/hardware/playstation-remote-play-on-psportal/) peut vous aider à trouver le menu.
+Sur **Portal**, balayez vers la gauche depuis le coin supérieur droit pour ouvrir le menu rapide, puis choisissez **Déconnecter**. Le [guide de Lecture à distance de Sony (en anglais)](https://www.playstation.com/en-nz/support/hardware/playstation-remote-play-on-psportal/) peut vous aider à trouver le menu.
 
 **Gardez Portal allumé et connecté au Wi-Fi.** Vous terminez uniquement la session de jeu en cours. Gardez aussi l’ordinateur éveillé et, s’il s’agit d’un portable, laissez son écran ouvert.
 
@@ -267,7 +267,7 @@ Agrandissez Terminal en faisant glisser un coin de la fenêtre. L’application 
 
 **Un appareil ne répond pas ou l’image est saccadée.**
 
-Gardez la PS5 et Portal éveillés. Vérifiez leurs adresses actuelles et le Wi-Fi de la maison. En cas de saccades, essayez 65 Mbps ou déconnectez Portal, puis reconnectez-le normalement sans lancer Better Portal.
+Gardez Portal éveillé. Vérifiez les adresses actuelles des deux appareils et le Wi-Fi de la maison. En cas de saccades, essayez 65 Mbps ou déconnectez Portal, puis reconnectez-le normalement sans lancer Better Portal.
 
 **Mon mot de passe administrateur sera-t-il enregistré ?**
 

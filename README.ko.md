@@ -109,7 +109,7 @@ macOS가 실행을 차단하면[‘macOS가 파일을 열지 않음’](#macos-b
 
 ### 1. 기기 준비하기
 
-**Portal** 화면 오른쪽 위에서 왼쪽으로 밀어 빠른 메뉴를 열고 **연결 끊기**를 선택합니다. PS5가 계속 켜져 있도록, 연결을 끊을 때 PS5를 대기 모드로 전환하는 옵션은 꺼 두세요. 메뉴를 찾기 어렵다면 [Sony 리모트 플레이 안내(영어)](https://www.playstation.com/en-nz/support/hardware/playstation-remote-play-on-psportal/)를 참고하세요.
+**Portal** 화면 오른쪽 위에서 왼쪽으로 밀어 빠른 메뉴를 열고 **연결 끊기**를 선택합니다. 메뉴를 찾기 어렵다면 [Sony 리모트 플레이 안내(영어)](https://www.playstation.com/en-nz/support/hardware/playstation-remote-play-on-psportal/)를 참고하세요.
 
 **Portal 전원과 Wi-Fi 연결은 유지하세요.** 현재 플레이 연결만 끝내는 것입니다. 컴퓨터도 잠들지 않게 하고, 노트북이라면 덮개를 열어 두세요.
 
@@ -267,7 +267,7 @@ Mac 로그인 암호를 입력하세요. 관리자 계정이 아니라면 Mac �
 
 **기기가 응답하지 않거나 영상이 끊깁니다.**
 
-PS5와 Portal을 켜 두고 현재 주소와 집의 Wi-Fi 연결을 확인하세요. 끊김이 생기면 65 Mbps를 시도하거나, Portal 연결을 끊고 Better Portal을 실행하지 않은 채 평소처럼 다시 연결하세요.
+Portal을 켜 두고 현재 주소와 집의 Wi-Fi 연결을 확인하세요. 끊김이 생기면 65 Mbps를 시도하거나, Portal 연결을 끊고 Better Portal을 실행하지 않은 채 평소처럼 다시 연결하세요.
 
 **관리자 암호를 저장하나요?**
 

@@ -103,7 +103,7 @@ Use **↑ / ↓** to choose **English**, **简体中文**, **日本語**, **한�
 
 ### 1. Prepare your devices
 
-On **Portal**, swipe left from the upper-right corner to open the quick menu, then choose **Disconnect**. Leave **Put the Connected PS5 in Rest Mode** off so PS5 stays on. See [Sony's Remote Play guide](https://www.playstation.com/en-nz/support/hardware/playstation-remote-play-on-psportal/) if you need help finding the menu.
+On **Portal**, swipe left from the upper-right corner to open the quick menu, then choose **Disconnect**. See [Sony's Remote Play guide](https://www.playstation.com/en-nz/support/hardware/playstation-remote-play-on-psportal/) if you need help finding the menu.
 
 **Keep Portal switched on and connected to Wi-Fi.** You are only ending its current play session. Keep your computer awake; leave a laptop's lid open.
 
@@ -256,7 +256,7 @@ Drag a corner of the Terminal window to enlarge it. The app needs at least 72 co
 
 **A device did not respond, or the picture stutters.**
 
-Keep PS5 and Portal awake. Recheck both current addresses and the home Wi-Fi connection. For stuttering, try 65 Mbps or disconnect Portal and reconnect normally without Better Portal.
+Keep Portal awake. Recheck both current addresses and the home Wi-Fi connection. For stuttering, try 65 Mbps or disconnect Portal and reconnect normally without Better Portal.
 
 **Will it save my administrator password?**
 

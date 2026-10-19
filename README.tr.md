@@ -13,6 +13,11 @@ Orijinal bit hızı ayarlama yöntemi **[@atameric](https://github.com/atameric)
 PlayStation Portal üzerinden kendi PS5’inizde oynarken daha yüksek bir görüntü kalitesi hedefi seçin. Better Portal, **macOS veya Windows** üzerinde kurulumu ekran ekran anlatır.
 
 Bu kılavuz Türkçedir. Terminal arayüzü şu anda **English, 简体中文, 日本語, 한국어, Español ve Français** dillerini destekler. Aşağıdaki görseller İngilizce Mac arayüzünden alınmıştır.
+1. Portal'ın PS5 bağlantısını kes.
+2. `Start.command` aç. Parolayı yalnız Mac'in sudo istemine gir. Vurgulanan ön koşulları ve düzenlenebilir cihaz adreslerini kontrol et; ilk deneme için 65 Mbps seç. Tab veya yukarı/aşağı tuşları alanı, sağ/sol veya boşluk tuşu profili seçer. Yazarak seçili değeri değiştirebilirsin.
+3. **WAIT** sırasında Portal bağlantısı kesik kalsın. Yeşil **READY / CONNECT NOW** mesajından sonra Portal'dan bağlan. Ekrandaki **02:00** ile başlayan **120 saniyelik geri sayım** bağlantı süresini gösterir.
+4. Başlangıç paketi değiştiğinde hedefi doğrulamak için en fazla 15 saniye daha beklenir. Üç yüksek hedef bildirimi gelirse doğrudan ağ yolu hemen geri yüklenir.
+5. **Ready to play**, hedef doğrulaması, yerel paket çıkışı doğrulaması ve hatasız geri yükleme gerektirir. Q/Esc ile çıkabilir, Enter ile yeni bir deneme başlatabilirsin. Deneme sırasında Q, Esc veya Ctrl-C ağın geri yüklenmesini başlatır. Kurtarma hatası varsa yeni deneme düğmesi devre dışı kalır; D ayrıntıları gösterir.
 
 [macOS hızlı başlangıç](#macos-quick-start) · [Windows hızlı başlangıç](#windows-quick-start) · [İlk oturum](#first-session) · [Cihaz adreslerini bulma](#find-device-addresses) · [Sorun giderme](#questions-and-fixes)
 
