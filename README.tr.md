@@ -1,5 +1,7 @@
 # PS5 Portal High Bitrate - Türkçe
 
+[![Discord topluluğuna katılın](https://img.shields.io/badge/Discord-Join%20the%20community-5865F2?logo=discord&logoColor=white)](https://discord.gg/C957je4ehv)
+
 **Yeni deneysel sürüm: Windows / Linux otomasyon + isteğe bağlı Proxmox / Docker kurulumu.** [v0.3.0-preview.3 indir](https://github.com/atameric/ps5-portal-high-bitrate/releases/tag/v0.3.0-preview.3) | [Adım adım otomatik kurulum](AUTOMATION.tr.md) | [Container kılavuzu (EN)](deploy/README.md). SDNick484, Alpine LXC/OpenRC ve Linux Docker macvlan paketlemesini ekledi. Windows otomasyonu fiziksel doğrulama bekliyor; Linux/Pi yeniden başlatma ve yeni bağlantı, Proxmox için gerçek cihaz başarı raporları var. Docker yalnız sahte ağ uçlarıyla test edildi. Proxmox kurulumundan önce kart firewall'u kapsamını oku. Mac mini prototipi kullanıcı tarafından doğrulandı; yeni ortak uygulama ayrıca platform testi gerektiriyor. Aşağıdaki eski kurulum adımları macOS elle başlatıcı içindir.
 
 Mac üzerinden kendi PS5 ve Portal cihazların için **geçici yüksek bitrate isteği**. Çalışan prototip Portal 7.1.7 üzerinde denendi. Her firmware ve ağda çalışması garanti değil. Public paketleme çevrimdışı test edildi; başka cihazlarda canlı doğrulama bekliyor.

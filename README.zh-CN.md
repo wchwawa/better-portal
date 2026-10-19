@@ -8,6 +8,8 @@
 
 [English](README.md) · **简体中文** · [日本語](README.ja.md) · [한국어](README.ko.md) · [Español](README.es.md) · [Français](README.fr.md)
 
+[![加入 Discord 社区](https://img.shields.io/badge/Discord-Join%20the%20community-5865F2?logo=discord&logoColor=white)](https://discord.gg/C957je4ehv)
+
 用 PlayStation Portal 玩自己的 PS5 时，通过 Mac 上的逐步向导选择更高的画面码率目标。
 
 [安装与打开](#安装与打开) · [第一次使用](#第一次使用) · [查找设备地址](#find-device-addresses) · [遇到问题](#常见问题)
