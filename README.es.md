@@ -8,6 +8,8 @@ Bajo licencia [MIT](LICENSE). Software independiente de la comunidad; sin afilia
 
 [English](README.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · **Español** · [Français](README.fr.md)
 
+[![Únete a la comunidad de Discord](https://img.shields.io/badge/Discord-Join%20the%20community-5865F2?logo=discord&logoColor=white)](https://discord.gg/C957je4ehv)
+
 Elige un bitrate objetivo más alto para mejorar la imagen al jugar a tu PS5 con PlayStation Portal. Better Portal te guía por la configuración en tu Mac, una pantalla a la vez.
 
 [Instalar y abrir](#get-started) · [Primera sesión](#first-session) · [Buscar las direcciones](#find-device-addresses) · [Resolver problemas](#questions-and-fixes)

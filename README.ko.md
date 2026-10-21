@@ -8,6 +8,8 @@
 
 [English](README.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja.md) · **한국어** · [Español](README.es.md) · [Français](README.fr.md)
 
+[![Discord 커뮤니티 참여](https://img.shields.io/badge/Discord-Join%20the%20community-5865F2?logo=discord&logoColor=white)](https://discord.gg/C957je4ehv)
+
 PlayStation Portal로 자신의 PS5를 플레이할 때 더 높은 화질을 위한 비트레이트 목표를 설정하세요. Mac의 설정 도우미가 화면마다 필요한 조작을 안내합니다.
 
 [설치 및 실행](#get-started) · [처음 사용하기](#first-session) · [기기 주소 찾기](#find-device-addresses) · [문제 해결](#questions-and-fixes)
