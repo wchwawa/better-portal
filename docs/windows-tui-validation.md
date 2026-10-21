@@ -35,6 +35,49 @@ route, forwarding and address-discovery failures. Each must stop before opening 
 relay socket or changing network mappings. These cases reproduce failure paths;
 they do not identify the cause of a user report without its full error text.
 
+### Npcap capture and injection regressions
+
+The pinned Scapy 2.6.1 wrapper discards the return value of `pcap_setnonblock`
+and maps negative `pcap_next_ex` results to an empty queue. Injecting a native
+read error through that wrapper reproduced a Windows baseline that waited for
+its entire 120-second connection window and reported `completed: true`,
+`run_error: null`, and empty packet counts. The session had no working capture;
+`completed` meant the loop ended, not that baseline playback succeeded.
+
+The Windows adapter now checks the native setup and read results, preserves the
+driver's error text, and copies only complete captured frames. Injection uses
+`pcap_sendpacket` with its documented zero-on-success contract. Capture errors
+stop the relay and enter its existing restoration path; failed restoration
+retains the independent watchdog. A normally empty capture queue is still valid.
+End-of-capture and inactive-handle results use their own messages instead of
+repeating stale error text from an earlier operation.
+
+`tests/test_windows_io.py` exercises the production adapter with real ctypes
+packet-buffer pointers and controlled native API results. It replays both
+directions through the baseline and active session loops, checks unchanged
+baseline content and patched startup retransmissions, and covers capture loss,
+truncated buffers, setup failures, injection failures, the egress witness, and
+the Windows automatic relay. The native API is simulated: these tests establish
+error handling and packet integrity, not Windows driver/device compatibility or
+the root cause of a particular community report.
+
+The focused suite is reproducible with:
+
+```sh
+python -m unittest discover -s tests -p test_windows_io.py -v
+```
+
+Local acceptance on macOS/Python 3.12 passed all 16 new I/O cases, the full
+201-test suite (one Windows kernel-lock test skipped), and four tooling tests.
+An additional offline smoke check used the system libpcap through the real
+Scapy ctypes bindings: it copied a synthetic Ethernet frame exactly, preserved
+the native savefile injection refusal, and detected EOF without repeating that
+earlier send error. It did not access a network interface or Windows/Npcap.
+
+API contracts: [capture results](https://npcap.com/guide/wpcap/pcap_next_ex.html),
+[nonblocking setup](https://npcap.com/guide/wpcap/pcap_setnonblock.html), and
+[packet injection](https://npcap.com/guide/wpcap/pcap_inject.html).
+
 On native Windows, also run:
 
 ```bat

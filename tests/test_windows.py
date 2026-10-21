@@ -45,12 +45,11 @@ class WindowsTests(unittest.TestCase):
 
     def test_injection_failure_detected(self):
         sock=MagicMock()
-        for result in (-1, 1):
-            sock.pcap_fd.send.return_value=result
+        for result in (-1, 0, 1, 4):
+            sock.send.return_value=result
             with self.assertRaises(RuntimeError):n.send_raw(sock,b'abc')
-        for result in (0, 3):
-            sock.pcap_fd.send.return_value=result
-            n.send_raw(sock,b'abc')
+        sock.send.return_value=3
+        n.send_raw(sock,b'abc')
 
     def test_restore_uses_original_peer_mac(self):
         state={'config':{},'own_mac':'02:00:00:00:00:01','ps5_mac':'02:00:00:00:00:02','portal_mac':'02:00:00:00:00:03'}
