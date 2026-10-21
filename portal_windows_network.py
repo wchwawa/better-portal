@@ -8,6 +8,7 @@ import sys
 import time
 from pathlib import Path
 from scapy.all import ARP, Ether, conf, srp
+from scapy.data import MTU
 from scapy.interfaces import resolve_iface
 from portal_recovery import restore_peer_mappings
 
@@ -119,26 +120,88 @@ def frames(state, restore=False):
             Ether(src=own, dst=b)/ARP(op=2, psrc=PS5, pdst=PORTAL, hwsrc=a if restore else own, hwdst=b)]
 
 
+def _pcap_error(api, handle, status):
+    # Only PCAP_ERROR promises fresh handle error text; other statuses can
+    # otherwise repeat an unrelated error from an earlier operation.
+    if status == api.PCAP_ERROR:
+        return (api.pcap_geterr(handle) or b'No driver error provided.').decode(errors='replace')
+    if status == api.PCAP_ERROR_BREAK:
+        return 'Capture ended unexpectedly.'
+    if status == api.PCAP_ERROR_NOT_ACTIVATED:
+        return 'Capture handle is not activated.'
+    return f'Unexpected Npcap status {status}.'
+
+
+class _NpcapSocket:
+    """Preserve native Npcap errors and copy only the captured packet bytes.
+
+    Scapy 2.6.1 treats pcap_next_ex errors as an empty queue and discards the
+    pcap_setnonblock result. The relay needs both failures to stop and recover.
+    Scapy still owns adapter selection, capture setup, filters and handle cleanup.
+    """
+    def __init__(self, capture, api):
+        self._capture = capture
+        self._api = api
+        self._handle = capture.pcap_fd.pcap
+        self._header = ctypes.POINTER(api.pcap_pkthdr)()
+        self._data = ctypes.POINTER(ctypes.c_ubyte)()
+
+    def recv_raw(self):
+        result = self._api.pcap_next_ex(
+            self._handle, ctypes.byref(self._header), ctypes.byref(self._data))
+        if result == 0:
+            return None, None, None
+        if result != 1:
+            raise RuntimeError('Npcap packet capture failed: ' + _pcap_error(self._api, self._handle, result))
+        if not self._header or not self._data:
+            raise RuntimeError('Npcap returned an empty packet buffer.')
+        header = self._header.contents
+        if header.caplen < header.len:
+            raise RuntimeError(f'Npcap truncated an Ethernet frame ({header.caplen}/{header.len} bytes).')
+        if not 0 < header.caplen <= MTU or header.caplen != header.len:
+            raise RuntimeError('Npcap returned an invalid packet length.')
+        # Npcap owns the buffer and can overwrite it on the next receive call.
+        frame = ctypes.string_at(self._data, header.caplen)
+        timestamp = header.ts.tv_sec + header.ts.tv_usec / 1e6
+        return Ether, frame, timestamp
+
+    def send(self, frame):
+        data = bytes(frame)
+        # This API returns zero on success; unlike pcap_inject it has no byte count.
+        result = self._api.pcap_sendpacket(self._handle, data, len(data))
+        if result != 0:
+            raise RuntimeError('Npcap packet injection failed: ' + _pcap_error(self._api, self._handle, result))
+        return len(data)
+
+    def close(self):
+        self._capture.close()
+
+
 def open_socket(filter=None):
+    from scapy.libs import winpcapy as api
     sock = conf.L2socket(iface=IFACE, filter=filter, promisc=True)
     try:
         if sock.pcap_fd.datalink() != 1:
             raise RuntimeError('Adapter must expose Ethernet frames. Do not use Wi-Fi monitor mode.')
-        from scapy.libs.winpcapy import pcap_setmintocopy
-        if pcap_setmintocopy(sock.pcap_fd.pcap, 0) != 0:
-            raise RuntimeError('Npcap low-latency capture setup failed.')
-        sock.pcap_fd.setnonblock(True)
-        return sock
+        handle = sock.pcap_fd.pcap
+        result = api.pcap_setmintocopy(handle, 0)
+        if result != 0:
+            raise RuntimeError('Npcap low-latency capture setup failed: ' + _pcap_error(api, handle, result))
+        error = ctypes.create_string_buffer(api.PCAP_ERRBUF_SIZE)
+        result = api.pcap_setnonblock(handle, True, error)
+        if result != 0:
+            reason = error.value.decode(errors='replace') or _pcap_error(api, handle, result)
+            raise RuntimeError('Npcap nonblocking capture setup failed: ' + reason)
+        return _NpcapSocket(sock, api)
     except BaseException:
         sock.close()
         raise
 
 
 def send_raw(sock, frame):
-    # pcap_inject / pcap_sendpacket return negative on failure. Do not ignore it.
-    sent = sock.pcap_fd.send(bytes(frame))
-    if sent not in (0, len(bytes(frame))):
-        raise RuntimeError('Npcap packet injection failed.')
+    data = bytes(frame)
+    if sock.send(data) != len(data):
+        raise RuntimeError('Incomplete Npcap packet injection.')
 
 
 def restore(state, *, service=None):
