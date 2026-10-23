@@ -437,6 +437,14 @@ class Wizard:
         self.inline(row, 4, (f' {self.t(label)} ', self.emphasis(color) | self.curses.A_REVERSE),
                     ('  ' + self.t(title), self.emphasis(color)))
 
+    def wait_warning(self, row):
+        """Fill the guidance rows: connecting before READY makes the attempt fail."""
+        width = min(82, self.screen.getmaxyx()[1] - 8)
+        headline = pad_cells('!!  ' + self.t('DO NOT CONNECT PORTAL YET') + '  !!', width, center=True)
+        self.put(row, 4, headline, self.emphasis('warning') | self.curses.A_REVERSE)
+        self.put(row + 1, 4, 'Connecting before READY appears makes this attempt fail.',
+                 self.emphasis('warning'))
+
     def frame(self, step, footer):
         self.screen.erase()
         if step != 1:
@@ -472,6 +480,8 @@ class Wizard:
                      phase=self.t(stage_label.get(self.event.get('phase'), 'CHECK')),
                      seconds=self.event.get('seconds', 0)))
             self.put(5, 1, 'Q or Esc stops safely and restores the network.')
+            if self.event.get('phase') in ('checking', 'preparing'):
+                self.put(7, 1, 'DO NOT CONNECT PORTAL YET', self.emphasis('warning') | self.curses.A_REVERSE)
         else:
             self.put(3, 1, 'Esc exits. Setup resumes when the window is larger.')
         self.screen.refresh()
@@ -809,8 +819,8 @@ class Wizard:
                      self.colors.get(color, 0))
             self.put(19, 4, 'On Portal, select your PS5 to start Remote Play.', self.curses.A_DIM)
         elif phase in ('checking', 'preparing'):
-            self.put(17, 4, 'No action needed yet.', self.curses.A_BOLD)
-            self.put(18, 4, self.t('When READY appears, you get {seconds} seconds to connect.',
+            self.wait_warning(17)
+            self.put(19, 4, self.t('When READY appears, you get {seconds} seconds to connect.',
                                  seconds=CONNECT_SECONDS),
                      self.curses.A_DIM)
         elif phase == 'confirming':
