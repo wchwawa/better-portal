@@ -353,6 +353,50 @@ class LanguageTests(unittest.TestCase):
                 for call in draws:
                     self.assertLessEqual(call.args[1] + cell_width(call.args[2]), 71)
 
+    def test_wait_stage_warns_against_connecting_in_every_language_until_ready(self):
+        headline = 'DO NOT CONNECT PORTAL YET'
+        consequence = 'Connecting before READY appears makes this attempt fail.'
+        for platform in ('darwin', 'win32'):
+            for language in LANGUAGES:
+                with self.subTest(platform=platform, language=language):
+                    screen = MagicMock()
+                    screen.getmaxyx.return_value = (24, 72)
+                    screen.getch.return_value = -1
+                    wizard = tui.Wizard(screen, self.curses, demo=True, platform=platform)
+                    wizard.language = language
+                    for event in ({'type': 'checking'}, {'type': 'tick', 'phase': 'checking'},
+                                  {'type': 'preparing', 'seconds': 5},
+                                  {'type': 'tick', 'phase': 'preparing', 'seconds': 1}):
+                        screen.addstr.reset_mock()
+                        self.assertTrue(wizard.progress(event))
+                        draws = [call.args for call in screen.addstr.call_args_list]
+                        banner = next(args for args in draws if wizard.t(headline) in args[2])
+                        self.assertEqual((banner[0], banner[1], cell_width(banner[2])), (17, 4, 64),
+                                         'The warning bar must fill the guidance width below the devices')
+                        self.assertEqual(banner[3], self.curses.A_BOLD | self.curses.A_REVERSE)
+                        self.assertIn((18, 4, wizard.t(consequence), self.curses.A_BOLD), draws,
+                                      'The consequence must fit on one line without clipping')
+                        self.assertFalse(any('No action needed' in args[2] for args in draws))
+                        for args in draws:
+                            self.assertLessEqual(args[1] + cell_width(args[2]), 71)
+                    screen.addstr.reset_mock()
+                    self.assertTrue(wizard.progress({'type': 'ready', 'seconds': tui.CONNECT_SECONDS}))
+                    draws = [call.args for call in screen.addstr.call_args_list]
+                    self.assertFalse(any(wizard.t(headline) in args[2] or wizard.t(consequence) in args[2]
+                                         for args in draws), 'READY replaces the warning')
+                    self.assertIn((7, 4, ' ' + wizard.t('READY') + ' '), [args[:3] for args in draws])
+
+    def test_small_terminal_keeps_the_wait_warning_until_ready(self):
+        wizard = self.wizard(demo=True)
+        wizard.screen.getmaxyx.return_value = (18, 60)
+        for phase, shown in (('checking', True), ('preparing', True), ('waiting', False)):
+            with self.subTest(phase=phase):
+                wizard.event = {'phase': phase, 'seconds': 5}
+                wizard.screen.addstr.reset_mock()
+                wizard.small_terminal(live=True)
+                draws = [call.args for call in wizard.screen.addstr.call_args_list]
+                self.assertEqual(any(args[2] == 'DO NOT CONNECT PORTAL YET' for args in draws), shown)
+
 
 class TerminalTextTests(unittest.TestCase):
     def test_clip_and_padding_never_split_a_wide_character(self):
